@@ -16,6 +16,7 @@ import {
   FiStar,
   FiInstagram,
   FiYoutube,
+  FiLinkedin,
   FiMessageCircle,
 } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
@@ -738,31 +739,108 @@ export function App() {
               </section>
 
               <section className="social-media-section">
-                <div className="social-card">
-                  <div className="social-copy">
+                <div className="social-media-grid">
+                  <div className="social-left-col">
                     <span className="community-kicker">JOIN OUR COMMUNITY</span>
-                    <h2>Follow @booksbykilo</h2>
-                    <p>Join 50,000+ book lovers on Instagram & YouTube for daily unboxing videos, recommendations, and exclusive flash sales.</p>
-                    <div className="social-actions">
-                      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-btn instagram">
-                        <FiInstagram /> Instagram <b>42K</b>
+                    <h2>Connect with Books by Kilo</h2>
+                    <p>Scan or follow us for daily unboxing reels, reader stacks, and exclusive flash sales across India.</p>
+                    <div className="social-links-row">
+                      <a href="https://instagram.com" target="_blank" rel="noreferrer" className="social-pill-btn instagram">
+                        <FiInstagram /> Instagram
                       </a>
-                      <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="social-btn youtube">
-                        <FiYoutube /> YouTube <b>18K</b>
+                      <a href="https://youtube.com" target="_blank" rel="noreferrer" className="social-pill-btn youtube">
+                        <FiYoutube /> YouTube
                       </a>
-                      <button onClick={() => notify("Joining Book Deals WhatsApp group...")} className="social-btn whatsapp">
-                        <FiMessageCircle /> Deals Club <b>25K</b>
-                      </button>
+                      <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="social-pill-btn linkedin">
+                        <FiLinkedin /> LinkedIn
+                      </a>
                     </div>
                   </div>
-                  <div className="social-preview-grid">
-                    <div className="social-preview-item">
-                      <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&auto=format&fit=crop&q=60" alt="Book stack" />
-                      <span>Unboxing 5kg Stack 📚</span>
-                    </div>
-                    <div className="social-preview-item">
-                      <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&auto=format&fit=crop&q=60" alt="Reading shelf" />
-                      <span>Sunday Reader Shelf 💡</span>
+
+                  <div className="social-right-col">
+                    <div className="social-showcase-stage">
+                      {/* Phone Instagram Profile Mockup */}
+                      <div className="social-phone-mockup">
+                        <div className="phone-screen">
+                          <div className="phone-header">
+                            <FiChevronLeft />
+                            <strong>booksbykilo.official</strong>
+                            <FiMenu />
+                          </div>
+                          <div className="phone-profile-body">
+                            <div className="phone-profile-top">
+                              <div className="phone-avatar-wrap">
+                                <img src="/books/bright-eyes.jpg" alt="Books by Kilo" />
+                              </div>
+                              <div className="phone-stats-grid">
+                                <div><strong>1,420</strong><small>posts</small></div>
+                                <div><strong>52.4k</strong><small>followers</small></div>
+                                <div><strong>180</strong><small>following</small></div>
+                              </div>
+                            </div>
+                            <div className="phone-bio">
+                              <strong>Books by Kilo 📚</strong>
+                              <p>India’s favorite pre-loved bookstore by weight!</p>
+                              <a href="https://www.booksbykilo.in" target="_blank" rel="noreferrer">🔗 www.booksbykilo.in</a>
+                            </div>
+                            <div className="phone-actions">
+                              <button className="phone-btn primary" onClick={() => notify("Following Books by Kilo on Instagram!")}>Follow</button>
+                              <button className="phone-btn secondary" onClick={() => notify("Sending message to Books by Kilo...")}>Message</button>
+                            </div>
+                            <div className="phone-highlights">
+                              <div className="hl-item"><div className="hl-circle">📦</div><small>Unboxing</small></div>
+                              <div className="hl-item"><div className="hl-circle">⭐</div><small>Reviews</small></div>
+                              <div className="hl-item"><div className="hl-circle">📚</div><small>5kg Stacks</small></div>
+                              <div className="hl-item"><div className="hl-circle">🔥</div><small>Deals</small></div>
+                            </div>
+                            <div className="phone-feed-grid">
+                              <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300&auto=format&fit=crop&q=60" alt="Feed post 1" />
+                              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&auto=format&fit=crop&q=60" alt="Feed post 2" />
+                              <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&auto=format&fit=crop&q=60" alt="Feed post 3" />
+                              <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=300&auto=format&fit=crop&q=60" alt="Feed post 4" />
+                              <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=300&auto=format&fit=crop&q=60" alt="Feed post 5" />
+                              <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=300&auto=format&fit=crop&q=60" alt="Feed post 6" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Physical Social / QR Card */}
+                      <div className="social-qr-card">
+                        <div className="qr-card-hero">
+                          <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&auto=format&fit=crop&q=60" alt="Books by Kilo community" />
+                        </div>
+                        <div className="qr-card-body">
+                          <div className="qr-box">
+                            <svg viewBox="0 0 100 100" className="qr-svg" aria-label="Books by Kilo QR Code">
+                              <rect width="100" height="100" fill="#ffffff" />
+                              <path d="M10,10 h30 v30 h-30 z M16,16 v18 h18 v-18 z M22,22 h6 v6 h-6 z" fill="#111827" />
+                              <path d="M60,10 h30 v30 h-30 z M66,16 v18 h18 v-18 z M72,22 h6 v6 h-6 z" fill="#111827" />
+                              <path d="M10,60 h30 v30 h-30 z M16,66 v18 h18 v-18 z M22,72 h6 v6 h-6 z" fill="#111827" />
+                              <path d="M45,10 h10 v15 h-10 z M45,30 h10 v10 h-10 z M10,45 h15 v10 h-15 z M30,45 h10 v10 h-10 z M45,45 h10 v10 h-10 z M60,45 h25 v10 h-25 z M45,60 h10 v15 h-10 z M60,60 h15 v10 h-15 z M80,60 h10 v25 h-10 z M45,80 h25 v10 h-25 z" fill="#111827" />
+                            </svg>
+                            <strong>SCAN ME TO JOIN</strong>
+                          </div>
+                          <div className="qr-social-links">
+                            <small>LET'S CONNECT HERE</small>
+                            <div className="qr-icons">
+                              <a href="https://instagram.com" target="_blank" rel="noreferrer" title="Instagram"><FiInstagram /></a>
+                              <a href="https://youtube.com" target="_blank" rel="noreferrer" title="YouTube"><FiYoutube /></a>
+                              <a href="https://whatsapp.com" target="_blank" rel="noreferrer" title="WhatsApp"><FiMessageCircle /></a>
+                            </div>
+                          </div>
+                          <hr />
+                          <div className="qr-brand">
+                            <div className="text-brand"><span>BOOKS BY</span><strong>KILO</strong></div>
+                            <p>Find your people. Find your next book.</p>
+                          </div>
+                          <div className="qr-meta-info">
+                            <span>🌐 www.booksbykilo.in</span>
+                            <span>📧 support@booksbykilo.in</span>
+                            <span>📍 Pan-India Express Delivery</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
