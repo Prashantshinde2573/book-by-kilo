@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.npm-cache/
+.DS_Store
+*.log
+.env
+.env.*
+app/
+audit-current/
+source-audit/
+qa-*.png
+design-qa.md
+
