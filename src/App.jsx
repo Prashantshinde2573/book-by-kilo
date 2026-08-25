@@ -130,6 +130,7 @@ const genres = [
   ["History", "People, places & turning points", "/catalog/9781416548485-better.jpg"],
   ["Business", "Ideas that move careers forward", "/catalog/9780312541866-better.jpg"],
   ["Biography", "Remarkable lives, honestly told", "/catalog/9781443408486-better.jpg"],
+  ["Surprise Stack", "Unexpected reads, picked just for you.", "/brand/surprise.webp"],
 ];
 const languages = [
   ["English", "English", "/books/alice.jpg"],
@@ -274,7 +275,10 @@ function Shelf({ shelf, items, onOpen, onCart, list, onSave, rank }) {
   return (
     <section className="shelf-section">
       <div className="shelf-heading">
-        <h2>{shelf.title} {shelf.accent && <span>{shelf.accent}</span>}</h2>
+        <div>
+          <h2>{shelf.title} {shelf.accent && <span>{shelf.accent}</span>}</h2>
+          {shelf.subtitle && <span className="shelf-subtitle">{shelf.subtitle}</span>}
+        </div>
         {!rank && <button>View All <FiChevronRight /></button>}
       </div>
       <div className="shelf-wrap">
@@ -653,49 +657,48 @@ export function App() {
             </section>
 
             <div className="content-overlap">
+              {/* 1. Top 10 Books */}
               <div className="top-ten-shelf">
-                <Shelf shelf={{ title: "Top 10 Books This Week" }} items={[...allBooks].sort((a, b) => b.match - a.match).slice(0, 10)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} rank />
+                <Shelf shelf={{ title: "Top 10 Books", subtitle: "The absolute must-reads of the season." }} items={[...allBooks].sort((a, b) => b.match - a.match).slice(0, 10)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} rank />
               </div>
-              {shelves.slice(0, 2).map((shelf) => (
-                <Shelf key={shelf.title} shelf={shelf} items={(shelf.key === "new-books" ? [...internetNewBooks, ...allBooks.filter((book) => book.categories?.includes(shelf.key))] : allBooks.filter((book) => book.categories?.includes(shelf.key))).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
-              ))}
 
-              <section className="discovery-section publisher-section">
-                <div className="shelf-heading"><h2>Browse by publication</h2></div>
-                <div className="publisher-grid">
-                  {publishers.map((publisher, index) => (
-                    <button key={publisher.name} style={{ "--publisher-index": index }} onClick={() => setQuery(publisher.name)} aria-label={`Browse ${publisher.name}`}>
-                      <PublisherMark kind={publisher.mark} />
-                    </button>
-                  ))}
-                </div>
-              </section>
-
-              {shelves.slice(2, 4).map((shelf) => (
-                <Shelf key={shelf.title} shelf={shelf} items={allBooks.filter((book) => book.categories?.includes(shelf.key)).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
-              ))}
-
+              {/* 2. Explore by Genre */}
               <section className="discovery-section genre-section" id="genres">
-                <div className="shelf-heading"><h2>Explore by genre</h2></div>
+                <div className="shelf-heading">
+                  <div>
+                    <h2>Explore by Genre</h2>
+                    <span className="shelf-subtitle">Find your next story.</span>
+                  </div>
+                </div>
                 <div className="genre-grid">
-                  {genres.map(([title, subtitle, image], index) => (
-                    <button key={title} className={`genre-card genre-${index + 1}`} onClick={() => { setQuery(title); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
-                      <img src={image} alt="" />
-                      <b className="genre-number">{String(index + 1).padStart(2, "0")}</b>
-                      <span className="genre-meta">
-                        <strong>{title}</strong>
-                        <small>{subtitle}</small>
-                      </span>
-                    </button>
-                  ))}
+                  {genres.map(([title, subtitle, image], index) => {
+                    const isSurprise = index === 8 || title === "Surprise Stack";
+                    return (
+                      <button key={title} className={`genre-card genre-${index + 1} ${isSurprise ? "genre-surprise" : ""}`} onClick={() => { setQuery(title); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+                        <img src={image} alt="" />
+                        <b className="genre-number">{String(index + 1).padStart(2, "0")}</b>
+                        <span className="genre-meta">
+                          <strong>{title}</strong>
+                          <small>{subtitle}</small>
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </section>
 
+              {/* 3. Recently Added Books */}
+              <Shelf shelf={{ title: "Recently Added Books", subtitle: "Freshly stocked arrivals." }} items={allBooks.slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
+
+              {/* 4. Brand New Books */}
+              <Shelf shelf={{ title: "Brand New Books", subtitle: "Straight from the press." }} items={[...internetNewBooks, ...allBooks.filter((book) => book.categories?.includes("new-books"))].slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
+
+              {/* 5. Banner Mid */}
               <section className="gradient-highlight">
                 <div className="editor-copy">
                   <span className="eyebrow">CURATED FOR CURIOUS READERS</span>
-                  <h2>Editor’s Picks</h2>
-                  <p>Five books our team can’t stop recommending—fiction, ideas and beautiful editions, all priced by the kilo.</p>
+                  <h2>Banner Mid</h2>
+                  <p style={{ color: "#cbd5e1", fontSize: "14px", marginTop: "4px" }}>Unbeatable deals on bestselling reads.</p>
                   <button onClick={() => openPage("bestsellers")}>Explore Editor’s Picks <FiChevronRight /></button>
                 </div>
                 <div className="editor-stack">
@@ -705,12 +708,43 @@ export function App() {
                 </div>
               </section>
 
-              {shelves.slice(4, 6).map((shelf) => (
-                <Shelf key={shelf.title} shelf={shelf} items={allBooks.filter((book) => book.categories?.includes(shelf.key)).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
-              ))}
+              {/* 6. Children Books */}
+              <Shelf shelf={{ title: "Children Books", subtitle: "Magic for little readers." }} items={allBooks.filter((book) => book.categories?.includes("children")).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
 
+              {/* 7. Teen Fiction */}
+              <Shelf shelf={{ title: "Teen Fiction", subtitle: "Captivating young adult reads." }} items={allBooks.filter((book) => book.categories?.includes("teen-fiction")).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
+
+              {/* 8. Fiction / Non-Fiction */}
+              <Shelf shelf={{ title: "Fiction / Non-Fiction", subtitle: "From wild imaginations to real facts." }} items={allBooks.filter((book) => book.categories?.includes("fiction") || book.categories?.includes("non-fiction")).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
+
+              {/* 9. Explore by Publishers */}
+              <section className="discovery-section publisher-section">
+                <div className="shelf-heading">
+                  <div>
+                    <h2>Explore by Publishers</h2>
+                    <span className="shelf-subtitle">Shop your favorite imprints.</span>
+                  </div>
+                </div>
+                <div className="publisher-grid">
+                  {publishers.map((publisher, index) => (
+                    <button key={publisher.name} style={{ "--publisher-index": index }} onClick={() => setQuery(publisher.name)} aria-label={`Browse ${publisher.name}`}>
+                      <PublisherMark kind={publisher.mark} />
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              {/* 10. Extra Discount Sale */}
+              <Shelf shelf={{ title: "Extra Discount Sale", subtitle: "Massive markdowns on top titles." }} items={[...allBooks].sort((a, b) => a.price - b.price).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
+
+              {/* 11. Regional Languages */}
               <section className="discovery-section language-section">
-                <div className="shelf-heading"><h2>Read in your language</h2><span className="section-note">More languages, more stories</span></div>
+                <div className="shelf-heading">
+                  <div>
+                    <h2>Regional Languages</h2>
+                    <span className="shelf-subtitle">Stories in your mother tongue.</span>
+                  </div>
+                </div>
                 <div className="language-grid">
                   {languages.map(([language, native, image]) => (
                     <button key={language} onClick={() => notify(`${language} books selected`)}>
@@ -720,13 +754,17 @@ export function App() {
                 </div>
               </section>
 
+              {/* 12. Coffee Table Books */}
+              <Shelf shelf={{ title: "Coffee Table Books", subtitle: "Stunning visual statements." }} items={allBooks.filter((book) => book.categories?.includes("collector") || book.tier === "Premium" || book.tier === "Classic").slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
 
-
-              {shelves.slice(6).map((shelf) => (
-                <Shelf key={shelf.title} shelf={shelf} items={allBooks.filter((book) => book.categories?.includes(shelf.key)).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
-              ))}
+              {/* 13. Choose by Pricing */}
               <section className="collection-section" id="categories">
-                <div className="shelf-heading"><h2>Explore every kind of reader</h2></div>
+                <div className="shelf-heading">
+                  <div>
+                    <h2>Choose by Pricing</h2>
+                    <span className="shelf-subtitle">Fill your shelves by weight.</span>
+                  </div>
+                </div>
                 <div className="collection-grid">
                   {collections.map((collection) => (
                     <button className="collection-card gradient-reader-card" key={collection.title} onClick={() => { setQuery(collection.title.replace(" Books", "")); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
