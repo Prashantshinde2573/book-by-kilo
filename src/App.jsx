@@ -13,7 +13,12 @@ import {
   FiShoppingCart,
   FiUser,
   FiX,
+  FiStar,
+  FiInstagram,
+  FiYoutube,
+  FiMessageCircle,
 } from "react-icons/fi";
+import { FcGoogle } from "react-icons/fc";
 import { FaFire, FaPlay } from "react-icons/fa";
 
 const books = [
@@ -137,62 +142,18 @@ const navItems = [
   ["Home", "home"], ["All Books", "all"], ["Categories", "categories"], ["₹/kg Store", "store"],
   ["Surprise Stack", "surprise"], ["Bulk Books", "bulk"], ["Bestsellers", "bestsellers"], ["New Arrivals", "new"],
 ];
-const communityReads = [
-  {
-    name: "Aanya Mehta",
-    handle: "@aanyareads",
-    quote: "Found this beautiful edition for less than my coffee order.",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=96&h=96&q=80",
-    image: "https://images.unsplash.com/photo-1627007987162-32c5411dbd3f?w=900&auto=format&fit=crop&q=60",
-    book: "Bright Eyes, Brown Skin",
-    bookImage: "/books/bright-eyes.jpg",
-  },
-  {
-    name: "Priya Kapoor",
-    handle: "@priyabetweenpages",
-    quote: "My weekend plan arrived by the kilo. Zero regrets.",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=96&h=96&q=80",
-    image: "https://plus.unsplash.com/premium_photo-1664382465596-48a460743b6e?w=900&auto=format&fit=crop&q=60",
-    book: "King Lear",
-    bookImage: "/books/king-lear.jpg",
-  },
-  {
-    name: "Mira Sen",
-    handle: "@miraslittlelibrary",
-    quote: "The children’s stack was an instant hit at home.",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=96&h=96&q=80",
-    image: "https://images.unsplash.com/photo-1709855256067-12ad9a64ac06?w=900&auto=format&fit=crop&q=60",
-    book: "When It Snows",
-    bookImage: "/books/when-it-snows.jpg",
-  },
-  {
-    name: "Kavya Iyer",
-    handle: "@kavyaiyer",
-    quote: "Picked up Alice and a Pokémon guide — the niece approves.",
-    avatar: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=96&h=96&q=80",
-    image: "https://plus.unsplash.com/premium_photo-1664372145586-37c3f7de6983?w=900&auto=format&fit=crop&q=60",
-    book: "Alice in Wonderland",
-    bookImage: "/books/alice.jpg",
-  },
-  {
-    name: "Riya Sharma",
-    handle: "@riyasshelves",
-    quote: "Sunday afternoons just got a serious upgrade.",
-    avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=96&h=96&q=80",
-    image: "https://images.unsplash.com/photo-1547250936-e1426b362327?w=900&auto=format&fit=crop&q=60",
-    book: "Much Ado About Nothing",
-    bookImage: "/books/much-ado.jpg",
-  },
-  {
-    name: "Anaya Joshi",
-    handle: "@anayareads",
-    quote: "Eight books, one stack, under a thousand bucks. Books by Kilo forever.",
-    avatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=96&h=96&q=80",
-    image: "https://plus.unsplash.com/premium_photo-1711391559274-7fa38a89e54f?w=900&auto=format&fit=crop&q=60",
-    book: "Rainbow Magic",
-    bookImage: "/books/rainbow-magic.jpg",
-  },
-];
+
+const googleReviewSlide = {
+  id: "google-review-slide",
+  isGoogleReview: true,
+  title: "Google Rating 4.8",
+  author: "Verified Google Reviews",
+  rating: "4.8",
+  reviewsCount: "379 Reviews",
+  starImage: "https://www.booksbykilo.in/media/staticimages/star.png",
+  description: "Rated 4.8 out of 5 stars by 379+ verified book lovers across India. Highest rated online store for authentic pre-loved books by weight.",
+  image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900&auto=format&fit=crop&q=60",
+};
 
 function BookCard({ book, onOpen, onCart, saved, onSave, rank }) {
   const [preview, setPreview] = useState(null);
@@ -246,6 +207,9 @@ function BookCard({ book, onOpen, onCart, saved, onSave, rank }) {
       <button className="book-cover" onMouseEnter={schedulePreview} onMouseLeave={scheduleClose} onClick={() => onOpen(book)} aria-label={`View ${book.title}`}>
         <img className="cover-backdrop" src={book.image} alt="" aria-hidden="true" />
         <img className="cover-foreground" src={book.image} alt={`${book.title} by ${book.author}`} />
+        <div className="cover-price-badge">
+          <span>₹{book.price}</span><small>/kg</small>
+        </div>
       </button>
       {preview && createPortal(<div
         className="card-preview portal-preview"
@@ -325,6 +289,111 @@ function Shelf({ shelf, items, onOpen, onCart, list, onSave, rank }) {
   );
 }
 
+function ProductDetailPage({ book, onBack, onCart, list, onSave, allBooks, onSelectBook }) {
+  const [recFilter, setRecFilter] = useState("genre");
+
+  const recommendations = useMemo(() => {
+    if (!book) return [];
+    if (recFilter === "author") {
+      const matchAuthor = allBooks.filter((b) => b.id !== book.id && b.author.toLowerCase() === book.author.toLowerCase());
+      if (matchAuthor.length >= 2) return matchAuthor;
+    }
+    return allBooks.filter((b) => b.id !== book.id && (b.genre === book.genre || b.categories?.includes(book.categories?.[0])));
+  }, [book, recFilter, allBooks]);
+
+  if (!book) return null;
+
+  return (
+    <section className="pdp-page">
+      <div className="pdp-top-bar">
+        <button className="pdp-back-btn" onClick={onBack}>
+          <FiChevronLeft /> Back to catalog
+        </button>
+        <div className="pdp-breadcrumbs">
+          <span>Catalog</span> / <span>{book.genre || "Books"}</span> / <strong>{book.title}</strong>
+        </div>
+      </div>
+
+      <div className="pdp-main-card">
+        <div className="pdp-visual">
+          <img className="pdp-bg-blur" src={book.image} alt="" aria-hidden="true" />
+          <img className="pdp-cover" src={book.image} alt={`${book.title} by ${book.author}`} />
+        </div>
+
+        <div className="pdp-details">
+          <span className="eyebrow">{book.genre || "FEATURED BOOK"}</span>
+          <h1 className="pdp-title">{book.title}</h1>
+          <p className="byline">by {book.author}</p>
+
+          <div className="pdp-meta-row">
+            <span className="pdp-match">{book.match}% Match</span>
+            <span className="pdp-badge"><FiCheck /> Quality Checked</span>
+            <span className="pdp-badge">{book.weight}g</span>
+            <span className="pdp-badge">{book.tier || "Standard"} Tier</span>
+          </div>
+
+          <div className="pdp-price-box">
+            <span className="pdp-price">₹{book.price}</span>
+            <span className="pdp-unit">/kg</span>
+          </div>
+
+          <p className="description">{book.description || `A quality-checked Books by Kilo edition of ${book.title}.`}</p>
+
+          <div className="hero-actions pdp-actions">
+            <button className="cta" onClick={() => onCart(book)}>
+              <FiShoppingCart /> Add to Cart <b>₹{book.price}/kg</b>
+            </button>
+            <button className={`secondary ${list.includes(book.id) ? "saved" : ""}`} onClick={() => onSave(book)}>
+              {list.includes(book.id) ? <FiCheck /> : <FiHeart />} {list.includes(book.id) ? "In My List" : "Add to My List"}
+            </button>
+          </div>
+
+          <div className="pdp-guarantee-grid">
+            <div><FiCheck /> 100% Authentic Quality-Checked</div>
+            <div><FiCheck /> 7-Day Easy Replacement Guarantee</div>
+            <div><FiCheck /> Fast Pan-India Delivery</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="pdp-rec-section">
+        <div className="pdp-rec-header">
+          <div>
+            <span className="pdp-rec-kicker">CURATED RECOMMENDATIONS</span>
+            <h2>You Might Also Like</h2>
+          </div>
+          <div className="pdp-rec-tabs">
+            <button className={recFilter === "genre" ? "active" : ""} onClick={() => setRecFilter("genre")}>
+              Same Genre
+            </button>
+            <button className={recFilter === "author" ? "active" : ""} onClick={() => setRecFilter("author")}>
+              Same Author
+            </button>
+          </div>
+        </div>
+
+        <div className="shelf-wrap">
+          <div className="book-rail pdp-rec-rail">
+            {recommendations.slice(0, 16).map((recBook) => (
+              <BookCard
+                key={`rec-${recBook.id}`}
+                book={recBook}
+                onOpen={(b) => { onSelectBook(b); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                onCart={onCart}
+                saved={list.includes(recBook.id)}
+                onSave={onSave}
+              />
+            ))}
+            {!recommendations.length && (
+              <div className="empty">No other books found in this filter.</div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function App() {
   const [catalog, setCatalog] = useState([]);
   const [heroIndex, setHeroIndex] = useState(0);
@@ -339,6 +408,7 @@ export function App() {
   const [cart, setCart] = useState([]);
   const [list, setList] = useState([2, 10, 15]);
   const [toast, setToast] = useState("");
+  const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -369,7 +439,15 @@ export function App() {
     .map((title) => allBooks.find((book) => book.title.toLowerCase() === title.toLowerCase()))
     .filter(Boolean);
   const featuredBooks = heroBooks.length === 5 ? heroBooks : allBooks.slice(0, 5);
-  const featured = featuredBooks[heroIndex] || allBooks[0] || books[0];
+
+  const heroSlides = useMemo(() => [
+    featuredBooks[0],
+    featuredBooks[1],
+    googleReviewSlide,
+    ...featuredBooks.slice(2)
+  ].filter(Boolean), [featuredBooks]);
+
+  const featured = heroSlides[heroIndex] || heroSlides[0];
   const heroTitle = featured.title === "When It Snows"
     ? <>When It<br />Snows</>
     : featured.title === "King Lear"
@@ -377,12 +455,12 @@ export function App() {
       : featured.title;
 
   useEffect(() => {
-    if (featuredBooks.length < 2) return undefined;
+    if (heroSlides.length < 2) return undefined;
     const timer = window.setInterval(() => {
-      setHeroIndex((index) => (index + 1) % featuredBooks.length);
+      setHeroIndex((index) => (index + 1) % heroSlides.length);
     }, 6500);
     return () => window.clearInterval(timer);
-  }, [featuredBooks.length]);
+  }, [heroSlides.length]);
 
   const filtered = useMemo(() => {
     const value = query.trim().toLowerCase();
@@ -404,6 +482,7 @@ export function App() {
 
   const openPage = (nextPage) => {
     setPage(nextPage);
+    setSelected(null);
     setQuery("");
     setCategoryFilter("all");
     setTierFilter("all");
@@ -443,12 +522,41 @@ export function App() {
         <div className="header-actions">
           <button className="list-button" onClick={() => notify(`${list.length} books in My List`)}><FiHeart /> <span>My List</span></button>
           <button className="cart-button" onClick={() => notify(`${cart.length} books in your cart`)}><FiShoppingCart /> <span>Cart</span>{cart.length > 0 && <b>{cart.length}</b>}</button>
-          <button aria-label="Account"><FiUser /></button>
+          <div className="profile-wrapper">
+            <button className="account-button" aria-label="Account" onClick={() => setProfileOpen(!profileOpen)}><FiUser /></button>
+            {profileOpen && (
+              <div className="profile-dropdown">
+                <div className="profile-user-info">
+                  <div className="profile-avatar"><FiUser /></div>
+                  <div>
+                    <strong>Prashant Shinde</strong>
+                    <small>Reader Member</small>
+                  </div>
+                </div>
+                <hr />
+                <button onClick={() => { notify("My Orders coming soon"); setProfileOpen(false); }}>My Orders</button>
+                <button onClick={() => { notify(`${list.length} books in My List`); setProfileOpen(false); }}>Saved Books ({list.length})</button>
+                <button onClick={() => { notify("Account Settings"); setProfileOpen(false); }}>Settings</button>
+                <hr />
+                <button className="signout-btn" onClick={() => { notify("Signed out"); setProfileOpen(false); }}>Sign Out</button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
       <main id="home">
-        {query || page !== "home" ? (
+        {selected ? (
+          <ProductDetailPage
+            book={selected}
+            onBack={() => setSelected(null)}
+            onCart={addCart}
+            list={list}
+            onSave={toggleList}
+            allBooks={allBooks}
+            onSelectBook={(b) => setSelected(b)}
+          />
+        ) : query || page !== "home" ? (
           <section className="search-results catalog-page">
             <span className="catalog-kicker">BOOKS BY KILO CATALOG</span>
             <div className="results-head"><h1>{query ? `Results for “${query}”` : navItems.find((item) => item[1] === page)?.[0]}</h1><span>{filtered.length} books found</span></div>
@@ -462,7 +570,7 @@ export function App() {
               </div>
             </div>
             <div className="results-grid">
-              {filtered.map((book) => <BookCard key={book.id} book={book} onOpen={setSelected} onCart={addCart} saved={list.includes(book.id)} onSave={toggleList} />)}
+              {filtered.map((book) => <BookCard key={book.id} book={book} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} saved={list.includes(book.id)} onSave={toggleList} />)}
             </div>
             {!filtered.length && <div className="empty">No matches yet. Try an author, genre or collection tier.</div>}
           </section>
@@ -471,33 +579,72 @@ export function App() {
             <section className="hero">
               <div className="hero-art">
                 <img key={`backdrop-${featured.id}`} className="hero-backdrop" src={featured.image} alt="" aria-hidden="true" />
-                <img key={`book-${featured.id}`} className="hero-book" src={featured.image} alt={`${featured.title} cover`} />
+                {featured.isGoogleReview ? (
+                  <div className="google-hero-badge-art">
+                    <div className="thumb-style-g-badge">
+                      <div className="g-art-circle"><FcGoogle size={32} /></div>
+                      <div className="g-art-rating">4.8 ★</div>
+                      <img className="g-art-stars" src={featured.starImage} alt="5 stars rating" />
+                      <span className="g-art-count">379 Verified Reviews</span>
+                    </div>
+                  </div>
+                ) : (
+                  <img key={`book-${featured.id}`} className="hero-book" src={featured.image} alt={`${featured.title} cover`} />
+                )}
               </div>
-              <div className="hero-copy">
-                <span className="eyebrow">BOOKS BY KILO FEATURED</span>
-                <h1>{heroTitle}</h1>
-                <p className="byline">by {featured.author}</p>
-                <div className="hero-meta"><span><FiCheck /> Good Condition</span><span>{featured.weight}g</span><span>{featured.genre || featured.categories?.[0]}</span></div>
-                <p className="description">{featured.description || `A quality-checked Books by Kilo edition of ${featured.title}.`}</p>
-                <div className="hero-actions">
-                  <button className="cta" onClick={() => addCart(featured)}><FiShoppingCart /> Add to Cart <b>₹{featured.price}/kg</b></button>
-                  <button className="secondary" onClick={() => setSelected(featured)}><FiInfo /> More Info</button>
-                  <button className="text-button" onClick={() => toggleList(featured)}>{list.includes(featured.id) ? <FiCheck /> : <FiPlus />} My List</button>
+              {featured.isGoogleReview ? (
+                <div className="hero-copy google-hero-copy">
+                  <div className="google-review-header-flex">
+                    <div>
+                      <span className="eyebrow">VERIFIED GOOGLE REVIEWS</span>
+                      <h1 className="google-hero-title">Google Rating <em>4.8</em></h1>
+                    </div>
+                    <div className="google-official-logo">
+                      <FcGoogle size={32} />
+                    </div>
+                  </div>
+                  <div className="google-reviews-meta">
+                    <img className="google-star-strip" src={featured.starImage} alt="5 stars" />
+                    <span className="google-reviews-badge">379 Reviews</span>
+                  </div>
+                  <p className="byline">over 50,000+ happy readers across India</p>
+                  <p className="description">{featured.description}</p>
+                  <div className="hero-actions">
+                    <button className="cta" onClick={() => openPage("all")}><FiShoppingCart /> Shop Bestsellers <b>₹299/kg</b></button>
+                    <button className="secondary" onClick={() => notify("Rated 4.8/5 on Google Reviews from 379+ customers")}><FiStar /> 379 Reviews</button>
+                  </div>
                 </div>
-              </div>
-              <aside className="why-card">
-                <strong>Why you’ll love this</strong>
-                <b>95% Match</b>
-                <p>Celebrates identity, self-love and growing up with pride.</p>
-                <hr />
-                <span><FiCheck /> Quality Checked</span>
-                <span><FiCheck /> 7-Day Easy Returns</span>
-                <span><FiCheck /> Pan India Delivery</span>
-              </aside>
+              ) : (
+                <div className="hero-copy">
+                  <span className="eyebrow">BOOKS BY KILO FEATURED</span>
+                  <h1>{heroTitle}</h1>
+                  <p className="byline">by {featured.author}</p>
+                  <div className="hero-meta"><span><FiCheck /> Good Condition</span><span>{featured.weight}g</span><span>{featured.genre || featured.categories?.[0]}</span></div>
+                  <p className="description">{featured.description || `A quality-checked Books by Kilo edition of ${featured.title}.`}</p>
+                  <div className="hero-actions">
+                    <button className="cta" onClick={() => addCart(featured)}><FiShoppingCart /> Add to Cart <b>₹{featured.price}/kg</b></button>
+                    <button className="secondary" onClick={() => { setSelected(featured); window.scrollTo({ top: 0, behavior: "smooth" }); }}><FiInfo /> More Info</button>
+                    <button className="text-button" onClick={() => toggleList(featured)}>{list.includes(featured.id) ? <FiCheck /> : <FiPlus />} My List</button>
+                  </div>
+                </div>
+              )}
               <div className="hero-slider" aria-label="Featured books">
-                <div className="hero-indicators">
-                  {featuredBooks.map((book, index) => (
-                    <button key={book.id} className={index === heroIndex ? "active" : ""} onClick={() => setHeroIndex(index)} aria-label={`Feature ${book.title}`}>
+                <div className="hero-thumbnails">
+                  {heroSlides.map((slide, index) => (
+                    <button
+                      key={slide.id}
+                      className={`hero-thumb-btn ${index === heroIndex ? "active" : ""}`}
+                      onClick={() => setHeroIndex(index)}
+                      aria-label={`Slide ${index + 1}: ${slide.title || 'Google Reviews'}`}
+                    >
+                      {slide.isGoogleReview ? (
+                        <div className="thumb-google-badge">
+                          <span className="g-mark"><FcGoogle size={14} /></span>
+                          <small>4.8★</small>
+                        </div>
+                      ) : (
+                        <img src={slide.image} alt={slide.title} />
+                      )}
                     </button>
                   ))}
                 </div>
@@ -506,10 +653,10 @@ export function App() {
 
             <div className="content-overlap">
               <div className="top-ten-shelf">
-                <Shelf shelf={{ title: "Top 10 Books This Week" }} items={[...allBooks].sort((a, b) => b.match - a.match).slice(0, 10)} onOpen={setSelected} onCart={addCart} list={list} onSave={toggleList} rank />
+                <Shelf shelf={{ title: "Top 10 Books This Week" }} items={[...allBooks].sort((a, b) => b.match - a.match).slice(0, 10)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} rank />
               </div>
               {shelves.slice(0, 2).map((shelf) => (
-                <Shelf key={shelf.title} shelf={shelf} items={(shelf.key === "new-books" ? [...internetNewBooks, ...allBooks.filter((book) => book.categories?.includes(shelf.key))] : allBooks.filter((book) => book.categories?.includes(shelf.key))).slice(0, 24)} onOpen={setSelected} onCart={addCart} list={list} onSave={toggleList} />
+                <Shelf key={shelf.title} shelf={shelf} items={(shelf.key === "new-books" ? [...internetNewBooks, ...allBooks.filter((book) => book.categories?.includes(shelf.key))] : allBooks.filter((book) => book.categories?.includes(shelf.key))).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
               ))}
 
               <section className="discovery-section publisher-section">
@@ -524,7 +671,7 @@ export function App() {
               </section>
 
               {shelves.slice(2, 4).map((shelf) => (
-                <Shelf key={shelf.title} shelf={shelf} items={allBooks.filter((book) => book.categories?.includes(shelf.key)).slice(0, 24)} onOpen={setSelected} onCart={addCart} list={list} onSave={toggleList} />
+                <Shelf key={shelf.title} shelf={shelf} items={allBooks.filter((book) => book.categories?.includes(shelf.key)).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
               ))}
 
               <section className="discovery-section genre-section" id="genres">
@@ -552,13 +699,13 @@ export function App() {
                 </div>
                 <div className="editor-stack">
                   {[...allBooks].sort((a, b) => b.match - a.match).slice(0, 5).map((book, index) => (
-                    <button key={book.id} style={{ "--editor-index": index }} onClick={() => setSelected(book)} aria-label={`View ${book.title}`}><img src={book.image} alt={`${book.title} cover`} /></button>
+                    <button key={book.id} style={{ "--editor-index": index }} onClick={() => { setSelected(book); window.scrollTo({ top: 0, behavior: "smooth" }); }} aria-label={`View ${book.title}`}><img src={book.image} alt={`${book.title} cover`} /></button>
                   ))}
                 </div>
               </section>
 
               {shelves.slice(4, 6).map((shelf) => (
-                <Shelf key={shelf.title} shelf={shelf} items={allBooks.filter((book) => book.categories?.includes(shelf.key)).slice(0, 24)} onOpen={setSelected} onCart={addCart} list={list} onSave={toggleList} />
+                <Shelf key={shelf.title} shelf={shelf} items={allBooks.filter((book) => book.categories?.includes(shelf.key)).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
               ))}
 
               <section className="discovery-section language-section">
@@ -572,31 +719,10 @@ export function App() {
                 </div>
               </section>
 
-              <section className="community-section">
-                <div className="shelf-heading"><div><span className="community-kicker">FROM THE COMMUNITY</span><h2>What our community is reading</h2></div><button onClick={() => notify("Community stories coming soon")}>See stories <FiChevronRight /></button></div>
-                <div className="community-grid">
-                  {communityReads.map((reader) => (
-                    <article className="community-card" key={reader.name}>
-                      <img className="reader-photo" src={reader.image} alt="" aria-hidden="true" />
-                      <div className="reader-veil" />
-                      <div className="reader-top">
-                        <img src={reader.avatar} alt={`${reader.name} profile`} />
-                        <div><strong>{reader.name}</strong><small>{reader.handle}</small></div>
-                      </div>
-                      <div className="reader-copy">
-                        <p className="reader-quote">“{reader.quote}”</p>
-                        <button className="reader-book" onClick={() => setQuery(reader.book)} aria-label={`Browse ${reader.book}`}>
-                          <img src={reader.bookImage} alt="" />
-                          <strong>{reader.book}</strong>
-                        </button>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
+
 
               {shelves.slice(6).map((shelf) => (
-                <Shelf key={shelf.title} shelf={shelf} items={allBooks.filter((book) => book.categories?.includes(shelf.key)).slice(0, 24)} onOpen={setSelected} onCart={addCart} list={list} onSave={toggleList} />
+                <Shelf key={shelf.title} shelf={shelf} items={allBooks.filter((book) => book.categories?.includes(shelf.key)).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
               ))}
               <section className="collection-section" id="categories">
                 <div className="shelf-heading"><h2>Explore every kind of reader</h2></div>
@@ -610,6 +736,37 @@ export function App() {
                   ))}
                 </div>
               </section>
+
+              <section className="social-media-section">
+                <div className="social-card">
+                  <div className="social-copy">
+                    <span className="community-kicker">JOIN OUR COMMUNITY</span>
+                    <h2>Follow @booksbykilo</h2>
+                    <p>Join 50,000+ book lovers on Instagram & YouTube for daily unboxing videos, recommendations, and exclusive flash sales.</p>
+                    <div className="social-actions">
+                      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-btn instagram">
+                        <FiInstagram /> Instagram <b>42K</b>
+                      </a>
+                      <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="social-btn youtube">
+                        <FiYoutube /> YouTube <b>18K</b>
+                      </a>
+                      <button onClick={() => notify("Joining Book Deals WhatsApp group...")} className="social-btn whatsapp">
+                        <FiMessageCircle /> Deals Club <b>25K</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="social-preview-grid">
+                    <div className="social-preview-item">
+                      <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&auto=format&fit=crop&q=60" alt="Book stack" />
+                      <span>Unboxing 5kg Stack 📚</span>
+                    </div>
+                    <div className="social-preview-item">
+                      <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&auto=format&fit=crop&q=60" alt="Reading shelf" />
+                      <span>Sunday Reader Shelf 💡</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
             </div>
           </>
         )}
@@ -621,30 +778,6 @@ export function App() {
         <div><strong>Discover</strong><a href="#surprisestack">Surprise Stack</a><a href="#bulkbooks">Bulk Purchase</a><a href="#bestsellers">Bestselling Authors</a></div>
         <div><strong>Help</strong><a href="#contact">Contact Us</a><a href="#faq">FAQ</a><a href="#orders">My Orders</a></div>
       </footer>
-
-      {selected && (
-        <div className="modal-backdrop" onMouseDown={(event) => event.target === event.currentTarget && setSelected(null)}>
-          <article className="detail-modal" role="dialog" aria-modal="true" aria-label={`${selected.title} details`}>
-            <button className="modal-close" onClick={() => setSelected(null)} aria-label="Close details"><FiX /></button>
-            <div className="modal-visual">
-              <img className="blurred" src={selected.image} alt="" />
-              <img className="modal-cover" src={selected.image} alt={`${selected.title} cover`} />
-            </div>
-            <div className="modal-copy">
-              <span className="eyebrow">{selected.genre}</span>
-              <h2>{selected.title}</h2>
-              <p className="byline">by {selected.author}</p>
-              <div className="modal-match">{selected.match}% Match <span>Good condition</span></div>
-              <p>{selected.description}</p>
-              <dl><div><dt>Collection</dt><dd>{selected.tier} Books</dd></div><div><dt>Weight</dt><dd>{selected.weight}g</dd></div><div><dt>Price</dt><dd>₹{selected.price}/kg</dd></div><div><dt>Delivery</dt><dd>Pan India</dd></div></dl>
-              <div className="hero-actions">
-                <button className="cta" onClick={() => addCart(selected)}><FiShoppingCart /> Add to Cart</button>
-                <button className="secondary" onClick={() => toggleList(selected)}>{list.includes(selected.id) ? <FiMinus /> : <FiPlus />} {list.includes(selected.id) ? "Remove from" : "Add to"} My List</button>
-              </div>
-            </div>
-          </article>
-        </div>
-      )}
 
       {toast && <div className="toast"><FiCheck /> {toast}</div>}
     </div>
