@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import {
   FiChevronLeft,
   FiChevronRight,
+  FiChevronDown,
   FiCheck,
   FiHeart,
   FiInfo,
@@ -18,6 +19,8 @@ import {
   FiYoutube,
   FiLinkedin,
   FiMessageCircle,
+  FiTrash2,
+  FiGift,
 } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { FaFire, FaPlay } from "react-icons/fa";
@@ -63,7 +66,7 @@ const collections = [
   { title: "Classic Books", subtitle: "₹399/kg", image: "/brand/classic.webp" },
   { title: "Standard Books", subtitle: "₹299/kg", image: "/brand/standard.webp" },
   { title: "Collector Books", subtitle: "Coffee table editions", image: "/brand/coffee.webp" },
-  { title: "Surprise Stack", subtitle: "Starting ₹300", image: "/brand/surprise.webp" },
+  { title: "Surprise Stack", subtitle: "Starting ₹300", image: "/brand/surprise_banner.jpg" },
 ];
 
 const internetNewBooks = [
@@ -130,7 +133,7 @@ const genres = [
   ["History", "People, places & turning points", "/catalog/9781416548485-better.jpg"],
   ["Business", "Ideas that move careers forward", "/catalog/9780312541866-better.jpg"],
   ["Biography", "Remarkable lives, honestly told", "/catalog/9781443408486-better.jpg"],
-  ["Surprise Stack", "Unexpected reads, picked just for you.", "/brand/surprise.webp"],
+  ["Surprise Stack", "Unexpected reads, picked just for you.", "/brand/surprise_banner.jpg"],
 ];
 const languages = [
   ["English", "English", "/books/alice.jpg"],
@@ -140,9 +143,28 @@ const languages = [
   ["Gujarati", "ગુજરાતી", "/brand/non-fiction.webp"],
   ["Tamil", "தமிழ்", "/books/much-ado.jpg"],
 ];
+const megaCategories = [
+  { title: "Top 10 Books", image: "/books/pokemon.jpg", target: "top10", filter: "all" },
+  { title: "Explore by Genre", image: "/books/alice.jpg", target: "genres", filter: "all" },
+  { title: "Recently Added Books", image: "/books/when-it-snows.jpg", target: "recent", filter: "all" },
+  { title: "Brand New Books", image: "/books/timetime.jpg", target: "brandnew", filter: "new" },
+  { title: "Banner Mid", image: "/books/king-lear.jpg", target: "bannermid", filter: "all" },
+  { title: "Children Books", image: "/brand/children.webp", target: "children", filter: "children" },
+  { title: "Teen Fiction", image: "/books/keira.jpg", target: "teen", filter: "teen-fiction" },
+  { title: "Fiction / Non-Fiction", image: "/brand/non-fiction.webp", target: "fiction", filter: "fiction" },
+  { title: "Explore by Publishers", image: "/brand/classic.webp", target: "publishers", filter: "all" },
+  { title: "Extra Discount Sale", image: "/books/umbrella-tree.jpg", target: "sale", filter: "all" },
+  { title: "Regional Languages", image: "/books/bright-eyes.jpg", target: "languages", filter: "all" },
+  { title: "Coffee Table Books", image: "/books/dinosaurs.jpg", target: "coffeetable", filter: "collector" },
+  { title: "Choose by Pricing (₹299/399/499 per kg)", image: "/books/big-kick.jpg", target: "pricing", filter: "all" },
+];
+
 const navItems = [
-  ["Home", "home"], ["All Books", "all"], ["Categories", "categories"], ["₹/kg Store", "store"],
-  ["Surprise Stack", "surprise"], ["Bulk Books", "bulk"], ["Bestsellers", "bestsellers"], ["New Arrivals", "new"],
+  ["Home", "home"],
+  ["Categories", "categories"],
+  ["All Books", "all"],
+  ["Surprise Stack", "surprise"],
+  ["Bulk Books", "bulk"],
 ];
 
 const googleReviewSlide = {
@@ -279,7 +301,7 @@ function Shelf({ shelf, items, onOpen, onCart, list, onSave, rank }) {
           <h2>{shelf.title} {shelf.accent && <span>{shelf.accent}</span>}</h2>
           {shelf.subtitle && <span className="shelf-subtitle">{shelf.subtitle}</span>}
         </div>
-        {!rank && <button>View All <FiChevronRight /></button>}
+        {!rank && <button onClick={() => onViewAll?.(shelf)}>View All <FiChevronRight /></button>}
       </div>
       <div className="shelf-wrap">
         <button className={`rail-arrow left ${scrollState.left ? "available" : ""}`} disabled={!scrollState.left} onClick={() => scroll(-1)} aria-label="Scroll shelf left"><FiChevronLeft /></button>
@@ -291,6 +313,78 @@ function Shelf({ shelf, items, onOpen, onCart, list, onSave, rank }) {
         <button className={`rail-arrow right ${scrollState.right ? "available" : ""}`} disabled={!scrollState.right} onClick={() => scroll(1)} aria-label="Scroll shelf right"><FiChevronRight /></button>
       </div>
     </section>
+  );
+}
+
+function CartDrawer({ open, onClose, cart, onUpdateQty, onRemove, onClear, onCheckout }) {
+  const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = cart.reduce((sum, item) => sum + item.book.price * item.quantity, 0);
+  const totalWeight = cart.reduce((sum, item) => sum + (item.book.weight || 300) * item.quantity, 0);
+
+  if (!open) return null;
+
+  return (
+    <div className="cart-drawer-overlay" onClick={onClose}>
+      <aside className="cart-drawer" onClick={(e) => e.stopPropagation()}>
+        <div className="cart-drawer-header">
+          <div className="cart-drawer-title">
+            <FiShoppingCart />
+            <h3>Your Cart</h3>
+            <span className="cart-badge-count">{totalCount} {totalCount === 1 ? 'item' : 'items'}</span>
+          </div>
+          <button className="cart-close-btn" onClick={onClose} aria-label="Close cart"><FiX /></button>
+        </div>
+
+        <div className="cart-drawer-body">
+          {!cart.length ? (
+            <div className="cart-empty">
+              <div className="cart-empty-icon"><FiShoppingCart /></div>
+              <h4>Your cart is empty</h4>
+              <p>Discover great books by weight and fill your stack!</p>
+              <button className="cta" onClick={onClose}>Explore Catalog</button>
+            </div>
+          ) : (
+            <div className="cart-items-list">
+              {cart.map(({ id, book, quantity }) => (
+                <div className="cart-item-row" key={id}>
+                  <img src={book.image} alt={book.title} className="cart-item-thumb" />
+                  <div className="cart-item-info">
+                    <strong>{book.title}</strong>
+                    <small>by {book.author}</small>
+                    <span className="cart-item-price">₹{book.price}<small>/kg</small></span>
+                  </div>
+                  <div className="cart-item-ctrl">
+                    <div className="qty-picker">
+                      <button onClick={() => onUpdateQty(id, -1)} aria-label="Decrease quantity"><FiMinus /></button>
+                      <span>{quantity}</span>
+                      <button onClick={() => onUpdateQty(id, 1)} aria-label="Increase quantity"><FiPlus /></button>
+                    </div>
+                    <button className="trash-btn" onClick={() => onRemove(id)} title="Remove item"><FiTrash2 /></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {cart.length > 0 && (
+          <div className="cart-drawer-footer">
+            <div className="cart-summary-line">
+              <span>Estimated Weight</span>
+              <strong>{(totalWeight / 1000).toFixed(2)} kg</strong>
+            </div>
+            <div className="cart-summary-line total">
+              <span>Total Amount</span>
+              <strong>₹{totalPrice}</strong>
+            </div>
+            <button className="cta checkout-btn" onClick={onCheckout}>
+              Proceed to Checkout • ₹{totalPrice}
+            </button>
+            <button className="clear-cart-btn" onClick={onClear}>Clear Cart</button>
+          </div>
+        )}
+      </aside>
+    </div>
   );
 }
 
@@ -405,12 +499,14 @@ export function App() {
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [megaOpen, setMegaOpen] = useState(false);
   const [page, setPage] = useState("home");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [tierFilter, setTierFilter] = useState("all");
   const [sortBy, setSortBy] = useState("match");
   const [selected, setSelected] = useState(null);
   const [cart, setCart] = useState([]);
+  const [cartOpen, setCartOpen] = useState(false);
   const [list, setList] = useState([2, 10, 15]);
   const [toast, setToast] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
@@ -500,12 +596,56 @@ export function App() {
     window.setTimeout(() => setToast(""), 1800);
   };
   const addCart = (book) => {
-    setCart((items) => [...items, book]);
-    notify(`${book.title} added to your cart`);
+    setCart((items) => {
+      const existing = items.find((item) => item.id === book.id);
+      if (existing) {
+        return items.map((item) => item.id === book.id ? { ...item, quantity: item.quantity + 1 } : item);
+      }
+      return [...items, { id: book.id, book, quantity: 1 }];
+    });
+    notify(`Added "${book.title}" to cart`);
+  };
+  const updateCartQty = (bookId, delta) => {
+    setCart((items) =>
+      items
+        .map((item) => {
+          if (item.id === bookId) {
+            const nextQty = item.quantity + delta;
+            return nextQty > 0 ? { ...item, quantity: nextQty } : null;
+          }
+          return item;
+        })
+        .filter(Boolean)
+    );
+  };
+  const removeFromCart = (bookId) => {
+    setCart((items) => items.filter((item) => item.id !== bookId));
+    notify("Item removed from cart");
+  };
+  const clearCart = () => {
+    setCart([]);
+    notify("Cart cleared");
+  };
+  const handleViewAll = (shelf) => {
+    setPage("all");
+    setSelected(null);
+    if (shelf.key) {
+      setCategoryFilter(shelf.key);
+      setQuery("");
+    } else if (shelf.title.includes("Top 10")) {
+      setCategoryFilter("all");
+      setSortBy("match");
+      setQuery("");
+    } else {
+      setQuery(shelf.title.replace(" Books", "").replace(" Recently Added", ""));
+      setCategoryFilter("all");
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const toggleList = (book) => {
     setList((items) => items.includes(book.id) ? items.filter((id) => id !== book.id) : [...items, book.id]);
   };
+  const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart]);
 
   return (
     <div className="app-shell">
@@ -515,9 +655,93 @@ export function App() {
         </a>
         <button className="mobile-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu">{menuOpen ? <FiX /> : <FiMenu />}</button>
         <nav className={menuOpen ? "open" : ""}>
-          {navItems.map(([label, value]) => (
-            <a key={value} href={`#${value}`} className={page === value ? "active" : ""} onClick={(event) => { event.preventDefault(); openPage(value); }}>{label}</a>
-          ))}
+          {navItems.map(([label, value]) => {
+            if (value === "categories") {
+              return (
+                <div
+                  key={value}
+                  className="mega-nav-item"
+                  onMouseEnter={() => setMegaOpen(true)}
+                  onMouseLeave={() => setMegaOpen(false)}
+                >
+                  <a
+                    href="#categories"
+                    className={`mega-trigger ${page === "categories" || megaOpen ? "active" : ""}`}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setMegaOpen(!megaOpen);
+                    }}
+                  >
+                    Categories <FiChevronDown className={`chevron-icon ${megaOpen ? "open" : ""}`} />
+                  </a>
+
+                  {megaOpen && (
+                    <div className="categories-mega-menu">
+                      <div className="mega-featured-card">
+                        <img className="mega-featured-bg" src="/brand/surprise_banner.jpg" alt="Featured" />
+                        <div className="mega-featured-overlay" />
+                        <div className="mega-featured-content">
+                          <span className="mega-featured-badge">FEATURED COLLECTION</span>
+                          <h3>Surprise Mystery Stack</h3>
+                          <p>Hand-curated pre-loved books delivered by weight.</p>
+                          <button
+                            className="mega-featured-btn"
+                            onClick={() => {
+                              openPage("surprise");
+                              setMegaOpen(false);
+                            }}
+                          >
+                            Explore Now <FiChevronRight />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="mega-category-grid">
+                        {megaCategories.map((cat) => (
+                          <button
+                            key={cat.title}
+                            className="mega-category-card"
+                            onClick={() => {
+                              setMegaOpen(false);
+                              if (page !== "home") setPage("home");
+                              if (cat.filter && cat.filter !== "all") {
+                                setCategoryFilter(cat.filter);
+                                openPage("all");
+                              } else {
+                                const el = document.getElementById(cat.target) || document.querySelector(`.${cat.target}-shelf`);
+                                if (el) {
+                                  el.scrollIntoView({ behavior: "smooth" });
+                                } else {
+                                  openPage("all");
+                                }
+                              }
+                            }}
+                          >
+                            <img className="mega-cat-img" src={cat.image} alt={cat.title} />
+                            <span className="mega-cat-title">{cat.title}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            return (
+              <a
+                key={value}
+                href={`#${value}`}
+                className={page === value ? "active" : ""}
+                onClick={(event) => {
+                  event.preventDefault();
+                  openPage(value);
+                  setMegaOpen(false);
+                }}
+              >
+                {label}
+              </a>
+            );
+          })}
         </nav>
         <div className={`search ${searchOpen || query ? "open" : ""}`}>
           <button onClick={() => setSearchOpen(!searchOpen)} aria-label="Search books"><FiSearch /></button>
@@ -526,7 +750,7 @@ export function App() {
         </div>
         <div className="header-actions">
           <button className="list-button" onClick={() => notify(`${list.length} books in My List`)}><FiHeart /> <span>My List</span></button>
-          <button className="cart-button" onClick={() => notify(`${cart.length} books in your cart`)}><FiShoppingCart /> <span>Cart</span>{cart.length > 0 && <b>{cart.length}</b>}</button>
+          <button className="cart-button" onClick={() => setCartOpen(true)} aria-label="Open cart"><FiShoppingCart /> <span>Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
           <div className="profile-wrapper">
             <button className="account-button" aria-label="Account" onClick={() => setProfileOpen(!profileOpen)}><FiUser /></button>
             {profileOpen && (
@@ -585,12 +809,55 @@ export function App() {
               <div className="hero-art">
                 <img key={`backdrop-${featured.id}`} className="hero-backdrop" src={featured.image} alt="" aria-hidden="true" />
                 {featured.isGoogleReview ? (
-                  <div className="google-hero-badge-art">
-                    <div className="thumb-style-g-badge">
-                      <div className="g-art-circle"><FcGoogle size={32} /></div>
-                      <div className="g-art-rating">4.8 ★</div>
-                      <img className="g-art-stars" src={featured.starImage} alt="5 stars rating" />
-                      <span className="g-art-count">379 Verified Reviews</span>
+                  <div className="google-rating-card-v2">
+                    <div className="g-card-v2-left">
+                      <div className="g-card-v2-logo-wrapper">
+                        <FcGoogle size={54} />
+                      </div>
+                    </div>
+                    <div className="g-card-v2-divider" />
+                    <div className="g-card-v2-right">
+                      <div className="g-card-v2-header">
+                        <span className="g-card-v2-title">Google Rating</span>
+                        <span className="g-card-v2-verified-badge" aria-label="Verified">
+                          <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                            <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 0 .495.084.965.238 1.4C1.575 9.55.7 10.92.7 12.5c0 1.58.875 2.95 2.148 3.6-.154.435-.238.905-.238 1.4 0 2.21 1.79 4 4 4 .495 0 .965-.084 1.4-.238 1.4 1.273 2.77 2.148 4.35 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-.65 2.148-2.02 2.148-3.6z" fill="#2563eb"/>
+                            <path d="M9.8 16.2l-3.5-3.5 1.4-1.4 2.1 2.1 6.3-6.3 1.4 1.4-7.7 7.7z" fill="#ffffff"/>
+                          </svg>
+                        </span>
+                      </div>
+                      <div className="g-card-v2-score-row">
+                        <span className="g-card-v2-score">4.8</span>
+                        <span className="g-card-v2-scale">/ 5</span>
+                      </div>
+                      <div className="g-card-v2-stars">
+                        <span className="g-star">★</span>
+                        <span className="g-star">★</span>
+                        <span className="g-star">★</span>
+                        <span className="g-star">★</span>
+                        <span className="g-star g-star-half">★</span>
+                      </div>
+                      <div className="g-card-v2-count">
+                        Based on <strong className="g-count-num">1,248</strong> Google Reviews
+                      </div>
+                      <div className="g-card-v2-hr" />
+                      <a
+                        href="https://www.google.com/search?q=booksbykilo+reviews"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="g-card-v2-cta-btn"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          notify("Opening Google Reviews...");
+                          window.open("https://www.google.com/search?q=booksbykilo+reviews", "_blank");
+                        }}
+                      >
+                        <span className="g-cta-left">
+                          <FcGoogle size={18} />
+                          <span>Read our reviews on <strong className="g-brand-text"><span className="g-blue">G</span><span className="g-red">o</span><span className="g-yellow">o</span><span className="g-blue">g</span><span className="g-green">l</span><span className="g-red">e</span></strong></span>
+                        </span>
+                        <FiChevronRight size={16} className="g-cta-arrow" />
+                      </a>
                     </div>
                   </div>
                 ) : (
@@ -607,10 +874,6 @@ export function App() {
                     <div className="google-official-logo">
                       <FcGoogle size={32} />
                     </div>
-                  </div>
-                  <div className="google-reviews-meta">
-                    <img className="google-star-strip" src={featured.starImage} alt="5 stars" />
-                    <span className="google-reviews-badge">379 Reviews</span>
                   </div>
                   <p className="byline">over 50,000+ happy readers across India</p>
                   <p className="description">{featured.description}</p>
@@ -659,7 +922,7 @@ export function App() {
             <div className="content-overlap">
               {/* 1. Top 10 Books */}
               <div className="top-ten-shelf">
-                <Shelf shelf={{ title: "Top 10 Books", subtitle: "The absolute must-reads of the season." }} items={[...allBooks].sort((a, b) => b.match - a.match).slice(0, 10)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} rank />
+                <Shelf shelf={{ title: "Top 10 Books", subtitle: "The absolute must-reads of the season." }} items={[...allBooks].sort((a, b) => b.match - a.match).slice(0, 10)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} rank />
               </div>
 
               {/* 2. Explore by Genre */}
@@ -674,13 +937,34 @@ export function App() {
                   {genres.map(([title, subtitle, image], index) => {
                     const isSurprise = index === 8 || title === "Surprise Stack";
                     return (
-                      <button key={title} className={`genre-card genre-${index + 1} ${isSurprise ? "genre-surprise" : ""}`} onClick={() => { setQuery(title); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
-                        <img src={image} alt="" />
-                        <b className="genre-number">{String(index + 1).padStart(2, "0")}</b>
-                        <span className="genre-meta">
-                          <strong>{title}</strong>
-                          <small>{subtitle}</small>
-                        </span>
+                      <button
+                        key={title}
+                        className={`genre-card genre-${index + 1} ${isSurprise ? "genre-surprise" : ""}`}
+                        onClick={() => { setQuery(title); openPage("all"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                      >
+                        {isSurprise ? (
+                          <>
+                            <img className="surprise-bg-img" src={image} alt={title} />
+                            <div className="surprise-overlay" />
+                            <div className="surprise-content">
+                              <div className="surprise-badge"><FiGift size={12} /> MYSTERY BOX</div>
+                              <div className="surprise-body">
+                                <strong>{title}</strong>
+                                <small>{subtitle}</small>
+                                <span className="surprise-cta">Unlock Stack <FiChevronRight size={13} /></span>
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <img src={image} alt={title} />
+                            <b className="genre-number">{String(index + 1).padStart(2, "0")}</b>
+                            <span className="genre-meta">
+                              <strong>{title}</strong>
+                              <small>{subtitle}</small>
+                            </span>
+                          </>
+                        )}
                       </button>
                     );
                   })}
@@ -688,10 +972,10 @@ export function App() {
               </section>
 
               {/* 3. Recently Added Books */}
-              <Shelf shelf={{ title: "Recently Added Books", subtitle: "Freshly stocked arrivals." }} items={allBooks.slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
+              <Shelf shelf={{ title: "Recently Added Books", subtitle: "Freshly stocked arrivals." }} items={allBooks.slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} />
 
               {/* 4. Brand New Books */}
-              <Shelf shelf={{ title: "Brand New Books", subtitle: "Straight from the press." }} items={[...internetNewBooks, ...allBooks.filter((book) => book.categories?.includes("new-books"))].slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
+              <Shelf shelf={{ title: "Brand New Books", subtitle: "Straight from the press." }} items={[...internetNewBooks, ...allBooks.filter((book) => book.categories?.includes("new-books"))].slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} />
 
               {/* 5. Banner Mid */}
               <section className="gradient-highlight">
@@ -709,13 +993,13 @@ export function App() {
               </section>
 
               {/* 6. Children Books */}
-              <Shelf shelf={{ title: "Children Books", subtitle: "Magic for little readers." }} items={allBooks.filter((book) => book.categories?.includes("children")).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
+              <Shelf shelf={{ title: "Children Books", subtitle: "Magic for little readers." }} items={allBooks.filter((book) => book.categories?.includes("children")).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} />
 
               {/* 7. Teen Fiction */}
-              <Shelf shelf={{ title: "Teen Fiction", subtitle: "Captivating young adult reads." }} items={allBooks.filter((book) => book.categories?.includes("teen-fiction")).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
+              <Shelf shelf={{ title: "Teen Fiction", subtitle: "Captivating young adult reads." }} items={allBooks.filter((book) => book.categories?.includes("teen-fiction")).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} />
 
               {/* 8. Fiction / Non-Fiction */}
-              <Shelf shelf={{ title: "Fiction / Non-Fiction", subtitle: "From wild imaginations to real facts." }} items={allBooks.filter((book) => book.categories?.includes("fiction") || book.categories?.includes("non-fiction")).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
+              <Shelf shelf={{ title: "Fiction / Non-Fiction", subtitle: "From wild imaginations to real facts." }} items={allBooks.filter((book) => book.categories?.includes("fiction") || book.categories?.includes("non-fiction")).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} />
 
               {/* 9. Explore by Publishers */}
               <section className="discovery-section publisher-section">
@@ -727,7 +1011,7 @@ export function App() {
                 </div>
                 <div className="publisher-grid">
                   {publishers.map((publisher, index) => (
-                    <button key={publisher.name} style={{ "--publisher-index": index }} onClick={() => setQuery(publisher.name)} aria-label={`Browse ${publisher.name}`}>
+                    <button key={publisher.name} style={{ "--publisher-index": index }} onClick={() => { setQuery(publisher.name); openPage("all"); window.scrollTo({ top: 0, behavior: "smooth" }); }} aria-label={`Browse ${publisher.name}`}>
                       <PublisherMark kind={publisher.mark} />
                     </button>
                   ))}
@@ -735,7 +1019,7 @@ export function App() {
               </section>
 
               {/* 10. Extra Discount Sale */}
-              <Shelf shelf={{ title: "Extra Discount Sale", subtitle: "Massive markdowns on top titles." }} items={[...allBooks].sort((a, b) => a.price - b.price).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
+              <Shelf shelf={{ title: "Extra Discount Sale", subtitle: "Massive markdowns on top titles." }} items={[...allBooks].sort((a, b) => a.price - b.price).slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} />
 
               {/* 11. Regional Languages */}
               <section className="discovery-section language-section">
@@ -747,7 +1031,7 @@ export function App() {
                 </div>
                 <div className="language-grid">
                   {languages.map(([language, native, image]) => (
-                    <button key={language} onClick={() => notify(`${language} books selected`)}>
+                    <button key={language} onClick={() => { setQuery(language); openPage("all"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
                       <span><strong>{native}</strong><small>{language}</small></span><img src={image} alt="" />
                     </button>
                   ))}
@@ -755,7 +1039,7 @@ export function App() {
               </section>
 
               {/* 12. Coffee Table Books */}
-              <Shelf shelf={{ title: "Coffee Table Books", subtitle: "Stunning visual statements." }} items={allBooks.filter((book) => book.categories?.includes("collector") || book.tier === "Premium" || book.tier === "Classic").slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} />
+              <Shelf shelf={{ title: "Coffee Table Books", subtitle: "Stunning visual statements." }} items={allBooks.filter((book) => book.categories?.includes("collector") || book.tier === "Premium" || book.tier === "Classic").slice(0, 24)} onOpen={(b) => { setSelected(b); window.scrollTo({ top: 0, behavior: "smooth" }); }} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} />
 
               {/* 13. Choose by Pricing */}
               <section className="collection-section" id="categories">
@@ -767,7 +1051,7 @@ export function App() {
                 </div>
                 <div className="collection-grid">
                   {collections.map((collection) => (
-                    <button className="collection-card gradient-reader-card" key={collection.title} onClick={() => { setQuery(collection.title.replace(" Books", "")); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+                    <button className="collection-card gradient-reader-card" key={collection.title} onClick={() => { setQuery(collection.title.replace(" Books", "")); openPage("all"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
                       <img src={collection.image} alt="" />
                       <span><strong>{collection.title}</strong><small>{collection.subtitle}</small></span>
                       <FiChevronRight />
@@ -776,113 +1060,7 @@ export function App() {
                 </div>
               </section>
 
-              <section className="social-media-section">
-                <div className="social-media-grid">
-                  <div className="social-left-col">
-                    <span className="community-kicker">JOIN OUR COMMUNITY</span>
-                    <h2>Connect with Books by Kilo</h2>
-                    <p>Scan or follow us for daily unboxing reels, reader stacks, and exclusive flash sales across India.</p>
-                    <div className="social-links-row">
-                      <a href="https://instagram.com" target="_blank" rel="noreferrer" className="social-pill-btn instagram">
-                        <FiInstagram /> Instagram
-                      </a>
-                      <a href="https://youtube.com" target="_blank" rel="noreferrer" className="social-pill-btn youtube">
-                        <FiYoutube /> YouTube
-                      </a>
-                      <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="social-pill-btn linkedin">
-                        <FiLinkedin /> LinkedIn
-                      </a>
-                    </div>
-                  </div>
 
-                  <div className="social-right-col">
-                    <div className="social-showcase-stage">
-                      {/* Phone Instagram Profile Mockup */}
-                      <div className="social-phone-mockup">
-                        <div className="phone-screen">
-                          <div className="phone-header">
-                            <FiChevronLeft />
-                            <strong>booksbykilo.official</strong>
-                            <FiMenu />
-                          </div>
-                          <div className="phone-profile-body">
-                            <div className="phone-profile-top">
-                              <div className="phone-avatar-wrap">
-                                <img src="/books/bright-eyes.jpg" alt="Books by Kilo" />
-                              </div>
-                              <div className="phone-stats-grid">
-                                <div><strong>1,420</strong><small>posts</small></div>
-                                <div><strong>52.4k</strong><small>followers</small></div>
-                                <div><strong>180</strong><small>following</small></div>
-                              </div>
-                            </div>
-                            <div className="phone-bio">
-                              <strong>Books by Kilo 📚</strong>
-                              <p>India’s favorite pre-loved bookstore by weight!</p>
-                              <a href="https://www.booksbykilo.in" target="_blank" rel="noreferrer">🔗 www.booksbykilo.in</a>
-                            </div>
-                            <div className="phone-actions">
-                              <button className="phone-btn primary" onClick={() => notify("Following Books by Kilo on Instagram!")}>Follow</button>
-                              <button className="phone-btn secondary" onClick={() => notify("Sending message to Books by Kilo...")}>Message</button>
-                            </div>
-                            <div className="phone-highlights">
-                              <div className="hl-item"><div className="hl-circle">📦</div><small>Unboxing</small></div>
-                              <div className="hl-item"><div className="hl-circle">⭐</div><small>Reviews</small></div>
-                              <div className="hl-item"><div className="hl-circle">📚</div><small>5kg Stacks</small></div>
-                              <div className="hl-item"><div className="hl-circle">🔥</div><small>Deals</small></div>
-                            </div>
-                            <div className="phone-feed-grid">
-                              <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300&auto=format&fit=crop&q=60" alt="Feed post 1" />
-                              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&auto=format&fit=crop&q=60" alt="Feed post 2" />
-                              <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&auto=format&fit=crop&q=60" alt="Feed post 3" />
-                              <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=300&auto=format&fit=crop&q=60" alt="Feed post 4" />
-                              <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=300&auto=format&fit=crop&q=60" alt="Feed post 5" />
-                              <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=300&auto=format&fit=crop&q=60" alt="Feed post 6" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Physical Social / QR Card */}
-                      <div className="social-qr-card">
-                        <div className="qr-card-hero">
-                          <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&auto=format&fit=crop&q=60" alt="Books by Kilo community" />
-                        </div>
-                        <div className="qr-card-body">
-                          <div className="qr-box">
-                            <svg viewBox="0 0 100 100" className="qr-svg" aria-label="Books by Kilo QR Code">
-                              <rect width="100" height="100" fill="#ffffff" />
-                              <path d="M10,10 h30 v30 h-30 z M16,16 v18 h18 v-18 z M22,22 h6 v6 h-6 z" fill="#111827" />
-                              <path d="M60,10 h30 v30 h-30 z M66,16 v18 h18 v-18 z M72,22 h6 v6 h-6 z" fill="#111827" />
-                              <path d="M10,60 h30 v30 h-30 z M16,66 v18 h18 v-18 z M22,72 h6 v6 h-6 z" fill="#111827" />
-                              <path d="M45,10 h10 v15 h-10 z M45,30 h10 v10 h-10 z M10,45 h15 v10 h-15 z M30,45 h10 v10 h-10 z M45,45 h10 v10 h-10 z M60,45 h25 v10 h-25 z M45,60 h10 v15 h-10 z M60,60 h15 v10 h-15 z M80,60 h10 v25 h-10 z M45,80 h25 v10 h-25 z" fill="#111827" />
-                            </svg>
-                            <strong>SCAN ME TO JOIN</strong>
-                          </div>
-                          <div className="qr-social-links">
-                            <small>LET'S CONNECT HERE</small>
-                            <div className="qr-icons">
-                              <a href="https://instagram.com" target="_blank" rel="noreferrer" title="Instagram"><FiInstagram /></a>
-                              <a href="https://youtube.com" target="_blank" rel="noreferrer" title="YouTube"><FiYoutube /></a>
-                              <a href="https://whatsapp.com" target="_blank" rel="noreferrer" title="WhatsApp"><FiMessageCircle /></a>
-                            </div>
-                          </div>
-                          <hr />
-                          <div className="qr-brand">
-                            <div className="text-brand"><span>BOOKS BY</span><strong>KILO</strong></div>
-                            <p>Find your people. Find your next book.</p>
-                          </div>
-                          <div className="qr-meta-info">
-                            <span>🌐 www.booksbykilo.in</span>
-                            <span>📧 support@booksbykilo.in</span>
-                            <span>📍 Pan-India Express Delivery</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
             </div>
           </>
         )}
