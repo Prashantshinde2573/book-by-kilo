@@ -124,7 +124,7 @@ function PublisherMark({ kind }) {
       return null;
   }
 }
-const genres = [
+const genreItems = [
   ["Children", "Picture books, learning & wonder", "/brand/children.webp"],
   ["Fiction", "Stories to disappear into", "/books/alice.jpg"],
   ["Non-Fiction", "Ideas, lives & the real world", "/brand/non-fiction.webp"],
@@ -133,8 +133,9 @@ const genres = [
   ["History", "People, places & turning points", "/catalog/9781416548485-better.jpg"],
   ["Business", "Ideas that move careers forward", "/catalog/9780312541866-better.jpg"],
   ["Biography", "Remarkable lives, honestly told", "/catalog/9781443408486-better.jpg"],
-  ["Surprise Stack", "Unexpected reads, picked just for you.", "/brand/surprise_banner.jpg"],
 ];
+
+const surpriseCard = ["Surprise Stack", "Unexpected reads, picked just for you.", "/brand/surprise_banner.jpg"];
 const languages = [
   ["English", "English", "/books/alice.jpg"],
   ["Hindi", "हिन्दी", "/books/king-lear.jpg"],
@@ -161,10 +162,12 @@ const megaCategories = [
 
 const navItems = [
   ["Home", "home"],
-  ["Categories", "categories"],
   ["All Books", "all"],
+  ["Categories", "categories"],
   ["Surprise Stack", "surprise"],
   ["Bulk Books", "bulk"],
+  ["Bestsellers", "bestsellers"],
+  ["New Arrivals", "new"],
 ];
 
 const googleReviewSlide = {
@@ -511,6 +514,31 @@ export function App() {
   const [toast, setToast] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
 
+  const megaTimerRef = useRef(null);
+
+  const handleMegaEnter = () => {
+    if (megaTimerRef.current) window.clearTimeout(megaTimerRef.current);
+    setMegaOpen(true);
+  };
+
+  const handleMegaLeave = () => {
+    if (megaTimerRef.current) window.clearTimeout(megaTimerRef.current);
+    megaTimerRef.current = window.setTimeout(() => {
+      setMegaOpen(false);
+    }, 200);
+  };
+
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
   useEffect(() => {
     let active = true;
     fetch("/catalog.json")
@@ -588,6 +616,7 @@ export function App() {
     setCategoryFilter("all");
     setTierFilter("all");
     setMenuOpen(false);
+    setMegaOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -661,8 +690,8 @@ export function App() {
                 <div
                   key={value}
                   className="mega-nav-item"
-                  onMouseEnter={() => setMegaOpen(true)}
-                  onMouseLeave={() => setMegaOpen(false)}
+                  onMouseEnter={handleMegaEnter}
+                  onMouseLeave={handleMegaLeave}
                 >
                   <a
                     href="#categories"
@@ -676,7 +705,11 @@ export function App() {
                   </a>
 
                   {megaOpen && (
-                    <div className="categories-mega-menu">
+                    <div
+                      className="categories-mega-menu"
+                      onMouseEnter={handleMegaEnter}
+                      onMouseLeave={handleMegaLeave}
+                    >
                       <div className="mega-featured-card">
                         <img className="mega-featured-bg" src="/brand/surprise_banner.jpg" alt="Featured" />
                         <div className="mega-featured-overlay" />
@@ -703,6 +736,7 @@ export function App() {
                             className="mega-category-card"
                             onClick={() => {
                               setMegaOpen(false);
+                              setMenuOpen(false);
                               if (page !== "home") setPage("home");
                               if (cat.filter && cat.filter !== "all") {
                                 setCategoryFilter(cat.filter);
@@ -805,7 +839,11 @@ export function App() {
           </section>
         ) : (
           <>
-            <section className="hero">
+            <section
+              className="hero"
+              data-hero-title={typeof featured.title === "string" ? featured.title : "featured"}
+              data-hero-id={featured.id}
+            >
               <div className="hero-art">
                 <img key={`backdrop-${featured.id}`} className="hero-backdrop" src={featured.image} alt="" aria-hidden="true" />
                 {featured.isGoogleReview ? (
@@ -934,41 +972,56 @@ export function App() {
                   </div>
                 </div>
                 <div className="genre-grid">
-                  {genres.map(([title, subtitle, image], index) => {
-                    const isSurprise = index === 8 || title === "Surprise Stack";
-                    return (
-                      <button
-                        key={title}
-                        className={`genre-card genre-${index + 1} ${isSurprise ? "genre-surprise" : ""}`}
-                        onClick={() => { setQuery(title); openPage("all"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-                      >
-                        {isSurprise ? (
-                          <>
-                            <img className="surprise-bg-img" src={image} alt={title} />
-                            <div className="surprise-overlay" />
-                            <div className="surprise-content">
-                              <div className="surprise-badge"><FiGift size={12} /> MYSTERY BOX</div>
-                              <div className="surprise-body">
-                                <strong>{title}</strong>
-                                <small>{subtitle}</small>
-                                <span className="surprise-cta">Unlock Stack <FiChevronRight size={13} /></span>
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <img src={image} alt={title} />
-                            <b className="genre-number">{String(index + 1).padStart(2, "0")}</b>
-                            <span className="genre-meta">
-                              <strong>{title}</strong>
-                              <small>{subtitle}</small>
-                            </span>
-                          </>
-                        )}
-                      </button>
-                    );
-                  })}
+                  {genreItems.map(([title, subtitle, image], index) => (
+                    <button
+                      key={title}
+                      className={`genre-card genre-${index + 1}`}
+                      onClick={() => { setQuery(title); openPage("all"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                    >
+                      <img src={image} alt={title} />
+                      <b className="genre-number">{String(index + 1).padStart(2, "0")}</b>
+                      <span className="genre-meta">
+                        <strong>{title}</strong>
+                        <small>{subtitle}</small>
+                      </span>
+                    </button>
+                  ))}
+                  {/* Desktop Surprise Stack Card (Column 5, Spanning Rows 1-2) */}
+                  <button
+                    className="genre-card genre-surprise desktop-surprise-card"
+                    onClick={() => { setQuery("Surprise Stack"); openPage("surprise"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                  >
+                    <img className="surprise-bg-img" src={surpriseCard[2]} alt={surpriseCard[0]} />
+                    <div className="surprise-overlay" />
+                    <div className="surprise-content">
+                      <div className="surprise-badge"><FiGift size={12} /> MYSTERY BOX</div>
+                      <div className="surprise-body">
+                        <strong>{surpriseCard[0]}</strong>
+                        <small>{surpriseCard[1]}</small>
+                        <span className="surprise-cta">Unlock Stack <FiChevronRight size={13} /></span>
+                      </div>
+                    </div>
+                  </button>
                 </div>
+              </section>
+
+              {/* Mobile-only Standalone Surprise Stack Section */}
+              <section className="surprise-standalone-section mobile-surprise-section" id="surprisestack">
+                <button
+                  className="genre-card genre-surprise-standalone"
+                  onClick={() => { setQuery("Surprise Stack"); openPage("surprise"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                >
+                  <img className="surprise-bg-img" src={surpriseCard[2]} alt={surpriseCard[0]} />
+                  <div className="surprise-overlay" />
+                  <div className="surprise-content">
+                    <div className="surprise-badge"><FiGift size={12} /> MYSTERY BOX</div>
+                    <div className="surprise-body">
+                      <strong>{surpriseCard[0]}</strong>
+                      <small>{surpriseCard[1]}</small>
+                      <span className="surprise-cta">Unlock Stack <FiChevronRight size={13} /></span>
+                    </div>
+                  </div>
+                </button>
               </section>
 
               {/* 3. Recently Added Books */}
@@ -1066,11 +1119,55 @@ export function App() {
         )}
       </main>
 
-      <footer>
-        <div className="footer-brand"><div className="text-brand"><span>BOOKS BY</span><strong>KILO</strong></div><span>Find your people. Find your next book.</span></div>
-        <div><strong>Browse</strong><a href="#allbooks">All Books</a><a href="#categories">Categories</a><a href="#newarrivals">New Arrivals</a></div>
-        <div><strong>Discover</strong><a href="#surprisestack">Surprise Stack</a><a href="#bulkbooks">Bulk Purchase</a><a href="#bestsellers">Bestselling Authors</a></div>
-        <div><strong>Help</strong><a href="#contact">Contact Us</a><a href="#faq">FAQ</a><a href="#orders">My Orders</a></div>
+      <footer className="site-footer">
+        <div className="footer-top-row">
+          <div className="footer-left-col">
+            <div className="footer-socials">
+              <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram"><FiInstagram size={20} /></a>
+              <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube"><FiYoutube size={20} /></a>
+              <a href="https://linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn"><FiLinkedin size={20} /></a>
+              <a href="https://wa.me" target="_blank" rel="noreferrer" aria-label="WhatsApp"><FiMessageCircle size={20} /></a>
+            </div>
+            <a href="mailto:support@booksbykilo.in" className="footer-contact-email">
+              support@booksbykilo.in
+            </a>
+            <div className="footer-address">
+              <span>Books by Kilo HQ</span>
+              <span>Authentic pre-loved books by weight</span>
+              <span>Mumbai, Maharashtra, India</span>
+            </div>
+          </div>
+
+          <div className="footer-center-col">
+            <div className="footer-cta-card">
+              <span className="footer-cta-badge">PRE-LOVED BOOKS STORE</span>
+              <button className="footer-cta-btn" onClick={() => openPage("all")}>
+                Shop Bestsellers <b>₹299/kg</b>
+              </button>
+            </div>
+          </div>
+
+          <div className="footer-right-col">
+            <nav className="footer-vertical-nav">
+              <a href="#home" onClick={(e) => { e.preventDefault(); openPage("home"); }}>Home</a>
+              <a href="#all" onClick={(e) => { e.preventDefault(); openPage("all"); }}>All Books</a>
+              <a href="#categories" onClick={(e) => { e.preventDefault(); openPage("all"); }}>Categories</a>
+              <a href="#surprise" onClick={(e) => { e.preventDefault(); openPage("surprise"); }}>Surprise Stack</a>
+              <a href="#bulk" onClick={(e) => { e.preventDefault(); openPage("bulk"); }}>Bulk Books</a>
+              <a href="#bestsellers" onClick={(e) => { e.preventDefault(); openPage("bestsellers"); }}>Bestsellers</a>
+            </nav>
+          </div>
+        </div>
+
+        <div className="footer-bottom-row">
+          <a href="#terms" onClick={(e) => { e.preventDefault(); notify("Terms & Conditions"); }}>Terms & Conditions</a>
+          <span className="footer-copyright">© 2026 Books by Kilo. All Rights Reserved.</span>
+          <a href="#privacy" onClick={(e) => { e.preventDefault(); notify("Privacy Policy"); }}>Privacy Policy</a>
+        </div>
+
+        <div className="footer-bg-typography" aria-hidden="true">
+          booksbykilo
+        </div>
       </footer>
 
       {toast && <div className="toast"><FiCheck /> {toast}</div>}
