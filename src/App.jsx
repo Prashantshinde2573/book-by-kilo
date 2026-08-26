@@ -164,7 +164,6 @@ const navItems = [
   ["Home", "home"],
   ["All Books", "all"],
   ["Categories", "categories"],
-  ["Surprise Stack", "surprise"],
   ["Bulk Books", "bulk"],
   ["Bestsellers", "bestsellers"],
   ["New Arrivals", "new"],
