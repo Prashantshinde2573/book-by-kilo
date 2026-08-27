@@ -94,11 +94,11 @@ const books = [
 
 const collections = [
   { title: "New Books", subtitle: "Up to 80% off", image: "/brand/new-books.webp", route: "brand-new-books" },
-  { title: "Premium Books", subtitle: "₹499/kg", image: "/brand/premium.webp", route: "premium-books" },
+  { title: "Premium Books", subtitle: "Collector Editions", image: "/brand/premium.webp", route: "premium-books" },
   { title: "Non-Fiction", subtitle: "Books around us", image: "/brand/non-fiction.webp", route: "category-non-fiction" },
   { title: "Children Books", subtitle: "The best childhood", image: "/brand/children.webp", route: "category-children" },
-  { title: "Classic Books", subtitle: "₹399/kg", image: "/brand/classic.webp", route: "classic-books" },
-  { title: "Standard Books", subtitle: "₹299/kg", image: "/brand/standard.webp", route: "standard-books" },
+  { title: "Classic Books", subtitle: "Evergreen Reads", image: "/brand/classic.webp", route: "classic-books" },
+  { title: "Standard Books", subtitle: "Everyday Reads", image: "/brand/standard.webp", route: "standard-books" },
   { title: "Collector Books", subtitle: "Coffee table editions", image: "/brand/coffee.webp", route: "collector-books" },
   { title: "Surprise Stack", subtitle: "Starting ₹300", image: "/brand/surprise_banner.jpg", route: "surprise-stack" },
 ];
@@ -120,6 +120,17 @@ const publishers = [
   { name: "Usborne", mark: "usborne" },
   { name: "Oxford University Press", mark: "oxford" },
   { name: "Simon & Schuster", mark: "simon" },
+];
+
+const authors = [
+  { name: "J.K. Rowling", genre: "Fantasy & Magic" },
+  { name: "Agatha Christie", genre: "Crime & Mystery" },
+  { name: "Stephen King", genre: "Horror & Suspense" },
+  { name: "Roald Dahl", genre: "Children's Classics" },
+  { name: "Enid Blyton", genre: "Adventure & Mystery" },
+  { name: "Ruskin Bond", genre: "Short Stories & Life" },
+  { name: "Dan Brown", genre: "Thrillers & Symbols" },
+  { name: "George R.R. Martin", genre: "Epic Fantasy" },
 ];
 
 function PublisherMark({ kind }) {
@@ -178,6 +189,57 @@ const languages = [
   ["Bengali", "বাংলা", "/books/bright-eyes.jpg"],
   ["Gujarati", "ગુજરાતી", "/brand/non-fiction.webp"],
   ["Tamil", "தமிழ்", "/books/much-ado.jpg"],
+];
+
+const bookQuotes = [
+  {
+    quote: "When you want something, all the universe conspires in helping you to achieve it.",
+    book: "The Alchemist",
+    author: "Paulo Coelho",
+    image: "/books/alice.jpg",
+  },
+  {
+    quote: "It is our choices that show what we truly are, far more than our abilities.",
+    book: "Harry Potter & Chamber of Secrets",
+    author: "J.K. Rowling",
+    image: "https://covers.openlibrary.org/b/isbn/9780439064873-L.jpg",
+  },
+  {
+    quote: "Not all those who wander are lost.",
+    book: "The Fellowship of the Ring",
+    author: "J.R.R. Tolkien",
+    image: "https://covers.openlibrary.org/b/isbn/9780547928210-L.jpg",
+  },
+  {
+    quote: "Whatever our souls are made of, his and mine are the same.",
+    book: "Wuthering Heights",
+    author: "Emily Brontë",
+    image: "/brand/classic.webp",
+  },
+  {
+    quote: "The only way out of the labyrinth of suffering is to forgive.",
+    book: "Looking for Alaska",
+    author: "John Green",
+    image: "/books/keira.jpg",
+  },
+  {
+    quote: "So we beat on, boats against the current, borne back ceaselessly into the past.",
+    book: "The Great Gatsby",
+    author: "F. Scott Fitzgerald",
+    image: "/brand/coffee.webp",
+  },
+  {
+    quote: "There is no friend as loyal as a book.",
+    book: "A Moveable Feast",
+    author: "Ernest Hemingway",
+    image: "/brand/non-fiction.webp",
+  },
+  {
+    quote: "Until I feared I would lose it, I never loved to read. One does not love breathing.",
+    book: "To Kill a Mockingbird",
+    author: "Harper Lee",
+    image: "/brand/new-books.webp",
+  },
 ];
 
 const navItems = [
@@ -256,25 +318,25 @@ export function getPageMetadata(page, categoryFilter, query) {
     top10: { kicker: "CURATED COLLECTION", title: "Top 10 Bestselling Books", description: "The absolute must-reads of the season, ranked by popularity and reader ratings across India.", parent: "Collections" },
     "top-10-books": { kicker: "CURATED COLLECTION", title: "Top 10 Bestselling Books", description: "The absolute must-reads of the season, ranked by popularity and reader ratings across India.", parent: "Collections" },
     "recently-added": { kicker: "FRESH ARRIVALS", title: "Recently Added Books", description: "Freshly cataloged pre-loved titles arriving daily at our Mumbai warehouse.", parent: "Collections" },
-    "brand-new-books": { kicker: "MINT CONDITION", title: "Brand New Books (Up to 80% Off)", description: "Unread, publisher-direct copies in pristine condition at unbelievable prices by weight.", parent: "Collections" },
-    premium: { kicker: "COLLECTOR EDITIONS", title: "Premium Books (₹499/kg)", description: "Top-tier collectible hardcovers, art editions, and pristine titles at ₹499 per kg.", parent: "Collections" },
-    "premium-books": { kicker: "COLLECTOR EDITIONS", title: "Premium Books (₹499/kg)", description: "Top-tier collectible hardcovers, art editions, and pristine titles at ₹499 per kg.", parent: "Collections" },
-    classic: { kicker: "EVERGREEN READS", title: "Classic Books (₹399/kg)", description: "Timeless literature, popular fiction, and world classics at ₹399 per kg.", parent: "Collections" },
-    "classic-books": { kicker: "EVERGREEN READS", title: "Classic Books (₹399/kg)", description: "Timeless literature, popular fiction, and world classics at ₹399 per kg.", parent: "Collections" },
-    standard: { kicker: "EVERYDAY READS", title: "Standard Books (₹299/kg)", description: "Budget-friendly reads, children's stories, and popular paperbacks at ₹299 per kg.", parent: "Collections" },
-    "standard-books": { kicker: "EVERYDAY READS", title: "Standard Books (₹299/kg)", description: "Budget-friendly reads, children's stories, and popular paperbacks at ₹299 per kg.", parent: "Collections" },
+    "brand-new-books": { kicker: "MINT CONDITION", title: "Brand New Books (Up to 80% Off)", description: "Unread, publisher-direct copies in pristine condition at unbelievable prices.", parent: "Collections" },
+    premium: { kicker: "COLLECTOR EDITIONS", title: "Premium Books Collection", description: "Top-tier collectible hardcovers, art editions, and pristine titles.", parent: "Collections" },
+    "premium-books": { kicker: "COLLECTOR EDITIONS", title: "Premium Books Collection", description: "Top-tier collectible hardcovers, art editions, and pristine titles.", parent: "Collections" },
+    classic: { kicker: "EVERGREEN READS", title: "Classic Books Collection", description: "Timeless literature, popular fiction, and world classics.", parent: "Collections" },
+    "classic-books": { kicker: "EVERGREEN READS", title: "Classic Books Collection", description: "Timeless literature, popular fiction, and world classics.", parent: "Collections" },
+    standard: { kicker: "EVERYDAY READS", title: "Standard Books Collection", description: "Budget-friendly reads, children's stories, and popular paperbacks.", parent: "Collections" },
+    "standard-books": { kicker: "EVERYDAY READS", title: "Standard Books Collection", description: "Budget-friendly reads, children's stories, and popular paperbacks.", parent: "Collections" },
     bestsellers: { kicker: "MOST POPULAR", title: "Bestseller Books", description: "India's most loved pre-loved titles ordered by over 50,000 book lovers.", parent: "Collections" },
     new: { kicker: "NEW ARRIVALS", title: "New Arrivals", description: "The latest additions to our Books by Kilo inventory.", parent: "Collections" },
     "new-arrivals": { kicker: "NEW ARRIVALS", title: "New Arrivals", description: "The latest additions to our Books by Kilo inventory.", parent: "Collections" },
-    bulk: { kicker: "WHOLESALE & LIBRARIES", title: "Bulk Books & Wholesale Stacks", description: "Heavier sets and wholesale packages for libraries, schools & avid collectors.", parent: "Collections" },
-    "bulk-books": { kicker: "WHOLESALE & LIBRARIES", title: "Bulk Books & Wholesale Stacks", description: "Heavier sets and wholesale packages for libraries, schools & avid collectors.", parent: "Collections" },
+    bulk: { kicker: "WHOLESALE & LIBRARIES", title: "Bulk Books & Wholesale Stacks", description: "Wholesale packages and curated sets for libraries, schools & avid collectors.", parent: "Collections" },
+    "bulk-books": { kicker: "WHOLESALE & LIBRARIES", title: "Bulk Books & Wholesale Stacks", description: "Wholesale packages and curated sets for libraries, schools & avid collectors.", parent: "Collections" },
     surprise: { kicker: "MYSTERY BOX", title: "Surprise Stack Mystery Box", description: "Curated mystery boxes of unexpected hand-picked reads starting at ₹300.", parent: "Collections" },
     "surprise-stack": { kicker: "MYSTERY BOX", title: "Surprise Stack Mystery Box", description: "Curated mystery boxes of unexpected hand-picked reads starting at ₹300.", parent: "Collections" },
-    "extra-discount": { kicker: "SPECIAL OFFER", title: "Extra Discount Sale", description: "Massive markdowns on top titles - highest book weight for your rupee.", parent: "Collections" },
+    "extra-discount": { kicker: "SPECIAL OFFER", title: "Extra Discount Sale", description: "Massive markdowns on top titles - best value for your rupee.", parent: "Collections" },
     "collector-books": { kicker: "SPECIALTY COLLECTION", title: "Coffee Table & Collector Books", description: "Stunning visual editions, art portfolios, photography, and luxury hardcovers.", parent: "Collections" },
     categories: { kicker: "ALL CATEGORIES", title: "Explore All Categories", description: "Choose by genre, pricing tier, publisher imprint, or language.", parent: "Catalogue" },
-    all: { kicker: "COMPLETE CATALOGUE", title: "All Books Catalogue", description: "Browse our complete catalog of quality-checked pre-loved books by weight.", parent: "Catalogue" },
-    "all-books": { kicker: "COMPLETE CATALOGUE", title: "All Books Catalogue", description: "Browse our complete catalog of quality-checked pre-loved books by weight.", parent: "Catalogue" },
+    all: { kicker: "COMPLETE CATALOGUE", title: "All Books Catalogue", description: "Browse our complete catalog of quality-checked pre-loved books.", parent: "Catalogue" },
+    "all-books": { kicker: "COMPLETE CATALOGUE", title: "All Books Catalogue", description: "Browse our complete catalog of quality-checked pre-loved books.", parent: "Catalogue" },
   };
 
   return pagesMap[page] || {
@@ -350,8 +412,6 @@ function BookCard({ book, onOpen, onCart, saved, onSave, rank }) {
           {normBook.mrp > normBook.salePrice && (
             <span className="card-mrp-price">MRP {formatPrice(normBook.mrp)}</span>
           )}
-          <span className="card-price-divider" />
-          <span className="card-weight-val">{normBook.weight}g</span>
         </div>
       </button>
       {preview && createPortal(<div
@@ -369,7 +429,6 @@ function BookCard({ book, onOpen, onCart, saved, onSave, rank }) {
           <span className="preview-author">by {normBook.author}</span>
           <div className="preview-stats">
             <span className="match">{normBook.match || 95}% Match</span>
-            <span>{normBook.weight} gm</span>
             <span>{normBook.tier}</span>
           </div>
           <p>{normBook.description || `A quality-checked Books by Kilo edition of ${normBook.title}.`}</p>
@@ -430,7 +489,6 @@ function Shelf({ shelf, items, onOpen, onCart, list, onSave, rank, onViewAll }) 
       <div className="shelf-heading">
         <div>
           <h2>{shelf.title} {shelf.accent && <span>{shelf.accent}</span>}</h2>
-          {shelf.subtitle && <span className="shelf-subtitle">{shelf.subtitle}</span>}
         </div>
         {!rank && <button onClick={() => onViewAll?.(shelf)}>View All <FiChevronRight /></button>}
       </div>
@@ -442,6 +500,73 @@ function Shelf({ shelf, items, onOpen, onCart, list, onSave, rank, onViewAll }) 
           ))}
         </div>
         <button className={`rail-arrow right ${scrollState.right ? "available" : ""}`} disabled={!scrollState.right} onClick={() => scroll(1)} aria-label="Scroll shelf right"><FiChevronRight /></button>
+      </div>
+    </section>
+  );
+}
+
+function BookQuotesSection({ quotes, onBookClick }) {
+  const railRef = useRef(null);
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  const scroll = (dir) => {
+    if (!railRef.current) return;
+    const scrollAmount = 360 * 2 * dir;
+    railRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  };
+
+  const handleScroll = () => {
+    if (!railRef.current) return;
+    const cardWidth = 350;
+    const current = Math.round(railRef.current.scrollLeft / cardWidth);
+    setActiveIdx(current % quotes.length);
+  };
+
+  return (
+    <section className="quotes-section" id="quotes">
+      <div className="shelf-heading">
+        <div>
+          <h2>Quotes</h2>
+        </div>
+      </div>
+      <div className="quotes-carousel-wrapper">
+        <div
+          className="quotes-track"
+          ref={railRef}
+          onScroll={handleScroll}
+        >
+          {quotes.map((item, index) => (
+            <article
+              key={`${item.book}-${index}`}
+              className="quote-card"
+              onClick={() => onBookClick && onBookClick(item)}
+            >
+              <img
+                src={item.image}
+                alt={item.book}
+                className="quote-card-bg"
+              />
+              <div className="quote-card-vignette" />
+              <div className="quote-card-body">
+                <h3 className="quote-headline">"{item.quote}"</h3>
+                <div className="quote-byline">
+                  <div className="quote-accent-line" />
+                  <span className="quote-author-name">{item.author}</span>
+                  <strong className="quote-book-title">{item.book}</strong>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className="quotes-dots">
+        {quotes.map((q, idx) => (
+          <span
+            key={q.book}
+            className={`quote-dot ${activeIdx === idx ? "active" : ""}`}
+          />
+        ))}
       </div>
     </section>
   );
@@ -490,7 +615,6 @@ function CartDrawer({ open, onClose, cart, onUpdateQty, onRemove, onClear, onChe
                     <div className="cart-item-info">
                       <strong className="cart-item-title">{normBook.title}</strong>
                       <span className="cart-item-author">by {normBook.author}</span>
-                      <span className="cart-item-weight">{normBook.weight} gm</span>
 
                       <div className="cart-item-price-row">
                         <span className="cart-item-sale-price">{formatPrice(normBook.salePrice)}</span>
@@ -519,10 +643,6 @@ function CartDrawer({ open, onClose, cart, onUpdateQty, onRemove, onClear, onChe
 
         {cart.length > 0 && (
           <div className="cart-drawer-footer">
-            <div className="cart-summary-line">
-              <span>Total Weight</span>
-              <strong>{totalWeight >= 1000 ? `${(totalWeight / 1000).toFixed(2)} kg` : `${totalWeight} gm`}</strong>
-            </div>
             <div className="cart-summary-line total">
               <span>Subtotal</span>
               <strong>{formatPrice(totalPrice)}</strong>
@@ -557,30 +677,19 @@ function ProductDetailPage({ book, onBack, onCart, list, onSave, allBooks, onSel
     <section className="pdp-page">
       <div className="pdp-top-bar">
         <button className="pdp-back-btn" onClick={onBack}>
-          <FiChevronLeft /> Back to catalog
+          <FiChevronLeft /> Back
         </button>
-        <div className="pdp-breadcrumbs">
-          <span>Catalog</span> / <span>{normBook.genre || "Books"}</span> / <strong>{normBook.title}</strong>
-        </div>
       </div>
 
       <div className="pdp-main-card">
         <div className="pdp-visual">
-          <img className="pdp-bg-blur" src={normBook.image} alt="" aria-hidden="true" />
-          <img className="pdp-cover" src={normBook.image} alt={`${normBook.title} by ${normBook.author}`} />
+          <img className="pdp-cover-full" src={normBook.image} alt={`${normBook.title} by ${normBook.author}`} />
         </div>
 
         <div className="pdp-details">
           <span className="eyebrow">{normBook.genre || "FEATURED BOOK"}</span>
           <h1 className="pdp-title">{normBook.title}</h1>
           <p className="byline">by {normBook.author}</p>
-
-          <div className="pdp-meta-row">
-            <span className="pdp-match">{normBook.match || 95}% Match</span>
-            <span className="pdp-badge"><FiCheck /> Quality Checked</span>
-            <span className="pdp-badge">Weight: {normBook.weight} gm</span>
-            <span className="pdp-badge">{normBook.tier || "Standard"} Tier</span>
-          </div>
 
           <div className="pdp-price-box" style={{ display: "flex", alignItems: "baseline", gap: "10px", margin: "14px 0" }}>
             <span className="pdp-price">{formatPrice(normBook.salePrice)}</span>
@@ -997,7 +1106,7 @@ export function App() {
     <div className="app-shell">
       <header className="topbar">
         <a className="brand text-brand" href="#home" aria-label="Books by Kilo home" onClick={(event) => { event.preventDefault(); navigateTo("home"); }}>
-          <span>BOOKS BY</span><strong>KILO</strong>
+          <img src="/brand/logo.png" alt="Books by Kilo" className="site-logo-img" />
         </a>
         <button className="mobile-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu">{menuOpen ? <FiX /> : <FiMenu />}</button>
         <nav className={menuOpen ? "open" : ""}>
@@ -1026,8 +1135,8 @@ export function App() {
                       <div className="mega-container">
                         <div className="mega-left-banner">
                           <span className="mega-badge"><FaFire /> PRE-LOVED BARGAINS</span>
-                          <h3>Books by Weight</h3>
-                          <p>Quality-checked pre-loved books starting at <b>₹299/kg</b>. Shop by tier, genre or publisher!</p>
+                          <h3>Featured Collections</h3>
+                          <p>Quality-checked pre-loved books at unbelievable prices. Shop by collection, genre or author!</p>
                           <button
                             className="mega-featured-btn"
                             onClick={() => navigateTo("all-books")}
@@ -1094,9 +1203,9 @@ export function App() {
         </nav>
 
         <div className="header-actions">
-          <form className={`search ${searchOpen ? "open" : ""}`} onSubmit={(e) => { e.preventDefault(); if (query.trim()) navigateTo("search", { query }); }}>
+          <form className="search-field-pill" onSubmit={(e) => { e.preventDefault(); if (query.trim()) navigateTo("search", { query }); }}>
+            <span className="search-icon-inside"><FiSearch /></span>
             <input type="search" value={query} onChange={(e) => { setQuery(e.target.value); if (e.target.value.trim()) navigateTo("search", { query: e.target.value }); }} placeholder="Search title, author..." aria-label="Search title, author" />
-            <button type="button" onClick={() => setSearchOpen(!searchOpen)} aria-label="Toggle search"><FiSearch /></button>
           </form>
 
           <button className="cart-btn-trigger" onClick={() => setCartOpen(true)} aria-label="Open shopping cart">
@@ -1186,15 +1295,14 @@ export function App() {
               <div className="catalog-selects">
                 <select value={tierFilter} onChange={(event) => setTierFilter(event.target.value)} aria-label="Filter by tier">
                   <option value="all">All prices</option>
-                  <option value="standard">₹299/kg</option>
-                  <option value="classic">₹399/kg</option>
-                  <option value="premium">₹499/kg</option>
+                  <option value="standard">Standard Tier (₹299)</option>
+                  <option value="classic">Classic Tier (₹399)</option>
+                  <option value="premium">Premium Tier (₹499)</option>
                   <option value="new">New books</option>
                 </select>
                 <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} aria-label="Sort books">
                   <option value="match">Most relevant</option>
                   <option value="price-low">Price: low first</option>
-                  <option value="weight">Heaviest first</option>
                 </select>
               </div>
             </div>
@@ -1215,7 +1323,7 @@ export function App() {
             ) : (
               <div className="category-not-found">
                 <h3>Category Not Found</h3>
-                <p>We couldn't find any books matching this collection or filter. Explore our complete catalogue to discover thousands of pre-loved books by weight.</p>
+                <p>We couldn't find any books matching this collection or filter. Explore our complete catalogue to discover thousands of pre-loved books.</p>
                 <button className="cta" onClick={() => navigateTo("all-books")}>Browse All Books</button>
               </div>
             )}
@@ -1302,19 +1410,15 @@ export function App() {
                       <button className="cta" onClick={() => navigateTo("all-books")}>
                         <FiShoppingCart /> Shop Bestsellers
                       </button>
-                      <a
-                        href="https://www.google.com/search?q=booksbykilo+reviews"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
                         className="secondary"
-                        style={{ textDecoration: "none" }}
                         onClick={(e) => {
                           e.preventDefault();
                           window.open("https://www.google.com/search?q=booksbykilo+reviews", "_blank");
                         }}
                       >
                         <FiStar /> 1,248 Reviews
-                      </a>
+                      </button>
                     </div>
                   </>
                 ) : normFeatured ? (
@@ -1323,11 +1427,9 @@ export function App() {
                     <h1>{heroTitle}</h1>
                     <p className="byline">by {normFeatured.author}</p>
                     <div className="hero-meta">
-                      <span><FiCheck /> Good Condition</span>
-                      <span>{normFeatured.weight} gm</span>
-                      <span style={{ fontWeight: 700, color: "#ffffff" }}>{formatPrice(normFeatured.salePrice)}</span>
+                      <span style={{ fontWeight: 700, color: "#ffffff", fontSize: "16px" }}>{formatPrice(normFeatured.salePrice)}</span>
                       {normFeatured.mrp > normFeatured.salePrice && (
-                        <span style={{ textDecoration: "line-through", opacity: 0.7 }}>{formatPrice(normFeatured.mrp)}</span>
+                        <span style={{ textDecoration: "line-through", opacity: 0.75, fontSize: "14px" }}>MRP {formatPrice(normFeatured.mrp)}</span>
                       )}
                     </div>
                     <p className="description">{normFeatured.description || `A quality-checked Books by Kilo edition of ${normFeatured.title}.`}</p>
@@ -1366,7 +1468,7 @@ export function App() {
             <div className="content-overlap">
               {/* 1. Top 10 Books */}
               <div className="top-ten-shelf">
-                <Shelf shelf={{ title: "Top 10 Books", subtitle: "The absolute must-reads of the season." }} items={[...allBooks].sort((a, b) => b.match - a.match).slice(0, 10)} onOpen={(b) => navigateTo("book", { bookId: b.id })} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} rank />
+                <Shelf shelf={{ title: "Top 10 Books This Week" }} items={[...allBooks].sort((a, b) => b.match - a.match).slice(0, 10)} onOpen={(b) => navigateTo("book", { bookId: b.id })} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} rank />
               </div>
 
               {/* 2. Explore by Genre */}
@@ -1374,7 +1476,6 @@ export function App() {
                 <div className="shelf-heading">
                   <div>
                     <h2>Explore by Genre</h2>
-                    <span className="shelf-subtitle">Find your next story.</span>
                   </div>
                 </div>
                 <div className="genre-grid">
@@ -1441,7 +1542,7 @@ export function App() {
                 <div className="editor-copy">
                   <span className="eyebrow">CURATED FOR CURIOUS READERS</span>
                   <h2>Bestseller Collections</h2>
-                  <p style={{ color: "#cbd5e1", fontSize: "14px", marginTop: "4px" }}>Unbeatable deals on bestselling reads by weight.</p>
+                  <p style={{ color: "#cbd5e1", fontSize: "14px", marginTop: "4px" }}>Unbeatable deals on bestselling pre-loved titles.</p>
                   <button onClick={() => navigateTo("bestsellers")}>Explore Bestsellers <FiChevronRight /></button>
                 </div>
                 <div className="editor-stack">
@@ -1460,18 +1561,21 @@ export function App() {
               {/* 8. Fiction / Non-Fiction */}
               <Shelf shelf={{ title: "Fiction / Non-Fiction", subtitle: "From wild imaginations to real facts." }} items={allBooks.filter((book) => book.categories?.includes("fiction") || book.categories?.includes("non-fiction")).slice(0, 24)} onOpen={(b) => navigateTo("book", { bookId: b.id })} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} />
 
-              {/* 9. Explore by Publishers */}
-              <section className="discovery-section publisher-section">
+              {/* 9. Explore by Authors */}
+              <section className="discovery-section author-section" id="authors">
                 <div className="shelf-heading">
                   <div>
-                    <h2>Explore by Publishers</h2>
-                    <span className="shelf-subtitle">Shop your favorite imprints.</span>
+                    <h2>Explore by Authors</h2>
                   </div>
                 </div>
-                <div className="publisher-grid">
-                  {publishers.map((publisher, index) => (
-                    <button key={publisher.name} style={{ "--publisher-index": index }} onClick={() => navigateTo("publisher", { publisher: publisher.name })} aria-label={`Browse ${publisher.name}`}>
-                      <PublisherMark kind={publisher.mark} />
+                <div className="author-grid">
+                  {authors.map((author) => (
+                    <button key={author.name} className="author-card" onClick={() => navigateTo("all-books", { query: author.name })} aria-label={`Browse books by ${author.name}`}>
+                      <div className="author-info">
+                        <strong>{author.name}</strong>
+                        <small>{author.genre}</small>
+                      </div>
+                      <FiChevronRight className="author-arrow" />
                     </button>
                   ))}
                 </div>
@@ -1480,12 +1584,11 @@ export function App() {
               {/* 10. Extra Discount Sale */}
               <Shelf shelf={{ title: "Extra Discount Sale", subtitle: "Massive markdowns on top titles." }} items={[...allBooks].sort((a, b) => a.salePrice - b.salePrice).slice(0, 24)} onOpen={(b) => navigateTo("book", { bookId: b.id })} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} />
 
-              {/* 11. Regional Languages */}
-              <section className="discovery-section language-section">
+              {/* 11. Explore by Regional Languages */}
+              <section className="discovery-section language-section" id="languages">
                 <div className="shelf-heading">
                   <div>
-                    <h2>Regional Languages</h2>
-                    <span className="shelf-subtitle">Stories in your mother tongue.</span>
+                    <h2>Explore by Regional Languages</h2>
                   </div>
                 </div>
                 <div className="language-grid">
@@ -1500,12 +1603,14 @@ export function App() {
               {/* 12. Coffee Table Books */}
               <Shelf shelf={{ title: "Coffee Table Books", subtitle: "Stunning visual statements." }} items={allBooks.filter((book) => book.categories?.includes("collector") || book.tier === "Premium" || book.tier === "Classic").slice(0, 24)} onOpen={(b) => navigateTo("book", { bookId: b.id })} onCart={addCart} list={list} onSave={toggleList} onViewAll={handleViewAll} />
 
+              {/* Quotes Section (Positioned Directly Above Choose by Pricing) */}
+              <BookQuotesSection quotes={bookQuotes} onBookClick={(q) => navigateTo("all-books", { query: q.book })} />
+
               {/* 13. Choose by Pricing */}
               <section className="collection-section" id="categories">
                 <div className="shelf-heading">
                   <div>
                     <h2>Choose by Pricing</h2>
-                    <span className="shelf-subtitle">Fill your shelves by weight.</span>
                   </div>
                 </div>
                 <div className="collection-grid">
@@ -1537,17 +1642,8 @@ export function App() {
             </a>
             <div className="footer-address">
               <span>Books by Kilo HQ</span>
-              <span>Authentic pre-loved books by weight</span>
+              <span>Authentic pre-loved books</span>
               <span>Mumbai, Maharashtra, India</span>
-            </div>
-          </div>
-
-          <div className="footer-center-col">
-            <div className="footer-cta-card">
-              <span className="footer-cta-badge">PRE-LOVED BOOKS STORE</span>
-              <button className="footer-cta-btn" onClick={() => navigateTo("bestsellers")}>
-                Shop Bestsellers
-              </button>
             </div>
           </div>
 
