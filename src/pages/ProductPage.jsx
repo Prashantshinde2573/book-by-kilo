@@ -63,7 +63,9 @@ export default function ProductPage({ allBooks }) {
           <div className="pdp-price-box">
             <span className="pdp-price">{formatPrice(book.salePrice)}</span>
             {book.mrp > book.salePrice && (
-              <span className="pdp-mrp-price">{formatPrice(book.mrp)}</span>
+              <span className="pdp-mrp-price">
+                <span className="mrp-label">MRP</span> {formatPrice(book.mrp)}
+              </span>
             )}
             {book.discount > 0 && (
               <span className="pdp-discount-pill">{book.discount}% OFF</span>

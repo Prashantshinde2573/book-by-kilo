@@ -19,16 +19,30 @@ export default function Shelf({ shelf, items, rank, onViewAll }) {
     railRef.current?.scrollBy({ left: direction * window.innerWidth * 0.72, behavior: "smooth" });
   };
   useEffect(() => {
-    updateScrollState();
     const rail = railRef.current;
     if (!rail) return undefined;
+
+    // Explicitly enforce starting from the very first book on mount & update
+    rail.scrollLeft = 0;
+    rail.scrollTo({ left: 0, behavior: "instant" });
+    updateScrollState();
+
+    // Secondary frame check in case layout shifts after render
+    const frameId = requestAnimationFrame(() => {
+      if (rail && rail.scrollLeft !== 0 && !scrollState.left) {
+        rail.scrollLeft = 0;
+        updateScrollState();
+      }
+    });
+
     rail.addEventListener("scroll", updateScrollState, { passive: true });
     window.addEventListener("resize", updateScrollState);
     return () => {
+      cancelAnimationFrame(frameId);
       rail.removeEventListener("scroll", updateScrollState);
       window.removeEventListener("resize", updateScrollState);
     };
-  }, [items.length]);
+  }, [shelf.title, items]);
 
   return (
     <section className="shelf-section">

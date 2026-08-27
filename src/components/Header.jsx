@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FiChevronDown, FiChevronRight, FiMenu, FiSearch,
-  FiShoppingCart, FiUser, FiX, FiCheck,
+  FiShoppingCart, FiUser, FiX, FiHeart, FiBook,
 } from "react-icons/fi";
 import { FaFire } from "react-icons/fa";
 import { useAppContext } from "../context/AppContext";
@@ -26,6 +26,7 @@ export default function Header() {
   const { cartCount, setCartOpen, list, notify } = useAppContext();
   const [menuOpen, setMenuOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
+  const [mobileCatOpen, setMobileCatOpen] = useState(false);
   const [searchVal, setSearchVal] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
   const megaTimerRef = useRef(null);
@@ -42,14 +43,18 @@ export default function Header() {
   useEffect(() => {
     setMenuOpen(false);
     setMegaOpen(false);
+    setMobileCatOpen(false);
     setProfileOpen(false);
   }, [location.pathname]);
 
   const handleMegaEnter = () => {
+    if (window.innerWidth <= 850) return;
     if (megaTimerRef.current) window.clearTimeout(megaTimerRef.current);
     setMegaOpen(true);
   };
+
   const handleMegaLeave = () => {
+    if (window.innerWidth <= 850) return;
     if (megaTimerRef.current) window.clearTimeout(megaTimerRef.current);
     megaTimerRef.current = window.setTimeout(() => setMegaOpen(false), 200);
   };
@@ -59,6 +64,7 @@ export default function Header() {
     if (searchVal.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchVal.trim())}`);
       setMenuOpen(false);
+      setSearchVal("");
     }
   };
 
@@ -70,23 +76,60 @@ export default function Header() {
         <img src="/brand/logo.png" alt="Books by Kilo" className="site-logo-img" />
       </Link>
 
-      <button className="mobile-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu">
+      <button
+        className="mobile-menu"
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+      >
         {menuOpen ? <FiX /> : <FiMenu />}
       </button>
 
       <nav className={menuOpen ? "open" : ""}>
-        <Link to="/" className={location.pathname === "/" ? "active" : ""} onClick={() => setMenuOpen(false)}>Home</Link>
-        <Link to="/catalogue" className={isActive("/catalogue") ? "active" : ""} onClick={() => setMenuOpen(false)}>All Books</Link>
+        {/* Mobile-only Search Bar at top of drawer */}
+        <div className="mobile-nav-search">
+          <FiSearch className="mobile-search-icon" />
+          <input
+            type="search"
+            value={searchVal}
+            onChange={(e) => setSearchVal(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch(e)}
+            placeholder="Search title, author, genre..."
+            aria-label="Search mobile"
+          />
+          <button type="button" className="mobile-search-submit" onClick={handleSearch}>
+            Go
+          </button>
+        </div>
 
+        <Link to="/" className={location.pathname === "/" ? "active" : ""} onClick={() => setMenuOpen(false)}>
+          Home
+        </Link>
+
+        <Link to="/catalogue" className={isActive("/catalogue") ? "active" : ""} onClick={() => setMenuOpen(false)}>
+          All Books
+        </Link>
+
+        {/* Desktop Mega Dropdown item */}
         <div className="mega-nav-item" onMouseEnter={handleMegaEnter} onMouseLeave={handleMegaLeave}>
           <Link
             to="/catalogue"
-            className={`mega-trigger ${isActive("/category") || megaOpen ? "active" : ""}`}
+            className={`mega-trigger desktop-only-trigger ${isActive("/category") || megaOpen ? "active" : ""}`}
             onClick={(e) => { e.preventDefault(); navigate("/catalogue"); setMenuOpen(false); }}
           >
             Categories <FiChevronDown className="mega-caret" />
           </Link>
 
+          {/* Mobile Accordion Toggle Button */}
+          <button
+            type="button"
+            className="mobile-cat-toggle"
+            onClick={() => setMobileCatOpen(!mobileCatOpen)}
+          >
+            <span>Categories</span>
+            <FiChevronDown className={`mega-caret ${mobileCatOpen ? "rotate" : ""}`} />
+          </button>
+
+          {/* Desktop Mega Dropdown Menu */}
           {megaOpen && (
             <div className="mega-dropdown">
               <div className="mega-container">
@@ -118,15 +161,51 @@ export default function Header() {
               </div>
             </div>
           )}
+
+          {/* Mobile Accordion Expanded List */}
+          {mobileCatOpen && (
+            <div className="mobile-categories-drawer-list">
+              {megaCategories.map((cat) => (
+                <Link
+                  key={cat.title}
+                  to={cat.path}
+                  className="mobile-cat-link"
+                  onClick={() => { setMenuOpen(false); setMobileCatOpen(false); }}
+                >
+                  <span>{cat.title}</span>
+                  <FiChevronRight size={14} />
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
-        <Link to="/catalogue?tier=new" className={""} onClick={() => setMenuOpen(false)}>New Arrivals</Link>
-        <Link to="/catalogue?sort=match" className={""} onClick={() => setMenuOpen(false)}>Bestsellers</Link>
-        <Link to="/bulk-purchase" className={isActive("/bulk-purchase") ? "active" : ""} onClick={() => setMenuOpen(false)}>Bulk Books</Link>
+        <Link to="/catalogue?tier=new" onClick={() => setMenuOpen(false)}>
+          New Arrivals
+        </Link>
+        <Link to="/catalogue?sort=match" onClick={() => setMenuOpen(false)}>
+          Bestsellers
+        </Link>
+        <Link to="/bulk-purchase" className={isActive("/bulk-purchase") ? "active" : ""} onClick={() => setMenuOpen(false)}>
+          Bulk Books
+        </Link>
+        <Link to="/surprise-stack" className={isActive("/surprise-stack") ? "active" : ""} onClick={() => setMenuOpen(false)}>
+          Surprise Stack
+        </Link>
+
+        {/* Mobile Drawer Footer Actions */}
+        <div className="mobile-nav-footer">
+          <Link to="/wishlist" className="mobile-footer-link" onClick={() => setMenuOpen(false)}>
+            <FiHeart style={{ marginRight: "8px" }} /> My Wishlist ({list.length})
+          </Link>
+          <Link to="/cart" className="mobile-footer-link" onClick={() => setMenuOpen(false)}>
+            <FiShoppingCart style={{ marginRight: "8px" }} /> View Cart ({cartCount})
+          </Link>
+        </div>
       </nav>
 
       <div className="header-actions">
-        <form className="search-field-pill" onSubmit={handleSearch}>
+        <form className="search-field-pill desktop-search" onSubmit={handleSearch}>
           <span className="search-icon-inside"><FiSearch /></span>
           <input
             type="search"
@@ -139,12 +218,14 @@ export default function Header() {
 
         <button className="cart-btn-trigger" onClick={() => setCartOpen(true)} aria-label="Open shopping cart">
           <FiShoppingCart />
-          <span>Cart</span>
-          {cartCount > 0 && <b>{cartCount}</b>}
+          <span className="cart-label-text">Cart</span>
+          {cartCount > 0 && <b className="cart-count-pill">{cartCount}</b>}
         </button>
 
         <div style={{ position: "relative" }}>
-          <button className="account-button" onClick={() => setProfileOpen(!profileOpen)} aria-label="User account"><FiUser /></button>
+          <button className="account-button" onClick={() => setProfileOpen(!profileOpen)} aria-label="User account">
+            <FiUser />
+          </button>
           {profileOpen && (
             <div className="profile-dropdown">
               <div className="profile-user-info">

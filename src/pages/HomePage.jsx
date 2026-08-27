@@ -98,7 +98,7 @@ export default function HomePage({ allBooks }) {
         <div className="hero-art">
           <img key={`backdrop-${featured?.id}`} className="hero-backdrop" src={featured?.image} alt="" aria-hidden="true" />
           {featured?.isGoogleReview ? (
-            <div className="google-rating-card-v2">
+            <div className="google-rating-card-v2 desktop-only-gcard">
               <div className="g-card-v2-left">
                 <div className="g-card-v2-logo-wrapper"><FcGoogle size={48} /></div>
               </div>
@@ -108,7 +108,7 @@ export default function HomePage({ allBooks }) {
                   <span className="g-card-v2-title">Google Rating</span>
                   <span className="g-card-v2-verified-badge" aria-label="Verified">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
-                      <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 0 .495.084.965.238 1.4C1.575 9.55.7 10.92.7 12.5c0 1.58.875 2.95 2.148 3.6-.154.435-.238.905-.238 1.4 0 2.21 1.79 4 4 4 .495 0 .965-.084 1.4-.238 1.4 1.273 2.77 2.148 4.35 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-.65 2.148-2.02 2.148-3.6z" fill="#2563eb"/>
+                      <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 4 .495 0 .965.084 1.4-.238 1.4 1.273 2.77 2.148 4.35 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-.65 2.148-2.02 2.148-3.6z" fill="#2563eb"/>
                       <path d="M9.8 16.2l-3.5-3.5 1.4-1.4 2.1 2.1 6.3-6.3 1.4 1.4-7.7 7.7z" fill="#ffffff"/>
                     </svg>
                   </span>
@@ -142,12 +142,21 @@ export default function HomePage({ allBooks }) {
           {featured?.isGoogleReview ? (
             <>
               <span className="eyebrow">CUSTOMER TRUST &amp; REVIEWS</span>
-              <h1>Google Rating <em>4.8</em></h1>
+              <h1>Google Rating <em>4.8 ★</em></h1>
               <p className="byline">by 50,000+ Verified Readers Across India</p>
+              <div className="mobile-only-gcard mobile-g-rating-card">
+                <div className="g-card-v2-score-row" style={{ justifyContent: "center", margin: "4px 0" }}>
+                  <span className="g-card-v2-score" style={{ fontSize: "28px" }}>4.8</span>
+                  <span className="g-card-v2-scale">/ 5</span>
+                  <div className="g-card-v2-stars" style={{ marginLeft: "8px" }}>
+                    <span className="g-star">★</span><span className="g-star">★</span><span className="g-star">★</span><span className="g-star">★</span><span className="g-star g-star-half">★</span>
+                  </div>
+                </div>
+                <div className="g-card-v2-count" style={{ textAlign: "center" }}>Based on <strong>1,248</strong> verified reader reviews</div>
+              </div>
               <div className="hero-meta">
                 <span><FiCheck /> 100% Authentic Books</span>
-                <span>4.8 / 5 Rating</span>
-                <span>1,248+ Reviews</span>
+                <span>Fast Shipping</span>
               </div>
               <p className="description">{googleReviewSlide.description}</p>
               <div className="hero-actions">
