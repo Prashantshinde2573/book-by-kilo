@@ -13,12 +13,12 @@ const megaCategories = [
   { title: "Recently Added Books", image: "/books/when-it-snows.jpg", path: "/catalogue?sort=match" },
   { title: "Brand New Books", image: "/books/timetime.jpg", path: "/catalogue?tier=new" },
   { title: "Bestsellers", image: "/books/king-lear.jpg", path: "/catalogue?sort=match" },
-  { title: "Children Books", image: "/brand/children.webp", path: "/category/children-books" },
-  { title: "Teen Fiction", image: "/books/keira.jpg", path: "/category/teen-fiction" },
-  { title: "Fiction Books", image: "/brand/non-fiction.webp", path: "/category/fiction" },
-  { title: "Non-Fiction", image: "/brand/non-fiction.webp", path: "/category/non-fiction" },
+  { title: "Children Books", image: "/brand/children.webp", path: "/catalogue?category=children-books" },
+  { title: "Teen Fiction", image: "/books/keira.jpg", path: "/catalogue?category=teen-fiction" },
+  { title: "Fiction Books", image: "/brand/non-fiction.webp", path: "/catalogue?category=fiction" },
+  { title: "Non-Fiction", image: "/brand/non-fiction.webp", path: "/catalogue?category=non-fiction" },
   { title: "Extra Discount Sale", image: "/books/umbrella-tree.jpg", path: "/catalogue?sort=price-low" },
-  { title: "Coffee Table Books", image: "/books/dinosaurs.jpg", path: "/category/coffee-table-books" },
+  { title: "Coffee Table Books", image: "/books/dinosaurs.jpg", path: "/catalogue?category=coffee-table-books" },
   { title: "Surprise Stack", image: "/brand/surprise_banner.jpg", path: "/category/surprise-stack" },
 ];
 

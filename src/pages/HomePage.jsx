@@ -75,15 +75,15 @@ export default function HomePage({ allBooks }) {
   }, [heroSlides.length]);
 
   const handleViewAll = (shelf) => {
-    if (shelf.title.includes("Brand New")) navigate("/catalogue?tier=new");
-    else if (shelf.title.includes("Children")) navigate("/category/children-books");
-    else if (shelf.title.includes("Teen")) navigate("/category/teen-fiction");
-    else if (shelf.title.includes("Fiction")) navigate("/category/fiction");
-    else if (shelf.title.includes("Premium")) navigate("/category/premium-books");
-    else if (shelf.title.includes("Classic")) navigate("/category/classic-books");
-    else if (shelf.title.includes("Standard")) navigate("/category/standard-books");
-    else if (shelf.title.includes("Coffee Table")) navigate("/category/coffee-table-books");
-    else if (shelf.title.includes("Top 10")) navigate("/catalogue?sort=match");
+    if (shelf.title.includes("Brand New")) navigate("/catalogue?collection=new-books");
+    else if (shelf.title.includes("Children")) navigate("/catalogue?category=children-books");
+    else if (shelf.title.includes("Teen")) navigate("/catalogue?category=teen-fiction");
+    else if (shelf.title.includes("Fiction")) navigate("/catalogue?category=fiction");
+    else if (shelf.title.includes("Premium")) navigate("/catalogue?price=500-above");
+    else if (shelf.title.includes("Classic")) navigate("/catalogue?category=classic-books");
+    else if (shelf.title.includes("Standard")) navigate("/catalogue?price=200-349");
+    else if (shelf.title.includes("Coffee Table")) navigate("/catalogue?category=coffee-table-books");
+    else if (shelf.title.includes("Top 10")) navigate("/catalogue?collection=bestsellers");
     else if (shelf.title.includes("Discount")) navigate("/catalogue?sort=price-low");
     else navigate("/catalogue");
   };
@@ -228,7 +228,7 @@ export default function HomePage({ allBooks }) {
             {genreItems.map(([title, subtitle, image, catKey], index) => (
               <Link
                 key={title}
-                to={`/category/${catKey}`}
+                to={`/catalogue?category=${catKey}`}
                 className={`genre-card genre-${index + 1}`}
               >
                 <img src={image} alt={title} />

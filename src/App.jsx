@@ -7,6 +7,7 @@ import { books, internetNewBooks, getNormalizedBook } from "./data/books";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import SustainabilityImpactSection from "./components/SustainabilityImpactSection";
 import CartDrawer from "./components/CartDrawer";
 
 import HomePage from "./pages/HomePage";
@@ -102,6 +103,7 @@ function InnerApp() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
+      <SustainabilityImpactSection />
       <Footer />
       <CartDrawer />
       <Toast />
