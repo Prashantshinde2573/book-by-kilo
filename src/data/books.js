@@ -153,14 +153,46 @@ export const publishers = [
 ];
 
 export const authors = [
-  { name: "J.K. Rowling", genre: "Fantasy & Magic" },
-  { name: "Agatha Christie", genre: "Crime & Mystery" },
-  { name: "Stephen King", genre: "Horror & Suspense" },
-  { name: "Roald Dahl", genre: "Children's Classics" },
-  { name: "Enid Blyton", genre: "Adventure & Mystery" },
-  { name: "Ruskin Bond", genre: "Short Stories & Life" },
-  { name: "Dan Brown", genre: "Thrillers & Symbols" },
-  { name: "George R.R. Martin", genre: "Epic Fantasy" },
+  { 
+    name: "J.K. Rowling", 
+    genre: "Fantasy & Magic", 
+    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80" 
+  },
+  { 
+    name: "Agatha Christie", 
+    genre: "Crime & Mystery", 
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80" 
+  },
+  { 
+    name: "Stephen King", 
+    genre: "Horror & Suspense", 
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80" 
+  },
+  { 
+    name: "Roald Dahl", 
+    genre: "Children's Classics", 
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80" 
+  },
+  { 
+    name: "Enid Blyton", 
+    genre: "Adventure & Mystery", 
+    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" 
+  },
+  { 
+    name: "Ruskin Bond", 
+    genre: "Short Stories & Life", 
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&auto=format&fit=crop&q=80" 
+  },
+  { 
+    name: "Dan Brown", 
+    genre: "Thrillers & Symbols", 
+    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&auto=format&fit=crop&q=80" 
+  },
+  { 
+    name: "George R.R. Martin", 
+    genre: "Epic Fantasy", 
+    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&auto=format&fit=crop&q=80" 
+  },
 ];
 
 export const genreItems = [

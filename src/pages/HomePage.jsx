@@ -144,16 +144,6 @@ export default function HomePage({ allBooks }) {
               <span className="eyebrow">CUSTOMER TRUST &amp; REVIEWS</span>
               <h1>Google Rating <em>4.8 ★</em></h1>
               <p className="byline">by 50,000+ Verified Readers Across India</p>
-              <div className="mobile-only-gcard mobile-g-rating-card">
-                <div className="g-card-v2-score-row" style={{ justifyContent: "center", margin: "4px 0" }}>
-                  <span className="g-card-v2-score" style={{ fontSize: "28px" }}>4.8</span>
-                  <span className="g-card-v2-scale">/ 5</span>
-                  <div className="g-card-v2-stars" style={{ marginLeft: "8px" }}>
-                    <span className="g-star">★</span><span className="g-star">★</span><span className="g-star">★</span><span className="g-star">★</span><span className="g-star g-star-half">★</span>
-                  </div>
-                </div>
-                <div className="g-card-v2-count" style={{ textAlign: "center" }}>Based on <strong>1,248</strong> verified reader reviews</div>
-              </div>
               <div className="hero-meta">
                 <span><FiCheck /> 100% Authentic Books</span>
                 <span>Fast Shipping</span>
@@ -308,10 +298,33 @@ export default function HomePage({ allBooks }) {
           <div className="shelf-heading"><div><h2>Explore by Authors</h2></div></div>
           <div className="author-grid">
             {authors.map((author) => (
-              <Link key={author.name} to={`/search?q=${encodeURIComponent(author.name)}`} className="author-card" aria-label={`Browse books by ${author.name}`}>
-                <div className="author-info">
-                  <strong>{author.name}</strong>
-                  <small>{author.genre}</small>
+              <Link 
+                key={author.name} 
+                to={`/catalogue?author=${encodeURIComponent(author.name)}`} 
+                className="author-card" 
+                aria-label={`Browse books by ${author.name}`}
+              >
+                <div className="author-card-left">
+                  <div className="author-avatar-wrap">
+                    {author.image ? (
+                      <img 
+                        src={author.image} 
+                        alt={author.name} 
+                        className="author-avatar-img" 
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : null}
+                    <span className="author-avatar-initials">
+                      {author.name.split(" ").map(n => n[0]).join("")}
+                    </span>
+                  </div>
+                  <div className="author-info">
+                    <strong>{author.name}</strong>
+                    <small>{author.genre}</small>
+                  </div>
                 </div>
                 <FiChevronRight className="author-arrow" />
               </Link>
