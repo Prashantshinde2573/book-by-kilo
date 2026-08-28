@@ -111,13 +111,15 @@ export default function Header() {
 
         {/* Desktop Mega Dropdown item */}
         <div className="mega-nav-item" onMouseEnter={handleMegaEnter} onMouseLeave={handleMegaLeave}>
-          <Link
-            to="/catalogue"
-            className={`mega-trigger desktop-only-trigger ${isActive("/category") || megaOpen ? "active" : ""}`}
-            onClick={(e) => { e.preventDefault(); navigate("/catalogue"); setMenuOpen(false); }}
-          >
-            Categories <FiChevronDown className="mega-caret" />
-          </Link>
+          {!menuOpen && (
+            <Link
+              to="/catalogue"
+              className={`mega-trigger desktop-only-trigger ${isActive("/category") || megaOpen ? "active" : ""}`}
+              onClick={(e) => { e.preventDefault(); navigate("/catalogue"); setMenuOpen(false); }}
+            >
+              Categories <FiChevronDown className="mega-caret" />
+            </Link>
+          )}
 
           {/* Mobile Accordion Toggle Button */}
           <button

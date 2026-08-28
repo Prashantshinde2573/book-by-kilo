@@ -4822,6 +4822,7 @@ nav a.active::after,
   /* Uniform Mobile Section Spacing & Gutters */
   .content-overlap {
     margin-top: 0;
+    padding-bottom: 0 !important;
   }
 
   .shelf-heading {
@@ -9107,6 +9108,7 @@ body {
     max-width: 100% !important;
     overflow: hidden !important;
     margin-bottom: 24px !important;
+    padding-bottom: 0px !important;
   }
 
   .top-ten-shelf .shelf-heading {
@@ -9415,6 +9417,15 @@ body {
     padding: 0 !important;
   }
 
+  .author-section {
+    margin: 28px 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding-top: 36px !important;
+    padding-bottom: 36px !important;
+  }
+
   .author-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -9424,12 +9435,76 @@ body {
   }
 
   a.author-card {
-    padding: 12px 10px !important;
+    min-height: 68px !important;
+    padding: 10px 12px !important;
     box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    border-radius: 10px !important;
   }
 
-  .author-name {
+  .author-card-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+
+  .author-avatar-wrap {
+    width: 40px !important;
+    height: 40px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .author-avatar-initials {
     font-size: 13px !important;
+  }
+
+  a.author-card .author-info {
+    min-width: 0 !important;
+    flex: 1 !important;
+    gap: 2px !important;
+  }
+
+  a.author-card .author-info strong {
+    font-size: 13px !important;
+    line-height: 1.25 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+  }
+
+  a.author-card .author-info small {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+  }
+
+  a.author-card .author-arrow {
+    display: none !important;
+  }
+
+  @media (max-width: 420px) {
+    .author-grid {
+      grid-template-columns: 1fr !important;
+      gap: 8px !important;
+    }
+
+    a.author-card {
+      padding: 12px 14px !important;
+    }
+
+    a.author-card .author-arrow {
+      display: block !important;
+      font-size: 16px !important;
+    }
   }
 
   /* 8. Languages Grid */
