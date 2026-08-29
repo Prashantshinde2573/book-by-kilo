@@ -15,6 +15,7 @@ export const categoryOptions = [
 
 export const collectionOptions = [
   { label: "All Collections", value: "all" },
+  { label: "New Arrivals", value: "new-arrivals" },
   { label: "Bestseller Reads", value: "bestsellers" },
   { label: "Brand New Books", value: "new-books" },
   { label: "Vintage & Classics", value: "classics" },
@@ -55,9 +56,29 @@ export const sortOptions = [
 export function normalizeCategory(val) {
   if (!val || val === "all") return "all";
   const s = String(val).toLowerCase();
-  if (s === "children" || s === "children-books") return "children-books";
-  if (s === "classic" || s === "classic-books") return "classic-books";
-  if (s === "collector" || s === "coffee-table-books") return "coffee-table-books";
+  if (s === "children" || s === "children-books" || s === "kids") return "children-books";
+  if (s === "teen" || s === "teen-fiction" || s === "young-adult") return "teen-fiction";
+  if (s === "classic" || s === "classic-books" || s === "classics") return "classic-books";
+  if (s === "collector" || s === "coffee-table-books" || s === "coffee") return "coffee-table-books";
+  if (s === "history" || s === "politics" || s === "history-politics") return "history";
+  if (s === "business" || s === "economics" || s === "leadership") return "business";
+  if (s === "biography" || s === "memoir" || s === "biography-memoir") return "biography";
+  if (s === "fiction") return "fiction";
+  if (s === "non-fiction" || s === "nonfiction") return "non-fiction";
+  return s;
+}
+
+// Helper to normalize collection slugs across variations
+export function normalizeCollection(val) {
+  if (!val || val === "all") return "all";
+  const s = String(val).toLowerCase();
+  if (s === "new" || s === "new-arrivals" || s === "recently-added" || s === "recent") return "new-arrivals";
+  if (s === "brand-new" || s === "brand-new-books" || s === "new-books") return "new-books";
+  if (s === "bestseller" || s === "bestsellers" || s === "top10" || s === "top-10-books" || s === "top-10") return "bestsellers";
+  if (s === "classic" || s === "classics" || s === "vintage") return "classics";
+  if (s === "surprise" || s === "surprise-stack") return "surprise-stack";
+  if (s === "bulk" || s === "bulk-books" || s === "books-in-bulk") return "bulk";
+  if (s === "under-199" || s === "under199" || s === "budget") return "under-199";
   return s;
 }
 

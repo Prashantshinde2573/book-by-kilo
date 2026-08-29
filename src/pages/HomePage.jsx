@@ -75,16 +75,17 @@ export default function HomePage({ allBooks }) {
   }, [heroSlides.length]);
 
   const handleViewAll = (shelf) => {
-    if (shelf.title.includes("Brand New")) navigate("/catalogue?collection=new-books");
+    if (shelf.title.includes("Top 10")) navigate("/catalogue?collection=bestsellers");
+    else if (shelf.title.includes("Recently Added")) navigate("/catalogue?collection=new-arrivals");
+    else if (shelf.title.includes("Brand New")) navigate("/catalogue?collection=new-books");
     else if (shelf.title.includes("Children")) navigate("/catalogue?category=children-books");
     else if (shelf.title.includes("Teen")) navigate("/catalogue?category=teen-fiction");
     else if (shelf.title.includes("Fiction")) navigate("/catalogue?category=fiction");
-    else if (shelf.title.includes("Premium")) navigate("/catalogue?price=500-above");
     else if (shelf.title.includes("Classic")) navigate("/catalogue?category=classic-books");
-    else if (shelf.title.includes("Standard")) navigate("/catalogue?price=200-349");
     else if (shelf.title.includes("Coffee Table")) navigate("/catalogue?category=coffee-table-books");
-    else if (shelf.title.includes("Top 10")) navigate("/catalogue?collection=bestsellers");
-    else if (shelf.title.includes("Discount")) navigate("/catalogue?sort=price-low");
+    else if (shelf.title.includes("Premium")) navigate("/catalogue?price=500-above");
+    else if (shelf.title.includes("Standard")) navigate("/catalogue?price=200-349");
+    else if (shelf.title.includes("Discount")) navigate("/catalogue?collection=under-199");
     else navigate("/catalogue");
   };
 
@@ -150,7 +151,7 @@ export default function HomePage({ allBooks }) {
               </div>
               <p className="description">{googleReviewSlide.description}</p>
               <div className="hero-actions">
-                <Link to="/catalogue" className="cta"><FiShoppingCart /> Shop Bestsellers</Link>
+                <Link to="/catalogue?collection=bestsellers" className="cta"><FiShoppingCart /> Shop Bestsellers</Link>
                 <button className="secondary" onClick={() => window.open("https://www.google.com/search?q=booksbykilo+reviews", "_blank")}>
                   <FiStar /> 1,248 Reviews
                 </button>
@@ -207,7 +208,6 @@ export default function HomePage({ allBooks }) {
             shelf={{ title: "Top 10 Books This Week" }}
             items={[...allBooks].sort((a, b) => b.match - a.match).slice(0, 10)}
             onViewAll={handleViewAll}
-            rank
           />
         </div>
 
@@ -215,22 +215,21 @@ export default function HomePage({ allBooks }) {
         <section className="discovery-section genre-section" id="genres">
           <div className="shelf-heading"><div><h2>Explore by Genre</h2></div></div>
           <div className="genre-grid">
-            {genreItems.map(([title, subtitle, image, catKey], index) => (
+            {genreItems.map(([title, , image, catKey], index) => (
               <Link
                 key={title}
-                to={`/catalogue?category=${catKey}`}
+                to={`/category/${catKey}`}
                 className={`genre-card genre-${index + 1}`}
               >
                 <img src={image} alt={title} />
                 <b className="genre-number">{String(index + 1).padStart(2, "0")}</b>
                 <span className="genre-meta">
                   <strong>{title}</strong>
-                  <small>{subtitle}</small>
                 </span>
               </Link>
             ))}
             {/* Desktop Surprise Stack */}
-            <Link to="/category/surprise-stack" className="genre-card genre-surprise desktop-surprise-card">
+            <Link to="/surprise-stack" className="genre-card genre-surprise desktop-surprise-card">
               <img className="surprise-bg-img" src={surpriseCard[2]} alt={surpriseCard[0]} />
               <div className="surprise-overlay" />
               <div className="surprise-content">
@@ -247,7 +246,7 @@ export default function HomePage({ allBooks }) {
 
         {/* Mobile Surprise Stack */}
         <section className="surprise-standalone-section mobile-surprise-section" id="surprisestack">
-          <Link to="/category/surprise-stack" className="genre-card genre-surprise-standalone">
+          <Link to="/surprise-stack" className="genre-card genre-surprise-standalone">
             <img className="surprise-bg-img" src={surpriseCard[2]} alt={surpriseCard[0]} />
             <div className="surprise-overlay" />
             <div className="surprise-content">
@@ -273,7 +272,7 @@ export default function HomePage({ allBooks }) {
             <span className="eyebrow">CURATED FOR CURIOUS READERS</span>
             <h2>Bestseller Collections</h2>
             <p style={{ color: "#cbd5e1", fontSize: "14px", marginTop: "4px" }}>Unbeatable deals on bestselling pre-loved titles.</p>
-            <Link to="/catalogue?sort=match" style={{ display: "inline-flex", alignItems: "center", gap: "8px", marginTop: "16px" }}>Explore Bestsellers <FiChevronRight /></Link>
+            <Link to="/collection/bestsellers" style={{ display: "inline-flex", alignItems: "center", gap: "8px", marginTop: "16px" }}>Explore Bestsellers <FiChevronRight /></Link>
           </div>
           <div className="editor-stack">
             {[...allBooks].sort((a, b) => b.match - a.match).slice(0, 5).map((book, index) => (
@@ -297,11 +296,11 @@ export default function HomePage({ allBooks }) {
         <section className="discovery-section author-section" id="authors">
           <div className="shelf-heading"><div><h2>Explore by Authors</h2></div></div>
           <div className="author-grid">
-            {authors.map((author) => (
+            {authors.map((author, index) => (
               <Link 
                 key={author.name} 
                 to={`/catalogue?author=${encodeURIComponent(author.name)}`} 
-                className="author-card" 
+                className={`author-card author-${index + 1}`} 
                 aria-label={`Browse books by ${author.name}`}
               >
                 <div className="author-card-left">
@@ -339,9 +338,10 @@ export default function HomePage({ allBooks }) {
         <section className="discovery-section language-section" id="languages">
           <div className="shelf-heading"><div><h2>Explore by Regional Languages</h2></div></div>
           <div className="language-grid">
-            {languages.map(([language, native, image]) => (
-              <Link key={language} to={`/search?q=${encodeURIComponent(language)}`}>
-                <span><strong>{native}</strong><small>{language}</small></span><img src={image} alt="" />
+            {languages.map(([language, native, image], index) => (
+              <Link key={language} to={`/search?q=${encodeURIComponent(language)}`} className={`language-card language-${index + 1}`}>
+                <span><strong>{native}</strong><small>{language}</small></span>
+                <img src={image} alt={language} />
               </Link>
             ))}
           </div>
@@ -357,15 +357,21 @@ export default function HomePage({ allBooks }) {
         <section className="collection-section" id="categories">
           <div className="shelf-heading"><div><h2>Choose by Pricing</h2></div></div>
           <div className="collection-grid">
-            {collections.map((collection) => {
-              const to = collection.route.startsWith("category-")
-                ? `/category/${collection.route.replace("category-", "")}-books`.replace("--books", "-books")
-                : `/${collection.route}`;
+            {collections.map((collection, index) => {
+              let toPath = "/catalogue";
+              if (collection.route === "brand-new-books") toPath = "/collection/new-books";
+              else if (collection.route === "premium-books") toPath = "/collection/premium-books";
+              else if (collection.route === "category-non-fiction") toPath = "/category/non-fiction";
+              else if (collection.route === "category-children") toPath = "/category/children-books";
+              else if (collection.route === "classic-books") toPath = "/category/classic-books";
+              else if (collection.route === "standard-books") toPath = "/collection/standard-books";
+              else if (collection.route === "collector-books") toPath = "/category/coffee-table-books";
+              else if (collection.route === "surprise-stack") toPath = "/surprise-stack";
+
               return (
-                <Link className="collection-card gradient-reader-card" key={collection.title} to={`/catalogue?tier=${collection.route === "standard-books" ? "standard" : collection.route === "premium-books" ? "premium" : "all"}`}>
-                  <img src={collection.image} alt="" />
+                <Link className={`collection-card collection-${index + 1}`} key={collection.title} to={toPath}>
                   <span><strong>{collection.title}</strong><small>{collection.subtitle}</small></span>
-                  <FiChevronRight />
+                  <img src={collection.image} alt={collection.title} />
                 </Link>
               );
             })}

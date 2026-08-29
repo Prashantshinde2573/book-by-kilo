@@ -54,23 +54,39 @@ export default function BookCard({ book, rank }) {
   const openBook = () => navigate(`/product/${normBook.id}`);
 
   return (
-    <article className={`book-card ${rank ? "ranked" : ""} ${preview ? "preview-active" : ""}`}>
+    <article
+      className={`book-card ${rank ? "ranked" : ""} ${preview ? "preview-active" : ""}`}
+      onClick={openBook}
+      onMouseEnter={schedulePreview}
+      onMouseLeave={scheduleClose}
+    >
       {rank && <span className="rank-number">{rank}</span>}
-      <button className="book-cover" onMouseEnter={schedulePreview} onMouseLeave={scheduleClose} onClick={openBook} aria-label={`View ${normBook.title}`}>
+      <div className="book-cover">
         <img className="cover-backdrop" src={normBook.image} alt="" aria-hidden="true" />
         <img className="cover-foreground" src={normBook.image} alt={`${normBook.title} by ${normBook.author}`} />
         {normBook.discount > 0 && <span className="card-discount-pill">{normBook.discount}% OFF</span>}
-        <div className="cover-price-badge">
+      </div>
+      <div className="card-info">
+        <h3 className="card-title" title={normBook.title}>{normBook.title}</h3>
+        <div className="card-pricing-row">
           <span className="card-sale-price">{formatPrice(normBook.salePrice)}</span>
-          {normBook.mrp > normBook.salePrice && <span className="card-mrp-price">MRP {formatPrice(normBook.mrp)}</span>}
+          {normBook.mrp > normBook.salePrice && (
+            <span className="card-mrp-price">
+              MRP <span className="card-mrp-val">{formatPrice(normBook.mrp)}</span>
+            </span>
+          )}
+          {normBook.discount > 0 && (
+            <span className="card-discount-tag">({normBook.discount}% OFF)</span>
+          )}
         </div>
-      </button>
+      </div>
       {preview && createPortal(
         <div
           className="card-preview portal-preview"
           style={{ left: preview.left, top: preview.top, width: preview.width }}
           onMouseEnter={cancelTimers}
           onMouseLeave={scheduleClose}
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="preview-art">
             <img className="preview-blur" src={normBook.image} alt="" aria-hidden="true" />

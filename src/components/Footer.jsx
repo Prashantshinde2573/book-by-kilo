@@ -24,11 +24,11 @@ export default function Footer() {
             <div className="vsco-nav-col">
               <h3 className="vsco-col-title">CATEGORIES</h3>
               <ul className="vsco-link-list">
-                <li><Link to="/catalogue?category=fiction">Fiction Books</Link></li>
-                <li><Link to="/catalogue?category=non-fiction">Non-Fiction</Link></li>
-                <li><Link to="/catalogue?category=children-books">Children's Books</Link></li>
-                <li><Link to="/catalogue?category=teen-fiction">Teen Fiction</Link></li>
-                <li><Link to="/catalogue?category=coffee-table-books">Coffee Table Books</Link></li>
+                <li><Link to="/category/fiction">Fiction Books</Link></li>
+                <li><Link to="/category/non-fiction">Non-Fiction</Link></li>
+                <li><Link to="/category/children-books">Children's Books</Link></li>
+                <li><Link to="/category/teen-fiction">Teen Fiction</Link></li>
+                <li><Link to="/category/coffee-table-books">Coffee Table Books</Link></li>
                 <li><Link to="/catalogue">Explore All Categories</Link></li>
               </ul>
             </div>
@@ -38,11 +38,11 @@ export default function Footer() {
               <h3 className="vsco-col-title">COLLECTIONS</h3>
               <ul className="vsco-link-list">
                 <li><Link to="/catalogue">All Books by Kilo</Link></li>
-                <li><Link to="/catalogue?sort=match">Bestseller Stacks</Link></li>
-                <li><Link to="/catalogue?tier=new">Brand New Books</Link></li>
-                <li><Link to="/category/surprise-stack">Mystery Surprise Stack</Link></li>
+                <li><Link to="/collection/bestsellers">Bestseller Stacks</Link></li>
+                <li><Link to="/collection/new-books">Brand New Books</Link></li>
+                <li><Link to="/surprise-stack">Mystery Surprise Stack</Link></li>
                 <li><Link to="/bulk-purchase">Bulk &amp; Wholesale</Link></li>
-                <li><Link to="/catalogue?tier=classic">Classic &amp; Vintage</Link></li>
+                <li><Link to="/collection/classics">Classic &amp; Vintage</Link></li>
               </ul>
             </div>
 
@@ -70,7 +70,7 @@ export default function Footer() {
           </Link>
 
           <div className="vsco-cta-actions">
-            <Link to="/category/surprise-stack" className="vsco-pill-btn vsco-pill-outline">
+            <Link to="/surprise-stack" className="vsco-pill-btn vsco-pill-outline">
               SURPRISE STACK
             </Link>
             <Link to="/catalogue" className="vsco-pill-btn vsco-pill-solid">

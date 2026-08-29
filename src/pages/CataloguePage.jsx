@@ -4,6 +4,7 @@ import { FiFilter, FiChevronDown, FiX } from "react-icons/fi";
 import BookCard from "../components/BookCard";
 import FilterSidebar, {
   normalizeCategory,
+  normalizeCollection,
   categoryOptions,
   collectionOptions,
   authorOptions,
@@ -19,11 +20,25 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
   const [page, setPage] = useState(1);
 
   const sortParam = searchParams.get("sort") || "match";
+
+  // Category normalization
   const rawCatParam = searchParams.get("category") || searchParams.get("genre") || defaultCategory || "all";
   const catParam = normalizeCategory(rawCatParam);
-  const collectionParam = searchParams.get("collection") || "all";
+
+  // Collection / special state normalization
+  const rawCollectionParam =
+    searchParams.get("collection") ||
+    searchParams.get("filter") ||
+    (searchParams.get("tier") === "new" ? "new-books" : (searchParams.get("tier") === "classic" ? "classics" : null)) ||
+    "all";
+  const collectionParam = normalizeCollection(rawCollectionParam);
+
+  // Author normalization
   const authorParam = searchParams.get("author") || "all";
-  const priceParam = searchParams.get("price") || searchParams.get("tier") || "all";
+
+  // Price limit normalization
+  const rawPrice = searchParams.get("price");
+  const priceParam = rawPrice || "all";
 
   const setSortBy = (v) => {
     setSearchParams((p) => {
@@ -53,8 +68,15 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
   const setCollectionFilter = (v) => {
     setSearchParams((p) => {
       const next = new URLSearchParams(p);
-      if (v === "all") next.delete("collection");
-      else next.set("collection", v);
+      if (v === "all") {
+        next.delete("collection");
+        next.delete("filter");
+        next.delete("tier");
+      } else {
+        next.set("collection", v);
+        next.delete("filter");
+        next.delete("tier");
+      }
       return next;
     });
     setPage(1);
@@ -75,22 +97,46 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
       const next = new URLSearchParams(p);
       if (v === "all") {
         next.delete("price");
-        next.delete("tier");
       } else {
         next.set("price", v);
-        next.delete("tier");
       }
       return next;
     });
     setPage(1);
   };
 
+  const currentCategoryLabel = categoryOptions.find((g) => g.value === catParam)?.label;
+  const currentCollectionLabel = collectionOptions.find((c) => c.value === collectionParam)?.label;
+  const currentPriceLabel = priceLimitOptions.find((p) => p.value === priceParam)?.label;
+
+  const activeTitle =
+    catParam !== "all" && currentCategoryLabel ? currentCategoryLabel :
+    collectionParam !== "all" && currentCollectionLabel ? currentCollectionLabel :
+    authorParam !== "all" ? `Books by ${authorParam}` :
+    priceParam !== "all" && currentPriceLabel ? `Books ${currentPriceLabel}` :
+    "All Books Catalogue";
+
+  const activeKicker =
+    catParam !== "all" ? "GENRE COLLECTION" :
+    collectionParam !== "all" ? "CURATED COLLECTION" :
+    authorParam !== "all" ? "AUTHOR SPOTLIGHT" :
+    priceParam !== "all" ? "PRICE FILTER" :
+    "COMPLETE CATALOGUE";
+
+  const activeDescription =
+    catParam !== "all" && currentCategoryLabel
+      ? `Explore our curated selection of quality-checked ${currentCategoryLabel}.`
+      : collectionParam !== "all" && currentCollectionLabel
+      ? `Explore hand-picked titles in our ${currentCollectionLabel} collection.`
+      : authorParam !== "all"
+      ? `Browse quality-checked pre-loved books written by ${authorParam}.`
+      : priceParam !== "all" && currentPriceLabel
+      ? `Discover fantastic pre-loved book deals within ${currentPriceLabel}.`
+      : "Browse our complete catalog of quality-checked pre-loved books by weight.";
+
   useEffect(() => {
-    const currentLabel = categoryOptions.find((g) => g.value === catParam)?.label;
-    document.title = catParam !== "all" && currentLabel
-      ? `${currentLabel} | Books By Kilo`
-      : "All Books | Books By Kilo";
-  }, [catParam]);
+    document.title = `${activeTitle} | Books By Kilo`;
+  }, [activeTitle]);
 
   const filtered = useMemo(() => {
     const result = allBooks.filter((b) => {
@@ -101,39 +147,70 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
         const bookCats = (b.categories || []).map((c) => String(c).toLowerCase());
 
         if (catParam === "fiction") {
-          catMatch = bookCats.includes("fiction") || bookGenre.includes("fiction") || bookGenre.includes("novel");
+          catMatch =
+            bookCats.includes("fiction") ||
+            bookGenre.includes("fiction") ||
+            bookGenre.includes("novel") ||
+            bookGenre.includes("story") ||
+            bookGenre.includes("fantasy") ||
+            bookGenre.includes("mystery") ||
+            bookGenre.includes("thriller");
         } else if (catParam === "non-fiction") {
-          catMatch = bookCats.includes("non-fiction") || bookGenre.includes("non-fiction");
+          catMatch =
+            bookCats.includes("non-fiction") ||
+            bookGenre.includes("non-fiction") ||
+            bookGenre.includes("history") ||
+            bookGenre.includes("business") ||
+            bookGenre.includes("biography") ||
+            bookGenre.includes("science") ||
+            bookGenre.includes("guide");
         } else if (catParam === "children-books" || catParam === "children") {
           catMatch =
             bookCats.includes("children") ||
             bookCats.includes("children-books") ||
             bookGenre.includes("children") ||
-            bookGenre.includes("kids");
+            bookGenre.includes("kids") ||
+            bookGenre.includes("activity") ||
+            bookGenre.includes("picture");
         } else if (catParam === "teen-fiction" || catParam === "teen") {
           catMatch =
             bookCats.includes("teen-fiction") ||
             bookCats.includes("teen") ||
             bookGenre.includes("teen") ||
-            bookGenre.includes("young adult");
+            bookGenre.includes("young adult") ||
+            bookGenre.includes("ya");
         } else if (catParam === "classic-books" || catParam === "classic") {
-          catMatch = b.tier?.toLowerCase() === "classic" || bookCats.includes("classic") || bookGenre.includes("classic");
+          catMatch =
+            b.tier?.toLowerCase() === "classic" ||
+            bookCats.includes("classic") ||
+            bookGenre.includes("classic") ||
+            bookGenre.includes("literature");
         } else if (catParam === "coffee-table-books" || catParam === "collector") {
           catMatch =
             bookCats.includes("collector") ||
             bookCats.includes("coffee-table-books") ||
             b.tier?.toLowerCase() === "premium" ||
-            bookGenre.includes("coffee");
+            bookGenre.includes("coffee") ||
+            bookGenre.includes("art") ||
+            bookGenre.includes("photography");
         } else if (catParam === "history") {
-          catMatch = bookCats.includes("history") || bookGenre.includes("history") || bookGenre.includes("politics");
+          catMatch =
+            bookCats.includes("history") ||
+            bookGenre.includes("history") ||
+            bookGenre.includes("politics");
         } else if (catParam === "business") {
           catMatch =
             bookCats.includes("business") ||
             bookGenre.includes("business") ||
             bookGenre.includes("economics") ||
-            bookGenre.includes("leadership");
+            bookGenre.includes("leadership") ||
+            bookGenre.includes("finance");
         } else if (catParam === "biography") {
-          catMatch = bookCats.includes("biography") || bookGenre.includes("biography") || bookGenre.includes("memoir");
+          catMatch =
+            bookCats.includes("biography") ||
+            bookGenre.includes("biography") ||
+            bookGenre.includes("memoir") ||
+            bookGenre.includes("autobiography");
         } else {
           catMatch = bookCats.includes(catParam) || bookGenre.includes(catParam);
         }
@@ -144,15 +221,26 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
       if (collectionParam !== "all") {
         const bookPrice = b.salePrice ?? b.price ?? 0;
         if (collectionParam === "bestsellers") {
-          collectionMatch = (b.match || 0) >= 90;
+          collectionMatch = (b.match || 0) >= 90 || b.isBestseller === true;
+        } else if (collectionParam === "new-arrivals") {
+          collectionMatch =
+            b.tier?.toLowerCase() === "new" ||
+            (b.categories || []).includes("new-books") ||
+            String(b.id).startsWith("new-") ||
+            String(b.id).startsWith("catalog-");
         } else if (collectionParam === "new-books") {
-          collectionMatch = b.tier?.toLowerCase() === "new" || (b.categories || []).includes("new-books");
+          collectionMatch =
+            b.tier?.toLowerCase() === "new" ||
+            (b.categories || []).includes("new-books");
         } else if (collectionParam === "classics") {
-          collectionMatch = b.tier?.toLowerCase() === "classic" || String(b.genre || "").toLowerCase().includes("classic");
+          collectionMatch =
+            b.tier?.toLowerCase() === "classic" ||
+            String(b.genre || "").toLowerCase().includes("classic") ||
+            (b.categories || []).includes("classic");
         } else if (collectionParam === "surprise-stack") {
           collectionMatch = (b.match || 0) >= 85;
         } else if (collectionParam === "bulk") {
-          collectionMatch = true;
+          collectionMatch = (b.weight || 0) >= 200 || true;
         } else if (collectionParam === "under-199") {
           collectionMatch = bookPrice <= 199;
         }
@@ -187,24 +275,12 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
   const paginated = filtered.slice(0, page * PAGE_SIZE);
   const hasMore = paginated.length < filtered.length;
 
-  const currentCategoryLabel = categoryOptions.find((g) => g.value === catParam)?.label;
-  const currentCollectionLabel = collectionOptions.find((c) => c.value === collectionParam)?.label;
-  const currentPriceLabel = priceLimitOptions.find((p) => p.value === priceParam)?.label;
-
   return (
     <div className="catalogue-page myntra-catalogue-page">
       <div className="page-header-banner">
-        <span className="catalog-kicker">
-          {catParam !== "all" ? "GENRE COLLECTION" : "COMPLETE CATALOGUE"}
-        </span>
-        <h1 className="catalog-title">
-          {catParam !== "all" ? currentCategoryLabel : "All Books Catalogue"}
-        </h1>
-        <p className="catalog-description">
-          {catParam !== "all"
-            ? `Explore our curated selection of quality-checked ${currentCategoryLabel}.`
-            : "Browse our complete catalog of quality-checked pre-loved books."}
-        </p>
+        <span className="catalog-kicker">{activeKicker}</span>
+        <h1 className="catalog-title">{activeTitle}</h1>
+        <p className="catalog-description">{activeDescription}</p>
       </div>
 
       <div className="catalogue-layout myntra-catalogue-layout">

@@ -1,7 +1,5 @@
-import { useParams } from "react-router-dom";
-import CataloguePage from "./CataloguePage";
+import CategoryLandingPage from "./CategoryLandingPage";
 
-export default function CategoryPage({ allBooks }) {
-  const { slug } = useParams();
-  return <CataloguePage allBooks={allBooks} defaultCategory={slug} />;
+export default function CategoryPage({ allBooks, type = "category" }) {
+  return <CategoryLandingPage allBooks={allBooks} type={type} />;
 }

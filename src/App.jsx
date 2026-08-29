@@ -88,7 +88,8 @@ function InnerApp() {
           <Route path="/catalogue" element={<CataloguePage allBooks={allBooks} />} />
           <Route path="/shop" element={<CataloguePage allBooks={allBooks} />} />
           <Route path="/category/surprise-stack" element={<SurpriseStackPage />} />
-          <Route path="/category/:slug" element={<CategoryPage allBooks={allBooks} />} />
+          <Route path="/category/:slug" element={<CategoryPage allBooks={allBooks} type="category" />} />
+          <Route path="/collection/:slug" element={<CategoryPage allBooks={allBooks} type="collection" />} />
           <Route path="/product/:id" element={<ProductPage allBooks={allBooks} />} />
           <Route path="/search" element={<SearchPage allBooks={allBooks} />} />
           <Route path="/cart" element={<CartPage />} />

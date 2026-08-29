@@ -8,18 +8,18 @@ import { FaFire } from "react-icons/fa";
 import { useAppContext } from "../context/AppContext";
 
 const megaCategories = [
-  { title: "Top 10 Books", image: "/books/pokemon.jpg", path: "/catalogue?sort=match" },
+  { title: "Top 10 Books", image: "/books/pokemon.jpg", path: "/collection/bestsellers" },
   { title: "Explore by Genre", image: "/books/alice.jpg", path: "/catalogue" },
-  { title: "Recently Added Books", image: "/books/when-it-snows.jpg", path: "/catalogue?sort=match" },
-  { title: "Brand New Books", image: "/books/timetime.jpg", path: "/catalogue?tier=new" },
-  { title: "Bestsellers", image: "/books/king-lear.jpg", path: "/catalogue?sort=match" },
-  { title: "Children Books", image: "/brand/children.webp", path: "/catalogue?category=children-books" },
-  { title: "Teen Fiction", image: "/books/keira.jpg", path: "/catalogue?category=teen-fiction" },
-  { title: "Fiction Books", image: "/brand/non-fiction.webp", path: "/catalogue?category=fiction" },
-  { title: "Non-Fiction", image: "/brand/non-fiction.webp", path: "/catalogue?category=non-fiction" },
-  { title: "Extra Discount Sale", image: "/books/umbrella-tree.jpg", path: "/catalogue?sort=price-low" },
-  { title: "Coffee Table Books", image: "/books/dinosaurs.jpg", path: "/catalogue?category=coffee-table-books" },
-  { title: "Surprise Stack", image: "/brand/surprise_banner.jpg", path: "/category/surprise-stack" },
+  { title: "Recently Added Books", image: "/books/when-it-snows.jpg", path: "/collection/new-arrivals" },
+  { title: "Brand New Books", image: "/books/timetime.jpg", path: "/collection/new-books" },
+  { title: "Bestsellers", image: "/books/king-lear.jpg", path: "/collection/bestsellers" },
+  { title: "Children Books", image: "/brand/children.webp", path: "/category/children-books" },
+  { title: "Teen Fiction", image: "/books/keira.jpg", path: "/category/teen-fiction" },
+  { title: "Fiction Books", image: "/brand/non-fiction.webp", path: "/category/fiction" },
+  { title: "Non-Fiction", image: "/brand/non-fiction.webp", path: "/category/non-fiction" },
+  { title: "Extra Discount Sale", image: "/books/umbrella-tree.jpg", path: "/collection/under-199" },
+  { title: "Coffee Table Books", image: "/books/dinosaurs.jpg", path: "/category/coffee-table-books" },
+  { title: "Surprise Stack", image: "/brand/surprise_banner.jpg", path: "/surprise-stack" },
 ];
 
 export default function Header() {
@@ -182,10 +182,10 @@ export default function Header() {
           )}
         </div>
 
-        <Link to="/catalogue?tier=new" onClick={() => setMenuOpen(false)}>
+        <Link to="/collection/new-arrivals" onClick={() => setMenuOpen(false)}>
           New Arrivals
         </Link>
-        <Link to="/catalogue?sort=match" onClick={() => setMenuOpen(false)}>
+        <Link to="/collection/bestsellers" onClick={() => setMenuOpen(false)}>
           Bestsellers
         </Link>
         <Link to="/bulk-purchase" className={isActive("/bulk-purchase") ? "active" : ""} onClick={() => setMenuOpen(false)}>
