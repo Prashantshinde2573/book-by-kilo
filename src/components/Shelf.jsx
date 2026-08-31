@@ -11,8 +11,8 @@ export default function Shelf({ shelf, items, rank, onViewAll }) {
     const rail = railRef.current;
     if (!rail) return;
     setScrollState({
-      left: rail.scrollLeft > 4,
-      right: rail.scrollLeft + rail.clientWidth < rail.scrollWidth - 4,
+      left: rail.scrollLeft > 6,
+      right: rail.scrollLeft + rail.clientWidth < rail.scrollWidth - 6,
     });
   };
 
@@ -21,21 +21,19 @@ export default function Shelf({ shelf, items, rank, onViewAll }) {
     if (!rail) return;
     const card = rail.querySelector(".book-card");
     const cardWidth = card ? card.getBoundingClientRect().width : 220;
-    const gap = typeof window !== "undefined" && window.innerWidth > 1024 ? 32 : 14;
-    const cardsToScroll = Math.max(1, Math.floor(rail.clientWidth / (cardWidth + gap)) - 1 || 3);
-    const scrollAmount = cardsToScroll * (cardWidth + gap);
+    const gap = typeof window !== "undefined" && window.innerWidth <= 640 ? 12 : window.innerWidth <= 1080 ? 18 : 24;
+    const scrollAmount = rail.clientWidth || 5 * (cardWidth + gap);
     rail.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
   };
+
   useEffect(() => {
     const rail = railRef.current;
     if (!rail) return undefined;
 
-    // Explicitly enforce starting from the very first book on mount & update
     rail.scrollLeft = 0;
     rail.scrollTo({ left: 0, behavior: "instant" });
     updateScrollState();
 
-    // Secondary frame check in case layout shifts after render
     const frameId = requestAnimationFrame(() => {
       if (rail && rail.scrollLeft !== 0 && !scrollState.left) {
         rail.scrollLeft = 0;
@@ -58,16 +56,42 @@ export default function Shelf({ shelf, items, rank, onViewAll }) {
         <div>
           <h2>{shelf.title} {shelf.accent && <span>{shelf.accent}</span>}</h2>
         </div>
-        {!rank && <button onClick={() => onViewAll?.(shelf)}>View All <FiChevronRight /></button>}
+        {!rank && (
+          <button 
+            type="button" 
+            className="shelf-view-all-btn"
+            onClick={() => onViewAll?.(shelf)}
+            aria-label={`View all ${shelf.title}`}
+          >
+            <span>View All</span>
+            <FiChevronRight size={15} />
+          </button>
+        )}
       </div>
       <div className="shelf-wrap">
-        <button className={`rail-arrow left ${scrollState.left ? "available" : ""}`} disabled={!scrollState.left} onClick={() => scroll(-1)} aria-label="Scroll shelf left"><FiChevronLeft /></button>
+        <button 
+          type="button"
+          className={`rail-arrow left ${scrollState.left ? "available" : ""}`} 
+          disabled={!scrollState.left} 
+          onClick={() => scroll(-1)} 
+          aria-label="Scroll shelf left"
+        >
+          <FiChevronLeft />
+        </button>
         <div className="book-rail" id={id} ref={railRef}>
           {items.map((book, index) => (
             <BookCard key={`${shelf.title}-${book.id}`} book={book} rank={rank ? index + 1 : undefined} />
           ))}
         </div>
-        <button className={`rail-arrow right ${scrollState.right ? "available" : ""}`} disabled={!scrollState.right} onClick={() => scroll(1)} aria-label="Scroll shelf right"><FiChevronRight /></button>
+        <button 
+          type="button"
+          className={`rail-arrow right ${scrollState.right ? "available" : ""}`} 
+          disabled={!scrollState.right} 
+          onClick={() => scroll(1)} 
+          aria-label="Scroll shelf right"
+        >
+          <FiChevronRight />
+        </button>
       </div>
     </section>
   );

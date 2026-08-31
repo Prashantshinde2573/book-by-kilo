@@ -211,14 +211,14 @@ export const authors = [
 ];
 
 export const genreItems = [
-  ["Children", "Picture books, learning & wonder", "/brand/children.webp", "children-books"],
-  ["Fiction", "Stories to disappear into", "/brand/children.webp", "fiction"],
-  ["Non-Fiction", "Ideas, lives & the real world", "/brand/non-fiction.webp", "non-fiction"],
-  ["Classics", "Timeless books worth revisiting", "/brand/classic.webp", "classic-books"],
-  ["Teen Fiction", "Bold stories for new generations", "/brand/children.webp", "teen-fiction"],
-  ["History", "People, places & turning points", "/brand/non-fiction.webp", "history"],
-  ["Business", "Ideas that move careers forward", "/brand/non-fiction.webp", "business"],
-  ["Biography", "Remarkable lives, honestly told", "/brand/classic.webp", "biography"],
+  ["Children", "Picture books, learning & wonder", "https://www.booksbykilo.in/media/books/BBK/9781509804757-New.jpg", "children-books"],
+  ["Fiction", "Stories to disappear into", "https://www.booksbykilo.in/media/books/BBK/9781855760509.jpg", "fiction"],
+  ["Non-Fiction", "Ideas, lives & the real world", "https://www.booksbykilo.in/media/books/BBK/9788131017265-New.jpg", "non-fiction"],
+  ["Classics", "Timeless books worth revisiting", "https://www.booksbykilo.in/media/books/BBK/9780603004247.jpg", "classic-books"],
+  ["Teen Fiction", "Bold stories for new generations", "https://www.booksbykilo.in/media/books/BBK/9781785067334.jpg", "teen-fiction"],
+  ["History", "People, places & turning points", "https://www.booksbykilo.in/media/books/BBK/9780764159992.jpg", "history"],
+  ["Business", "Ideas that move careers forward", "https://www.booksbykilo.in/media/books/BBK/9780916392284.jpg", "business"],
+  ["Biography", "Remarkable lives, honestly told", "https://www.booksbykilo.in/media/books/BBK/9781785374081-New.jpg", "biography"],
 ];
 
 export const surpriseCard = ["Surprise Stack", "Unexpected reads, picked just for you.", "/brand/surprise_banner.jpg"];

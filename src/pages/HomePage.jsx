@@ -103,6 +103,77 @@ export default function HomePage({ allBooks = [] }) {
     else navigate("/catalogue");
   };
 
+  // Top 10 Books
+  const top10Books = useMemo(() => {
+    return [...allBooks].sort((a, b) => (b.match || 0) - (a.match || 0)).slice(0, 10);
+  }, [allBooks]);
+
+  // 1. Recently Added: Curated new arrivals across fiction, non-fiction, classics, etc.
+  const recentlyAddedBooks = useMemo(() => {
+    const isChild = (b) => (
+      (b.categories || []).includes("children-books") ||
+      (b.categories || []).includes("children") ||
+      String(b.genre || "").toLowerCase().includes("children")
+    );
+    // Prefer non-children / general new arrivals so Recently Added showcases diverse literature
+    const generalArrivals = allBooks.filter((b) => !isChild(b));
+    return (generalArrivals.length >= 24 ? generalArrivals : allBooks).slice(0, 24);
+  }, [allBooks]);
+
+  // 2. Brand New Books: Strictly brand-new condition, excluding books in Recently Added
+  const brandNewBooks = useMemo(() => {
+    const recentIds = new Set(recentlyAddedBooks.map((b) => b.id));
+    const isBrandNew = (b) => (
+      (b.categories || []).includes("new-books") ||
+      b.tier?.toLowerCase() === "new" ||
+      String(b.id).endsWith("-New") ||
+      String(b.id).startsWith("new-")
+    );
+    const eligible = allBooks.filter((b) => isBrandNew(b) && !recentIds.has(b.id));
+    return (eligible.length >= 24 ? eligible : allBooks.filter(isBrandNew)).slice(0, 24);
+  }, [allBooks, recentlyAddedBooks]);
+
+  // 3. Children's Books: Strictly children's category, excluding items in Recently Added and Brand New
+  const childrenBooks = useMemo(() => {
+    const usedIds = new Set([
+      ...recentlyAddedBooks.map((b) => b.id),
+      ...brandNewBooks.map((b) => b.id),
+    ]);
+    const isChild = (b) => (
+      (b.categories || []).includes("children-books") ||
+      (b.categories || []).includes("children") ||
+      String(b.genre || "").toLowerCase().includes("children")
+    );
+    const eligible = allBooks.filter((b) => isChild(b) && !usedIds.has(b.id));
+    return (eligible.length >= 24 ? eligible : allBooks.filter(isChild)).slice(0, 24);
+  }, [allBooks, recentlyAddedBooks, brandNewBooks]);
+
+  // 4. Teen Fiction Books
+  const teenFictionBooks = useMemo(() => {
+    return allBooks
+      .filter((b) => (b.categories || []).includes("teen-fiction") || (b.categories || []).includes("teen") || String(b.genre || "").toLowerCase().includes("teen"))
+      .slice(0, 24);
+  }, [allBooks]);
+
+  // 5. Fiction / Non-Fiction Books
+  const fictionNonFictionBooks = useMemo(() => {
+    return allBooks
+      .filter((b) => (b.categories || []).includes("fiction") || (b.categories || []).includes("non-fiction") || String(b.genre || "").toLowerCase().includes("fiction") || String(b.genre || "").toLowerCase().includes("non-fiction"))
+      .slice(0, 24);
+  }, [allBooks]);
+
+  // 6. Extra Discount Books
+  const extraDiscountBooks = useMemo(() => {
+    return [...allBooks].sort((a, b) => (a.salePrice || 0) - (b.salePrice || 0)).slice(0, 24);
+  }, [allBooks]);
+
+  // 7. Coffee Table Books
+  const coffeeTableBooks = useMemo(() => {
+    return allBooks
+      .filter((b) => (b.categories || []).includes("coffee-table-books") || (b.categories || []).includes("collector") || b.tier === "Premium" || b.tier === "Classic" || String(b.genre || "").toLowerCase().includes("coffee"))
+      .slice(0, 24);
+  }, [allBooks]);
+
   const surpriseTitle = Array.isArray(surpriseCard) ? surpriseCard[0] : (surpriseCard?.title || "Surprise Stack");
   const surpriseDesc = Array.isArray(surpriseCard) ? surpriseCard[1] : (surpriseCard?.desc || "Unexpected reads, picked just for you.");
   const surpriseImg = Array.isArray(surpriseCard) ? surpriseCard[2] : (surpriseCard?.image || "/brand/surprise_banner.jpg");
@@ -229,7 +300,7 @@ export default function HomePage({ allBooks = [] }) {
         <div className="top-ten-shelf">
           <Shelf
             shelf={{ title: "Top 10 Books This Week" }}
-            items={[...allBooks].sort((a, b) => (b.match || 0) - (a.match || 0)).slice(0, 10)}
+            items={top10Books}
             onViewAll={handleViewAll}
           />
         </div>
@@ -286,14 +357,14 @@ export default function HomePage({ allBooks = [] }) {
         {/* 3. Recently Added */}
         <Shelf
           shelf={{ title: "Recently Added Books", subtitle: "Freshly stocked arrivals." }}
-          items={allBooks.slice(0, 24)}
+          items={recentlyAddedBooks}
           onViewAll={handleViewAll}
         />
 
         {/* 4. Brand New Books */}
         <Shelf
           shelf={{ title: "Brand New Books", subtitle: "Straight from the press." }}
-          items={allBooks.filter((b) => (b.categories || []).includes("new-books") || b.tier?.toLowerCase() === "new" || String(b.id).startsWith("new-")).slice(0, 24)}
+          items={brandNewBooks}
           onViewAll={handleViewAll}
         />
 
@@ -317,21 +388,21 @@ export default function HomePage({ allBooks = [] }) {
         {/* 6. Children Books */}
         <Shelf
           shelf={{ title: "Children Books", subtitle: "Magic for little readers." }}
-          items={allBooks.filter((b) => (b.categories || []).includes("children-books") || (b.categories || []).includes("children") || String(b.genre || "").toLowerCase().includes("children")).slice(0, 24)}
+          items={childrenBooks}
           onViewAll={handleViewAll}
         />
 
         {/* 7. Teen Fiction */}
         <Shelf
           shelf={{ title: "Teen Fiction", subtitle: "Captivating young adult reads." }}
-          items={allBooks.filter((b) => (b.categories || []).includes("teen-fiction") || (b.categories || []).includes("teen") || String(b.genre || "").toLowerCase().includes("teen")).slice(0, 24)}
+          items={teenFictionBooks}
           onViewAll={handleViewAll}
         />
 
         {/* 8. Fiction / Non-Fiction */}
         <Shelf
           shelf={{ title: "Fiction / Non-Fiction", subtitle: "From wild imaginations to real facts." }}
-          items={allBooks.filter((b) => (b.categories || []).includes("fiction") || (b.categories || []).includes("non-fiction") || String(b.genre || "").toLowerCase().includes("fiction") || String(b.genre || "").toLowerCase().includes("non-fiction")).slice(0, 24)}
+          items={fictionNonFictionBooks}
           onViewAll={handleViewAll}
         />
 
@@ -384,7 +455,7 @@ export default function HomePage({ allBooks = [] }) {
         {/* 10. Extra Discount Sale */}
         <Shelf
           shelf={{ title: "Extra Discount Sale", subtitle: "Massive markdowns on top titles." }}
-          items={[...allBooks].sort((a, b) => (a.salePrice || 0) - (b.salePrice || 0)).slice(0, 24)}
+          items={extraDiscountBooks}
           onViewAll={handleViewAll}
         />
 
@@ -404,7 +475,7 @@ export default function HomePage({ allBooks = [] }) {
         {/* 12. Coffee Table Books */}
         <Shelf
           shelf={{ title: "Coffee Table Books", subtitle: "Stunning visual statements." }}
-          items={allBooks.filter((b) => (b.categories || []).includes("coffee-table-books") || (b.categories || []).includes("collector") || b.tier === "Premium" || b.tier === "Classic" || String(b.genre || "").toLowerCase().includes("coffee")).slice(0, 24)}
+          items={coffeeTableBooks}
           onViewAll={handleViewAll}
         />
 

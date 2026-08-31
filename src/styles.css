@@ -523,7 +523,7 @@ a.mega-nav-item-link:focus-visible {
 .hero {
   position: relative;
   height: clamp(500px, 75vh, 660px);
-  min-height: 500px;
+  min-height: 650px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -731,7 +731,7 @@ a.mega-nav-item-link:focus-visible {
   position: absolute;
   z-index: 10;
   right: 14%;
-  bottom: 24px;
+  bottom: 64px;
 }
 
 .hero-thumbnails {
@@ -1000,57 +1000,63 @@ a.mega-nav-item-link:focus-visible {
   position: relative;
   z-index: 5;
   margin-top: 0;
+  padding-top: 56px;
   padding-bottom: 40px;
   background: #ffffff;
 }
 
 .top-ten-shelf {
-  background: #09090b;
-  padding-top: 32px;
-  padding-bottom: 48px;
-  margin-bottom: 48px;
+  background: transparent;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 .top-ten-shelf .shelf-section {
-  margin: 0;
+  margin: 0 auto 72px;
 }
 
 .top-ten-shelf .shelf-heading {
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .top-ten-shelf .shelf-heading h2 {
-  color: #ffffff;
+  color: #111827;
   font-size: 24px;
-  font-weight: 600;
-  letter-spacing: -0.3px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
 }
 
 /* Ranked Book Cards (Increased height for Top 10 Books section) */
 .book-card.ranked {
   display: flex !important;
-  align-items: center !important;
+  align-items: flex-end !important;
   position: relative;
-  flex: 0 0 calc((100% - 4 * 32px) / 5);
-  width: calc((100% - 4 * 32px) / 5);
+  flex: 0 0 calc((100% - 4 * 24px) / 5);
+  width: calc((100% - 4 * 24px) / 5);
+  min-width: calc((100% - 4 * 24px) / 5);
+  max-width: calc((100% - 4 * 24px) / 5);
   height: clamp(230px, 16.5vw, 290px);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .rank-number {
-  font: 900 clamp(140px, 13.5vw, 220px)/0.82 "Oswald", Impact, sans-serif;
+  font: 900 clamp(130px, 12vw, 190px)/0.82 "Oswald", Impact, sans-serif;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
-  -webkit-text-stroke: 3px #4b5563;
-  text-stroke: 3px #4b5563;
+  -webkit-text-stroke: 3px #94a3b8;
+  text-stroke: 3px #94a3b8;
   background: transparent !important;
   position: relative;
   z-index: 1;
-  margin-right: -48px;
+  margin-right: -42px;
   flex-shrink: 0;
   user-select: none;
   pointer-events: none;
-  letter-spacing: -5px;
+  letter-spacing: -4px;
 }
 
 .book-card.ranked .book-cover {
@@ -1061,14 +1067,19 @@ a.mega-nav-item-link:focus-visible {
   aspect-ratio: auto;
   min-width: 0;
   border-radius: 8px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
 }
 
 .shelf-section {
   position: relative;
   z-index: 1;
-  margin: 0 0 48px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto 72px;
+  padding: 0 36px;
+  box-sizing: border-box;
   overflow: visible;
+  background: transparent;
 }
 
 .shelf-section:hover,
@@ -1080,15 +1091,15 @@ a.mega-nav-item-link:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--page-gutter);
-  margin-bottom: 16px;
+  padding: 0;
+  margin-bottom: 18px;
 }
 
 .shelf-heading h2 {
   margin: 0;
   font-size: 24px;
-  font-weight: 600;
-  letter-spacing: -.3px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
   color: #111827;
 }
 
@@ -1103,23 +1114,25 @@ a.mega-nav-item-link:focus-visible {
 }
 
 .shelf-heading button,
+.shelf-view-all-btn,
 .view-all-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 6px 16px;
-  border-radius: 99px;
+  border-radius: 9999px;
   background: #111827;
   border: 1px solid #111827;
   color: #ffffff;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+  transition: all 0.18s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .shelf-heading button:hover,
+.shelf-view-all-btn:hover,
 .view-all-btn:hover {
   background: #000000;
   color: #ffffff;
@@ -1130,21 +1143,22 @@ a.mega-nav-item-link:focus-visible {
 
 .shelf-wrap {
   position: relative;
+  width: 100%;
 }
 
 .book-rail {
   display: flex;
   align-items: stretch;
-  gap: 32px;
-  padding: 6px var(--page-gutter) 20px;
+  gap: 24px;
+  padding: 6px 0 20px;
   margin-bottom: 0;
   overflow-x: auto;
   overflow-y: visible;
   scrollbar-width: none;
   scroll-snap-type: x proximity;
-  scroll-padding-inline: var(--page-gutter);
   overscroll-behavior-x: contain;
   scroll-behavior: smooth;
+  box-sizing: border-box;
 }
 
 .book-rail::-webkit-scrollbar {
@@ -1154,10 +1168,10 @@ a.mega-nav-item-link:focus-visible {
 .book-card {
   --preview-shift: 0px;
   position: relative;
-  flex: 0 0 calc((100% - 4 * 32px) / 5);
-  width: calc((100% - 4 * 32px) / 5);
+  width: 100%;
   min-width: 0;
-  scroll-snap-align: start;
+  max-width: 100%;
+  flex: 1 1 auto;
   z-index: 1;
   background: #ffffff;
   border-radius: 12px;
@@ -1170,6 +1184,15 @@ a.mega-nav-item-link:focus-visible {
   transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.22s;
   text-decoration: none;
   box-sizing: border-box;
+}
+
+/* Scoped 5-Card Carousel Sizing for Shelf Rails */
+.book-rail .book-card {
+  flex: 0 0 calc((100% - 4 * 24px) / 5);
+  width: calc((100% - 4 * 24px) / 5);
+  min-width: calc((100% - 4 * 24px) / 5);
+  max-width: calc((100% - 4 * 24px) / 5);
+  scroll-snap-align: start;
 }
 
 .book-card:hover,
@@ -1556,25 +1579,26 @@ a.mega-nav-item-link:focus-visible {
   background: #f0fdf4;
 }
 
-/* ── BookMyShow-Inspired Carousel Navigation Arrows ────────────────────────── */
+/* ── Carousel Navigation Arrows (Dark Translucent Theme) ─────────────────── */
 .rail-arrow {
   position: absolute;
-  z-index: 95;
-  top: calc(50% - 10px);
+  z-index: 150;
+  top: calc(50% - 14px);
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  max-width: 40px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  max-width: 44px;
   border-radius: 50%;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
-  background: #ffffff;
-  color: #1e293b;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: none !important;
   pointer-events: auto;
   opacity: 0;
   visibility: hidden;
@@ -1585,9 +1609,9 @@ a.mega-nav-item-link:focus-visible {
 .rail-arrow svg {
   width: 22px;
   height: 22px;
-  stroke-width: 2.4;
-  color: #0f172a;
-  transition: transform 0.2s ease, color 0.2s ease;
+  stroke-width: 2.5;
+  color: #ffffff;
+  transition: transform 0.2s ease;
 }
 
 .rail-arrow.available {
@@ -1597,10 +1621,10 @@ a.mega-nav-item-link:focus-visible {
 }
 
 .rail-arrow.available:hover {
-  background: #ffffff;
-  color: #000000;
-  border-color: #cbd5e1;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.95);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: none !important;
   transform: translateY(-50%) scale(1.08);
 }
 
@@ -1609,7 +1633,7 @@ a.mega-nav-item-link:focus-visible {
 }
 
 .rail-arrow.available:focus-visible {
-  outline: 2px solid var(--soft-red);
+  outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
 
@@ -1622,11 +1646,11 @@ a.mega-nav-item-link:focus-visible {
 }
 
 .rail-arrow.left {
-  left: max(8px, calc(var(--page-gutter) - 20px));
+  left: -20px;
 }
 
 .rail-arrow.right {
-  right: max(8px, calc(var(--page-gutter) - 20px));
+  right: -20px;
 }
 
 .rail-arrow.right:hover svg {
@@ -1977,14 +2001,18 @@ a.mega-nav-item-link:focus-visible {
 }
 
 .collection-section {
-  margin-top: 10px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 10px auto 52px;
+  padding: 0 36px;
+  box-sizing: border-box;
 }
 
 .collection-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  padding: 0 var(--page-gutter);
+  padding: 0;
 }
 
 .collection-card,
@@ -2768,8 +2796,37 @@ a.collection-8::after {
   margin: 0 2px;
 }
 
+/* ── Explore by Genre Section (Dark Theme Banner) ─────────────────────────── */
 .genre-section {
-  margin-bottom: 48px;
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: 54px;
+  margin-bottom: 54px;
+  padding: 64px var(--page-gutter);
+  min-height: 280px;
+  background: linear-gradient(120deg, #09090b 0%, #18181b 50%, #27272a 100%);
+  border-top: 1px solid #27272a;
+  border-bottom: 1px solid #27272a;
+  color: #ffffff;
+  box-sizing: border-box;
+}
+
+.genre-section .shelf-heading {
+  max-width: 1440px;
+  margin: 0 auto 24px;
+  padding: 0;
+}
+
+.genre-section .shelf-heading h2 {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
 }
 
 .genre-grid {
@@ -2777,7 +2834,9 @@ a.collection-8::after {
   grid-template-columns: repeat(4, 1fr) 1.25fr;
   grid-template-rows: repeat(2, 1fr);
   gap: 16px;
-  padding: 0 var(--page-gutter);
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0;
 }
 
 .mobile-surprise-section {
@@ -2867,45 +2926,57 @@ a.collection-8::after {
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
-/* Category Specific Rich Multi-Tone Atmospheric Gradients */
-.genre-1 {
-  background: linear-gradient(135deg, #4c0519 0%, #881337 55%, #be123c 100%);
-  border: 1px solid rgba(244, 63, 94, 0.25);
-}
-
-.genre-2 {
-  background: linear-gradient(135deg, #022c22 0%, #0f766e 55%, #0d9488 100%);
-  border: 1px solid rgba(20, 184, 166, 0.25);
-}
-
-.genre-3 {
-  background: linear-gradient(135deg, #1c1917 0%, #451a03 55%, #78350f 100%);
-  border: 1px solid rgba(217, 119, 6, 0.25);
-}
-
-.genre-4 {
-  background: linear-gradient(135deg, #2e1005 0%, #5c2408 55%, #854d0e 100%);
-  border: 1px solid rgba(202, 138, 4, 0.25);
-}
-
+/* Column-Wise Cohesive Color Pairing (4 Columns × 2 Rows) */
+/* Column 1: 01 Children & 05 Teen Fiction (Deep Burgundy) */
+.genre-1,
 .genre-5 {
-  background: linear-gradient(135deg, #09090b 0%, #18181b 55%, #27272a 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, #4c0519 0%, #701a2e 50%, #9f1239 100%) !important;
+  border: 1px solid rgba(244, 63, 94, 0.28) !important;
 }
 
+.genre-1:hover,
+.genre-5:hover {
+  background: linear-gradient(135deg, #5c0720 0%, #881337 50%, #be123c 100%) !important;
+  border-color: rgba(244, 63, 94, 0.5) !important;
+}
+
+/* Column 2: 02 Fiction & 06 History (Deep Teal / Dark Cyan) */
+.genre-2,
 .genre-6 {
-  background: linear-gradient(135deg, #000000 0%, #111827 55%, #1f2937 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #0d9488 100%) !important;
+  border: 1px solid rgba(20, 184, 166, 0.28) !important;
 }
 
+.genre-2:hover,
+.genre-6:hover {
+  background: linear-gradient(135deg, #04382c 0%, #0f766e 50%, #14b8a6 100%) !important;
+  border-color: rgba(20, 184, 166, 0.5) !important;
+}
+
+/* Column 3: 03 Non-Fiction & 07 Business (Deep Brown / Dark Amber) */
+.genre-3,
 .genre-7 {
-  background: linear-gradient(135deg, #1a2e05 0%, #365314 55%, #4d7c0f 100%);
-  border: 1px solid rgba(132, 204, 22, 0.25);
+  background: linear-gradient(135deg, #241408 0%, #451a03 50%, #78350f 100%) !important;
+  border: 1px solid rgba(217, 119, 6, 0.28) !important;
 }
 
+.genre-3:hover,
+.genre-7:hover {
+  background: linear-gradient(135deg, #331d0b 0%, #5c2408 50%, #92400e 100%) !important;
+  border-color: rgba(217, 119, 6, 0.5) !important;
+}
+
+/* Column 4: 04 Classics & 08 Biography (Deep Plum / Dark Purple) */
+.genre-4,
 .genre-8 {
-  background: linear-gradient(135deg, #3f0f1d 0%, #701a2e 55%, #9f1239 100%);
-  border: 1px solid rgba(225, 29, 72, 0.25);
+  background: linear-gradient(135deg, #2e1065 0%, #4c1d95 50%, #6d28d9 100%) !important;
+  border: 1px solid rgba(168, 85, 247, 0.28) !important;
+}
+
+.genre-4:hover,
+.genre-8:hover {
+  background: linear-gradient(135deg, #3b1480 0%, #5b21b6 50%, #7c3aed 100%) !important;
+  border-color: rgba(168, 85, 247, 0.5) !important;
 }
 
 /* Surprise Stack Editorial Full-Bleed Card (Column 5, 2 Rows) */
@@ -3668,16 +3739,20 @@ a.collection-8::after {
   outline: none;
 }
 
-/* 1. Catalog Search Results Grid - 7 Columns on Desktop */
+/* 1. Catalog Search Results Grid - Responsive Grid on Desktop */
 .results-grid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 24px 12px;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 20px 14px;
 }
 
-.results-grid .book-card {
-  width: 100%;
-  flex: 1 1 auto;
+.results-grid .book-card,
+.landing-books-grid-4col .book-card {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
 }
 
 .empty {
@@ -4331,7 +4406,7 @@ a.collection-8::after {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
-  .book-card {
+  .book-rail .book-card {
     flex: 0 0 calc((100% - 4 * 14px) / 5);
     width: calc((100% - 4 * 14px) / 5);
   }
@@ -4937,40 +5012,44 @@ a.collection-8::after {
   }
 
   .shelf-heading {
-    padding: 0 20px !important;
+    padding: 0 !important;
   }
 
   .book-rail {
-    padding-left: 20px !important;
-    padding-right: 20px !important;
-    gap: 12px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    gap: 16px !important;
   }
 
-  .book-card {
-    flex: 0 0 calc((100% - 3 * 12px) / 4);
-    width: calc((100% - 3 * 12px) / 4);
+  .book-rail .book-card {
+    flex: 0 0 calc((100% - 2 * 16px) / 3) !important;
+    width: calc((100% - 2 * 16px) / 3) !important;
+    min-width: calc((100% - 2 * 16px) / 3) !important;
+    max-width: calc((100% - 2 * 16px) / 3) !important;
   }
 
-  .ranked {
-    flex: 0 0 calc((100% - 3 * 12px) / 4);
-    width: calc((100% - 3 * 12px) / 4);
-    height: 210px;
+  .book-rail .book-card.ranked {
+    flex: 0 0 calc((100% - 2 * 16px) / 3) !important;
+    width: calc((100% - 2 * 16px) / 3) !important;
+    min-width: calc((100% - 2 * 16px) / 3) !important;
+    max-width: calc((100% - 2 * 16px) / 3) !important;
+    height: 225px;
   }
 
   .rail-arrow {
     display: flex;
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    max-width: 36px;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    max-width: 38px;
   }
 
   .rail-arrow.left {
-    left: 8px;
+    left: -12px;
   }
 
   .rail-arrow.right {
-    right: 8px;
+    right: -12px;
   }
 
   /* 1. Explore by Publishers - Dark Rounded Section Container */
@@ -5588,12 +5667,12 @@ a.collection-8::after {
     padding-right: 16px;
   }
 
-  .book-card {
+  .book-rail .book-card {
     flex: 0 0 calc((100% - 10px) / 2);
     width: calc((100% - 10px) / 2);
   }
 
-  .ranked {
+  .book-rail .book-card.ranked {
     flex: 0 0 calc((100% - 10px) / 2);
     width: calc((100% - 10px) / 2);
     height: 195px;
@@ -7454,44 +7533,52 @@ a.genre-card .genre-number {
   max-width: 52%;
 }
 
-a.genre-1 {
-  background: linear-gradient(135deg, #4c0519 0%, #881337 55%, #be123c 100%);
-  border: 1px solid rgba(244, 63, 94, .25);
-}
-
-a.genre-2 {
-  background: linear-gradient(135deg, #022c22 0%, #0f766e 55%, #0d9488 100%);
-  border: 1px solid rgba(20, 184, 166, .25);
-}
-
-a.genre-3 {
-  background: linear-gradient(135deg, #1c1917 0%, #451a03 55%, #78350f 100%);
-  border: 1px solid rgba(217, 119, 6, .25);
-}
-
-a.genre-4 {
-  background: linear-gradient(135deg, #2e1005 0%, #5c2408 55%, #854d0e 100%);
-  border: 1px solid rgba(202, 138, 4, .25);
-}
-
+a.genre-1,
 a.genre-5 {
-  background: linear-gradient(135deg, #09090b 0%, #18181b 55%, #27272a 100%);
-  border: 1px solid rgba(255, 255, 255, .12);
+  background: linear-gradient(135deg, #4c0519 0%, #701a2e 50%, #9f1239 100%) !important;
+  border: 1px solid rgba(244, 63, 94, 0.28) !important;
 }
 
+a.genre-1:hover,
+a.genre-5:hover {
+  background: linear-gradient(135deg, #5c0720 0%, #881337 50%, #be123c 100%) !important;
+  border-color: rgba(244, 63, 94, 0.5) !important;
+}
+
+a.genre-2,
 a.genre-6 {
-  background: linear-gradient(135deg, #000000 0%, #111827 55%, #1f2937 100%);
-  border: 1px solid rgba(255, 255, 255, .12);
+  background: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #0d9488 100%) !important;
+  border: 1px solid rgba(20, 184, 166, 0.28) !important;
 }
 
+a.genre-2:hover,
+a.genre-6:hover {
+  background: linear-gradient(135deg, #04382c 0%, #0f766e 50%, #14b8a6 100%) !important;
+  border-color: rgba(20, 184, 166, 0.5) !important;
+}
+
+a.genre-3,
 a.genre-7 {
-  background: linear-gradient(135deg, #1a2e05 0%, #365314 55%, #4d7c0f 100%);
-  border: 1px solid rgba(132, 204, 22, .25);
+  background: linear-gradient(135deg, #241408 0%, #451a03 50%, #78350f 100%) !important;
+  border: 1px solid rgba(217, 119, 6, 0.28) !important;
 }
 
+a.genre-3:hover,
+a.genre-7:hover {
+  background: linear-gradient(135deg, #331d0b 0%, #5c2408 50%, #92400e 100%) !important;
+  border-color: rgba(217, 119, 6, 0.5) !important;
+}
+
+a.genre-4,
 a.genre-8 {
-  background: linear-gradient(135deg, #3f0f1d 0%, #701a2e 55%, #9f1239 100%);
-  border: 1px solid rgba(225, 29, 72, .25);
+  background: linear-gradient(135deg, #2e1065 0%, #4c1d95 50%, #6d28d9 100%) !important;
+  border: 1px solid rgba(168, 85, 247, 0.28) !important;
+}
+
+a.genre-4:hover,
+a.genre-8:hover {
+  background: linear-gradient(135deg, #3b1480 0%, #5b21b6 50%, #7c3aed 100%) !important;
+  border-color: rgba(168, 85, 247, 0.5) !important;
 }
 
 a.genre-card:hover {
@@ -8051,7 +8138,8 @@ a.genre-surprise-standalone {
 
 @media (min-width: 992px) {
   .toolbar-filter-btn {
-    display: none; /* Hide on desktop where permanent sidebar is already visible */
+    display: none;
+    /* Hide on desktop where permanent sidebar is already visible */
   }
 }
 
@@ -9963,39 +10051,25 @@ body {
 
 
 
-  /* 2. Top 10 Section Mobile Redesign & Left-Alignment */
+  /* 2. Top 10 Section Mobile Redesign */
   .top-ten-shelf {
     max-width: 100% !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     margin-bottom: 24px !important;
     padding-bottom: 0px !important;
   }
 
   .top-ten-shelf .shelf-heading {
-    padding: 0 16px !important;
+    padding: 0 !important;
     margin-bottom: 14px !important;
-  }
-
-  .book-card.ranked {
-    display: flex !important;
-    align-items: flex-end !important;
-    position: relative !important;
-    flex: 0 0 clamp(160px, 48vw, 195px) !important;
-    width: clamp(160px, 48vw, 195px) !important;
-    min-width: clamp(160px, 48vw, 195px) !important;
-    max-width: clamp(160px, 48vw, 195px) !important;
-    height: 210px !important;
-    margin: 0 !important;
-    scroll-snap-align: start !important;
-    box-sizing: border-box !important;
   }
 
   .rank-number {
     font: 900 74px/0.82 "Oswald", Impact, sans-serif !important;
     color: transparent !important;
     -webkit-text-fill-color: transparent !important;
-    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.4) !important;
-    text-stroke: 2px rgba(255, 255, 255, 0.4) !important;
+    -webkit-text-stroke: 2px #94a3b8 !important;
+    text-stroke: 2px #94a3b8 !important;
     background: transparent !important;
     position: relative !important;
     z-index: 1 !important;
@@ -10016,20 +10090,24 @@ body {
     aspect-ratio: auto !important;
     min-width: 0 !important;
     border-radius: 8px !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
     overflow: hidden !important;
   }
 
   /* 3. Product Carousel & Cards Mobile Sizing */
   .shelf-section {
+    width: 100% !important;
     max-width: 100% !important;
     overflow: hidden !important;
-    margin: 0 0 32px !important;
+    margin: 0 0 52px !important;
+    padding: 0 16px !important;
+    box-sizing: border-box !important;
   }
 
   .shelf-heading {
-    padding: 0 16px !important;
+    padding: 0 !important;
     margin-bottom: 14px !important;
+    width: 100% !important;
   }
 
   .shelf-heading h2 {
@@ -10038,33 +10116,54 @@ body {
   }
 
   .shelf-wrap {
+    width: 100% !important;
     max-width: 100% !important;
     position: relative !important;
+    overflow: visible !important;
   }
 
   .book-rail {
-    padding: 0 16px 12px 16px !important;
+    padding: 2px 0 14px 0 !important;
     margin-bottom: 0 !important;
     gap: 12px !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
     scroll-snap-type: x mandatory !important;
-    scroll-padding-inline: 16px !important;
+    scroll-padding-inline: 0 !important;
     scrollbar-width: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .book-rail::-webkit-scrollbar {
     display: none !important;
   }
 
-  .book-card:not(.ranked),
-  .book-card {
-    flex: 0 0 clamp(140px, 42vw, 175px) !important;
-    width: clamp(140px, 42vw, 175px) !important;
-    min-width: clamp(140px, 42vw, 175px) !important;
-    max-width: clamp(140px, 42vw, 175px) !important;
+  .book-rail .book-card:not(.ranked),
+  .book-rail .book-card {
+    flex: 0 0 calc((100% - 12px) / 2) !important;
+    width: calc((100% - 12px) / 2) !important;
+    min-width: calc((100% - 12px) / 2) !important;
+    max-width: calc((100% - 12px) / 2) !important;
     border-radius: 10px !important;
     scroll-snap-align: start !important;
+  }
+
+  .book-rail .book-card.ranked {
+    display: flex !important;
+    align-items: flex-end !important;
+    position: relative !important;
+    flex: 0 0 calc((100% - 12px) / 2) !important;
+    width: calc((100% - 12px) / 2) !important;
+    min-width: calc((100% - 12px) / 2) !important;
+    max-width: calc((100% - 12px) / 2) !important;
+    height: 200px !important;
+    margin: 0 !important;
+    scroll-snap-align: start !important;
+    box-sizing: border-box !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   .book-cover {
@@ -10103,15 +10202,40 @@ body {
     right: -24px !important;
   }
 
-  /* Rail arrow hidden on mobile to rely on native smooth touch swipe */
+  /* Mobile Carousel Navigation Arrows */
   .rail-arrow {
-    display: none !important;
+    display: flex !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    border-radius: 50% !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    z-index: 150 !important;
+    top: calc(50% - 12px) !important;
+  }
+
+  .rail-arrow svg {
+    width: 18px !important;
+    height: 18px !important;
+    stroke-width: 2.5 !important;
+    color: #ffffff !important;
+  }
+
+  .rail-arrow.left {
+    left: 4px !important;
+  }
+
+  .rail-arrow.right {
+    right: 4px !important;
   }
 
   /* 4. Full-Bleed Sections on Mobile */
   .author-section,
   .language-section,
   .quotes-section,
+  .genre-section,
   .environment-section,
   .impact-hero-banner {
     position: relative !important;
@@ -10129,6 +10253,7 @@ body {
   .author-section .shelf-heading,
   .language-section .shelf-heading,
   .quotes-section .shelf-heading,
+  .genre-section .shelf-heading,
   .environment-section .shelf-heading,
   .impact-hero-banner .shelf-heading {
     padding: 0 16px !important;

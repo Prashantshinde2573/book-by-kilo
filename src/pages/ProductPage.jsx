@@ -36,8 +36,8 @@ export default function ProductPage({ allBooks }) {
     const rail = recRailRef.current;
     if (!rail) return;
     setRecScrollState({
-      left: rail.scrollLeft > 4,
-      right: rail.scrollLeft + rail.clientWidth < rail.scrollWidth - 4,
+      left: rail.scrollLeft > 6,
+      right: rail.scrollLeft + rail.clientWidth < rail.scrollWidth - 6,
     });
   };
 
@@ -46,9 +46,8 @@ export default function ProductPage({ allBooks }) {
     if (!rail) return;
     const card = rail.querySelector(".book-card");
     const cardWidth = card ? card.getBoundingClientRect().width : 220;
-    const gap = typeof window !== "undefined" && window.innerWidth > 1024 ? 32 : 14;
-    const cardsToScroll = Math.max(1, Math.floor(rail.clientWidth / (cardWidth + gap)) - 1 || 3);
-    const scrollAmount = cardsToScroll * (cardWidth + gap);
+    const gap = typeof window !== "undefined" && window.innerWidth <= 640 ? 12 : window.innerWidth <= 1080 ? 18 : 24;
+    const scrollAmount = rail.clientWidth || 5 * (cardWidth + gap);
     rail.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
   };
 

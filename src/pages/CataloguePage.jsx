@@ -348,37 +348,6 @@ export default function CataloguePage({ allBooks = [], defaultCategory, defaultL
 
         {/* Main Content Area */}
         <div className="catalogue-main">
-          {/* Active Filter Chips / Tag (Simple indicator, no duplicate Clear All) */}
-          {hasAnyFilter && (
-            <div className="active-filter-chips">
-              {languageParam !== "all" && (
-                <span className="filter-chip">
-                  Language: {currentLanguageLabel || languageParam}
-                </span>
-              )}
-              {catParam !== "all" && (
-                <span className="filter-chip">
-                  Category: {currentCategoryLabel || catParam}
-                </span>
-              )}
-              {collectionParam !== "all" && (
-                <span className="filter-chip">
-                  Collection: {currentCollectionLabel || collectionParam}
-                </span>
-              )}
-              {authorParam !== "all" && (
-                <span className="filter-chip">
-                  Author: {authorParam}
-                </span>
-              )}
-              {priceParam !== "all" && (
-                <span className="filter-chip">
-                  Price: {currentPriceLabel || priceParam}
-                </span>
-              )}
-            </div>
-          )}
-
           {/* Toolbar: [ Filters ] | Showing X of XXXX books | Sort by: [ Recommended ▼ ] */}
           <div className="catalogue-toolbar">
             <button
