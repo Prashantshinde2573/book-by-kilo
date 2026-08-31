@@ -13,6 +13,16 @@ export const categoryOptions = [
   { label: "Biography & Memoir", value: "biography" },
 ];
 
+export const languageOptions = [
+  { label: "All Languages", value: "all" },
+  { label: "English", value: "english" },
+  { label: "Hindi (हिन्दी)", value: "hindi" },
+  { label: "Marathi (मराठी)", value: "marathi" },
+  { label: "Bengali (বাংলা)", value: "bengali" },
+  { label: "Gujarati (ગુજરાતી)", value: "gujarati" },
+  { label: "Tamil (தமிழ்)", value: "tamil" },
+];
+
 export const collectionOptions = [
   { label: "All Collections", value: "all" },
   { label: "New Arrivals", value: "new-arrivals" },
@@ -26,15 +36,16 @@ export const collectionOptions = [
 
 export const authorOptions = [
   { label: "All Authors", value: "all" },
-  { label: "J.K. Rowling", value: "J.K. Rowling" },
-  { label: "Agatha Christie", value: "Agatha Christie" },
-  { label: "Stephen King", value: "Stephen King" },
+  { label: "James Patterson", value: "James Patterson" },
+  { label: "Dan Brown", value: "Dan Brown" },
   { label: "Roald Dahl", value: "Roald Dahl" },
+  { label: "Stephen King", value: "Stephen King" },
+  { label: "Agatha Christie", value: "Agatha Christie" },
   { label: "Enid Blyton", value: "Enid Blyton" },
   { label: "Ruskin Bond", value: "Ruskin Bond" },
-  { label: "Dan Brown", value: "Dan Brown" },
-  { label: "William Shakespeare", value: "William Shakespeare" },
-  { label: "Julian Barnes", value: "Julian Barnes" },
+  { label: "J.K. Rowling", value: "J.K. Rowling" },
+  { label: "Jeffrey Archer", value: "Jeffrey Archer" },
+  { label: "John Grisham", value: "John Grisham" },
 ];
 
 export const priceLimitOptions = [
@@ -85,6 +96,8 @@ export function normalizeCollection(val) {
 export default function FilterSidebar({
   categoryFilter = "all",
   setCategoryFilter,
+  languageFilter = "all",
+  setLanguageFilter,
   collectionFilter = "all",
   setCollectionFilter,
   authorFilter = "all",
@@ -93,25 +106,33 @@ export default function FilterSidebar({
   setPriceFilter,
   sortBy = "match",
   setSortBy,
+  onClearAll,
   resultCount,
   mobileOpen,
   onMobileClose,
 }) {
   const currentCategory = normalizeCategory(categoryFilter);
+  const currentLanguage = String(languageFilter || "all").toLowerCase();
   const currentCollection = String(collectionFilter || "all");
   const currentAuthor = String(authorFilter || "all");
   const currentPrice = String(priceFilter || "all");
 
   const handleClearAll = () => {
-    if (setCategoryFilter) setCategoryFilter("all");
-    if (setCollectionFilter) setCollectionFilter("all");
-    if (setAuthorFilter) setAuthorFilter("all");
-    if (setPriceFilter) setPriceFilter("all");
-    if (setSortBy) setSortBy("match");
+    if (onClearAll) {
+      onClearAll();
+    } else {
+      if (setCategoryFilter) setCategoryFilter("all");
+      if (setLanguageFilter) setLanguageFilter("all");
+      if (setCollectionFilter) setCollectionFilter("all");
+      if (setAuthorFilter) setAuthorFilter("all");
+      if (setPriceFilter) setPriceFilter("all");
+      if (setSortBy) setSortBy("match");
+    }
   };
 
   const hasActiveFilters =
     currentCategory !== "all" ||
+    currentLanguage !== "all" ||
     currentCollection !== "all" ||
     currentAuthor !== "all" ||
     currentPrice !== "all" ||
@@ -129,20 +150,57 @@ export default function FilterSidebar({
         )}
       </div>
 
-      {/* Section 1: Categories */}
+      {/* Section 1: Languages */}
+      <div className="myntra-filter-section">
+        <span className="myntra-section-heading">LANGUAGES</span>
+        <div className="myntra-options-list">
+          {languageOptions.map((opt) => {
+            const isChecked = currentLanguage === opt.value.toLowerCase();
+            return (
+              <label
+                key={opt.value}
+                className={`myntra-radio-label ${isChecked ? "active" : ""}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (setLanguageFilter) setLanguageFilter(opt.value);
+                }}
+              >
+                <input
+                  type="radio"
+                  name="filter-language"
+                  value={opt.value}
+                  checked={isChecked}
+                  readOnly
+                />
+                <span className="myntra-custom-radio" />
+                <span className="myntra-option-text">{opt.label}</span>
+              </label>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Section 2: Categories */}
       <div className="myntra-filter-section">
         <span className="myntra-section-heading">CATEGORIES</span>
         <div className="myntra-options-list">
           {categoryOptions.map((opt) => {
             const isChecked = currentCategory === opt.value;
             return (
-              <label key={opt.value} className={`myntra-radio-label ${isChecked ? "active" : ""}`}>
+              <label
+                key={opt.value}
+                className={`myntra-radio-label ${isChecked ? "active" : ""}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (setCategoryFilter) setCategoryFilter(opt.value);
+                }}
+              >
                 <input
                   type="radio"
                   name="filter-category"
                   value={opt.value}
                   checked={isChecked}
-                  onChange={() => setCategoryFilter && setCategoryFilter(opt.value)}
+                  readOnly
                 />
                 <span className="myntra-custom-radio" />
                 <span className="myntra-option-text">{opt.label}</span>
@@ -152,20 +210,27 @@ export default function FilterSidebar({
         </div>
       </div>
 
-      {/* Section 2: Collections */}
+      {/* Section 3: Collections */}
       <div className="myntra-filter-section">
         <span className="myntra-section-heading">COLLECTIONS</span>
         <div className="myntra-options-list">
           {collectionOptions.map((opt) => {
             const isChecked = currentCollection === opt.value;
             return (
-              <label key={opt.value} className={`myntra-radio-label ${isChecked ? "active" : ""}`}>
+              <label
+                key={opt.value}
+                className={`myntra-radio-label ${isChecked ? "active" : ""}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (setCollectionFilter) setCollectionFilter(opt.value);
+                }}
+              >
                 <input
                   type="radio"
                   name="filter-collection"
                   value={opt.value}
                   checked={isChecked}
-                  onChange={() => setCollectionFilter && setCollectionFilter(opt.value)}
+                  readOnly
                 />
                 <span className="myntra-custom-radio" />
                 <span className="myntra-option-text">{opt.label}</span>
@@ -175,20 +240,27 @@ export default function FilterSidebar({
         </div>
       </div>
 
-      {/* Section 3: Authors */}
+      {/* Section 4: Authors */}
       <div className="myntra-filter-section">
         <span className="myntra-section-heading">AUTHORS</span>
         <div className="myntra-options-list">
           {authorOptions.map((opt) => {
             const isChecked = currentAuthor.toLowerCase() === opt.value.toLowerCase();
             return (
-              <label key={opt.value} className={`myntra-radio-label ${isChecked ? "active" : ""}`}>
+              <label
+                key={opt.value}
+                className={`myntra-radio-label ${isChecked ? "active" : ""}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (setAuthorFilter) setAuthorFilter(opt.value);
+                }}
+              >
                 <input
                   type="radio"
                   name="filter-author"
                   value={opt.value}
                   checked={isChecked}
-                  onChange={() => setAuthorFilter && setAuthorFilter(opt.value)}
+                  readOnly
                 />
                 <span className="myntra-custom-radio" />
                 <span className="myntra-option-text">{opt.label}</span>
@@ -198,20 +270,27 @@ export default function FilterSidebar({
         </div>
       </div>
 
-      {/* Section 4: Price Limit */}
+      {/* Section 5: Price Limit */}
       <div className="myntra-filter-section">
         <span className="myntra-section-heading">PRICE LIMIT</span>
         <div className="myntra-options-list">
           {priceLimitOptions.map((opt) => {
             const isChecked = currentPrice === opt.value;
             return (
-              <label key={opt.value} className={`myntra-radio-label ${isChecked ? "active" : ""}`}>
+              <label
+                key={opt.value}
+                className={`myntra-radio-label ${isChecked ? "active" : ""}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (setPriceFilter) setPriceFilter(opt.value);
+                }}
+              >
                 <input
                   type="radio"
                   name="filter-price"
                   value={opt.value}
                   checked={isChecked}
-                  onChange={() => setPriceFilter && setPriceFilter(opt.value)}
+                  readOnly
                 />
                 <span className="myntra-custom-radio" />
                 <span className="myntra-option-text">{opt.label}</span>
@@ -220,34 +299,42 @@ export default function FilterSidebar({
           })}
         </div>
       </div>
-
-      {/* Bottom Status */}
-      {typeof resultCount === "number" && (
-        <div className="myntra-filter-footer">
-          <span className="myntra-count-text">{resultCount} books available</span>
-        </div>
-      )}
     </div>
   );
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className="filter-sidebar desktop-filter-sidebar myntra-desktop-sidebar">
+      {/* Desktop Sidebar (Permanent) */}
+      <aside className="myntra-filter-sidebar desktop-filter" aria-label="Filters">
         {content}
       </aside>
 
-      {/* Mobile drawer */}
+      {/* Mobile Drawer (Slide-Over) */}
       {mobileOpen && (
-        <div className="filter-mobile-overlay" onClick={onMobileClose}>
-          <div className="filter-mobile-drawer" onClick={(e) => e.stopPropagation()}>
-            <div className="filter-drawer-header">
-              <strong>FILTERS</strong>
-              <button type="button" onClick={onMobileClose} aria-label="Close filters">
+        <div className="myntra-mobile-drawer" role="dialog" aria-label="Filter drawer">
+          <div className="myntra-drawer-backdrop" onClick={onMobileClose} />
+          <div className="myntra-drawer-content">
+            <div className="myntra-drawer-top">
+              <span className="myntra-drawer-heading">FILTER &amp; SORT</span>
+              <button
+                type="button"
+                className="myntra-drawer-close"
+                onClick={onMobileClose}
+                aria-label="Close filters"
+              >
                 <FiX />
               </button>
             </div>
-            {content}
+            <div className="myntra-drawer-body">{content}</div>
+            <div className="myntra-drawer-footer">
+              <button
+                type="button"
+                className="myntra-apply-btn"
+                onClick={onMobileClose}
+              >
+                APPLY FILTERS {resultCount !== undefined && `(${resultCount})`}
+              </button>
+            </div>
           </div>
         </div>
       )}

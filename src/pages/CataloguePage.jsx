@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { FiFilter, FiChevronDown, FiX } from "react-icons/fi";
+import { FiFilter } from "react-icons/fi";
 import BookCard from "../components/BookCard";
 import FilterSidebar, {
   normalizeCategory,
   normalizeCollection,
   categoryOptions,
+  languageOptions,
   collectionOptions,
   authorOptions,
   priceLimitOptions,
@@ -14,7 +15,7 @@ import FilterSidebar, {
 
 const PAGE_SIZE = 48;
 
-export default function CataloguePage({ allBooks, defaultCategory }) {
+export default function CataloguePage({ allBooks = [], defaultCategory, defaultLanguage }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -24,6 +25,10 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
   // Category normalization
   const rawCatParam = searchParams.get("category") || searchParams.get("genre") || defaultCategory || "all";
   const catParam = normalizeCategory(rawCatParam);
+
+  // Language normalization
+  const rawLangParam = searchParams.get("language") || defaultLanguage || "all";
+  const languageParam = rawLangParam.toLowerCase();
 
   // Collection / special state normalization
   const rawCollectionParam =
@@ -45,6 +50,16 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
       const next = new URLSearchParams(p);
       if (v === "match") next.delete("sort");
       else next.set("sort", v);
+      return next;
+    });
+    setPage(1);
+  };
+
+  const setLanguageFilter = (v) => {
+    setSearchParams((p) => {
+      const next = new URLSearchParams(p);
+      if (v === "all") next.delete("language");
+      else next.set("language", v);
       return next;
     });
     setPage(1);
@@ -105,11 +120,18 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
     setPage(1);
   };
 
+  const handleClearAllFilters = () => {
+    setSearchParams({});
+    setPage(1);
+  };
+
   const currentCategoryLabel = categoryOptions.find((g) => g.value === catParam)?.label;
+  const currentLanguageLabel = languageOptions.find((l) => l.value.toLowerCase() === languageParam)?.label;
   const currentCollectionLabel = collectionOptions.find((c) => c.value === collectionParam)?.label;
   const currentPriceLabel = priceLimitOptions.find((p) => p.value === priceParam)?.label;
 
   const activeTitle =
+    languageParam !== "all" && currentLanguageLabel ? `${currentLanguageLabel} Books` :
     catParam !== "all" && currentCategoryLabel ? currentCategoryLabel :
     collectionParam !== "all" && currentCollectionLabel ? currentCollectionLabel :
     authorParam !== "all" ? `Books by ${authorParam}` :
@@ -117,6 +139,7 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
     "All Books Catalogue";
 
   const activeKicker =
+    languageParam !== "all" ? "LANGUAGE COLLECTION" :
     catParam !== "all" ? "GENRE COLLECTION" :
     collectionParam !== "all" ? "CURATED COLLECTION" :
     authorParam !== "all" ? "AUTHOR SPOTLIGHT" :
@@ -124,7 +147,9 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
     "COMPLETE CATALOGUE";
 
   const activeDescription =
-    catParam !== "all" && currentCategoryLabel
+    languageParam !== "all" && currentLanguageLabel
+      ? `Browse our authentic selection of quality-checked ${currentLanguageLabel} books.`
+      : catParam !== "all" && currentCategoryLabel
       ? `Explore our curated selection of quality-checked ${currentCategoryLabel}.`
       : collectionParam !== "all" && currentCollectionLabel
       ? `Explore hand-picked titles in our ${currentCollectionLabel} collection.`
@@ -140,7 +165,16 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
 
   const filtered = useMemo(() => {
     const result = allBooks.filter((b) => {
-      // 1. Category filter
+      // 1. Language filter
+      let langMatch = true;
+      if (languageParam !== "all") {
+        langMatch =
+          (b.languages || [b.language || "English"]).some(
+            (l) => String(l).toLowerCase() === languageParam
+          ) || String(b.language || "").toLowerCase() === languageParam;
+      }
+
+      // 2. Category filter
       let catMatch = true;
       if (catParam !== "all") {
         const bookGenre = String(b.genre || "").toLowerCase();
@@ -216,7 +250,7 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
         }
       }
 
-      // 2. Collection filter
+      // 3. Collection filter
       let collectionMatch = true;
       if (collectionParam !== "all") {
         const bookPrice = b.salePrice ?? b.price ?? 0;
@@ -246,13 +280,13 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
         }
       }
 
-      // 3. Author filter
+      // 4. Author filter
       let authorMatch = true;
       if (authorParam !== "all") {
         authorMatch = String(b.author || "").toLowerCase().includes(authorParam.toLowerCase());
       }
 
-      // 4. Price Limit filter
+      // 5. Price Limit filter
       let priceMatch = true;
       if (priceParam !== "all") {
         const p = b.salePrice ?? b.price ?? 0;
@@ -262,7 +296,7 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
         else if (priceParam === "500-above" || priceParam === "premium" || priceParam === "new") priceMatch = p >= 500;
       }
 
-      return catMatch && collectionMatch && authorMatch && priceMatch;
+      return langMatch && catMatch && collectionMatch && authorMatch && priceMatch;
     });
 
     return [...result].sort((a, b) =>
@@ -270,24 +304,34 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
       sortParam === "price-high" ? (b.salePrice ?? b.price) - (a.salePrice ?? a.price) :
       b.match - a.match
     );
-  }, [allBooks, catParam, collectionParam, authorParam, priceParam, sortParam]);
+  }, [allBooks, languageParam, catParam, collectionParam, authorParam, priceParam, sortParam]);
 
   const paginated = filtered.slice(0, page * PAGE_SIZE);
   const hasMore = paginated.length < filtered.length;
 
+  const hasAnyFilter =
+    languageParam !== "all" ||
+    catParam !== "all" ||
+    collectionParam !== "all" ||
+    authorParam !== "all" ||
+    priceParam !== "all";
+
   return (
-    <div className="catalogue-page myntra-catalogue-page">
+    <div className="catalogue-page">
+      {/* Editorial Page Header */}
       <div className="page-header-banner">
         <span className="catalog-kicker">{activeKicker}</span>
         <h1 className="catalog-title">{activeTitle}</h1>
-        <p className="catalog-description">{activeDescription}</p>
+        <p className="catalog-desc">{activeDescription}</p>
       </div>
 
-      <div className="catalogue-layout myntra-catalogue-layout">
-        {/* Left Filter Sidebar (synced with catParam) */}
+      <div className="catalogue-layout">
+        {/* Filter Sidebar (Desktop + Mobile Drawer) */}
         <FilterSidebar
           categoryFilter={catParam}
           setCategoryFilter={setCategoryFilter}
+          languageFilter={languageParam}
+          setLanguageFilter={setLanguageFilter}
           collectionFilter={collectionParam}
           setCollectionFilter={setCollectionFilter}
           authorFilter={authorParam}
@@ -296,94 +340,91 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
           setPriceFilter={setPriceFilter}
           sortBy={sortParam}
           setSortBy={setSortBy}
+          onClearAll={handleClearAllFilters}
           resultCount={filtered.length}
           mobileOpen={mobileFilterOpen}
           onMobileClose={() => setMobileFilterOpen(false)}
         />
 
-        {/* Right Main Area */}
-        <div className="catalogue-main myntra-catalogue-main">
-          {/* Top Myntra Toolbar */}
-          <div className="myntra-top-toolbar">
-            <div className="myntra-toolbar-left">
-              <button
-                type="button"
-                className="mobile-filter-btn"
-                onClick={() => setMobileFilterOpen(true)}
-              >
-                <FiFilter /> Filters
-              </button>
-
-              <span className="myntra-results-count">
-                <strong>{filtered.length}</strong> {filtered.length === 1 ? "Book" : "Books"} Found
-              </span>
-
-              {/* Active Filter Chips */}
-              <div className="myntra-active-chips">
-                {catParam !== "all" && (
-                  <span className="myntra-chip">
-                    {currentCategoryLabel}
-                    <button type="button" onClick={() => setCategoryFilter("all")} aria-label="Remove category filter">
-                      <FiX size={12} />
-                    </button>
-                  </span>
-                )}
-                {collectionParam !== "all" && (
-                  <span className="myntra-chip">
-                    {currentCollectionLabel}
-                    <button type="button" onClick={() => setCollectionFilter("all")} aria-label="Remove collection filter">
-                      <FiX size={12} />
-                    </button>
-                  </span>
-                )}
-                {authorParam !== "all" && (
-                  <span className="myntra-chip">
-                    Author: {authorParam}
-                    <button type="button" onClick={() => setAuthorFilter("all")} aria-label="Remove author filter">
-                      <FiX size={12} />
-                    </button>
-                  </span>
-                )}
-                {priceParam !== "all" && (
-                  <span className="myntra-chip">
-                    Price: {currentPriceLabel}
-                    <button type="button" onClick={() => setPriceFilter("all")} aria-label="Remove price filter">
-                      <FiX size={12} />
-                    </button>
-                  </span>
-                )}
-              </div>
+        {/* Main Content Area */}
+        <div className="catalogue-main">
+          {/* Active Filter Chips / Tag (Simple indicator, no duplicate Clear All) */}
+          {hasAnyFilter && (
+            <div className="active-filter-chips">
+              {languageParam !== "all" && (
+                <span className="filter-chip">
+                  Language: {currentLanguageLabel || languageParam}
+                </span>
+              )}
+              {catParam !== "all" && (
+                <span className="filter-chip">
+                  Category: {currentCategoryLabel || catParam}
+                </span>
+              )}
+              {collectionParam !== "all" && (
+                <span className="filter-chip">
+                  Collection: {currentCollectionLabel || collectionParam}
+                </span>
+              )}
+              {authorParam !== "all" && (
+                <span className="filter-chip">
+                  Author: {authorParam}
+                </span>
+              )}
+              {priceParam !== "all" && (
+                <span className="filter-chip">
+                  Price: {currentPriceLabel || priceParam}
+                </span>
+              )}
             </div>
+          )}
 
-            {/* Top Right Sort Dropdown */}
-            <div className="myntra-sort-dropdown-wrap">
-              <span className="myntra-sort-label">Sort by:</span>
-              <div className="myntra-select-container">
-                <select
-                  value={sortParam}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="myntra-sort-select"
-                  aria-label="Sort books by"
-                >
-                  {sortOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-                <FiChevronDown className="myntra-select-arrow" size={14} />
-              </div>
+          {/* Toolbar: [ Filters ] | Showing X of XXXX books | Sort by: [ Recommended ▼ ] */}
+          <div className="catalogue-toolbar">
+            <button
+              type="button"
+              className="toolbar-filter-btn"
+              onClick={() => setMobileFilterOpen(true)}
+              aria-label="Open filter menu"
+            >
+              <FiFilter />
+              <span>Filters {hasAnyFilter ? "•" : ""}</span>
+            </button>
+
+            <span className="result-count-label">
+              Showing <strong>{paginated.length}</strong> of <strong>{filtered.length}</strong> books
+            </span>
+
+            <div className="sort-dropdown-wrap">
+              <label htmlFor="catalogue-sort" className="sort-label">
+                Sort by:
+              </label>
+              <select
+                id="catalogue-sort"
+                className="catalogue-sort-select"
+                value={sortParam}
+                onChange={(e) => setSortBy(e.target.value)}
+                aria-label="Sort books by"
+              >
+                {sortOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          {/* Product Grid / Empty State */}
+          {/* Product Cards Grid */}
           {filtered.length > 0 ? (
             <>
-              <div className="results-grid myntra-results-grid">
+              <div className="results-grid">
                 {paginated.map((book) => (
                   <BookCard key={book.id} book={book} />
                 ))}
               </div>
+
+              {/* Load More Button */}
               {hasMore && (
                 <div className="load-more-wrap">
                   <button
@@ -391,22 +432,20 @@ export default function CataloguePage({ allBooks, defaultCategory }) {
                     className="load-more-btn"
                     onClick={() => setPage((p) => p + 1)}
                   >
-                    Load More Books
+                    Load More Books ({filtered.length - paginated.length} remaining)
                   </button>
                 </div>
               )}
             </>
           ) : (
-            <div className="category-not-found myntra-empty-state">
+            <div className="category-not-found">
               <h3>No Books Found</h3>
-              <p>We couldn't find any books matching your selected filters.</p>
+              <p>No books match your selected filters. Try changing or clearing your filter criteria.</p>
               <button
                 type="button"
                 className="cta"
-                onClick={() => {
-                  setSearchParams({});
-                  setPage(1);
-                }}
+                onClick={handleClearAllFilters}
+                style={{ display: "inline-flex", marginTop: "16px" }}
               >
                 Clear All Filters
               </button>

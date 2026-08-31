@@ -87,7 +87,7 @@ export const categoryConfigs = {
   },
   history: {
     title: "History & Politics",
-    image: "/catalog/9781416548485-better.jpg",
+    image: "/brand/non-fiction.webp",
     kicker: "TURNING POINTS & MEMOIRS",
     description: "Fascinating historical accounts, landmark political events, eyewitness memoirs, world chronicles, and the true stories that shaped civilization.",
     cataloguePath: "/catalogue?category=history",
@@ -100,27 +100,27 @@ export const categoryConfigs = {
     },
   },
   business: {
-    title: "Business & Leadership",
-    image: "/catalog/9780312541866-better.jpg",
-    kicker: "GROWTH, STRATEGY & CAREERS",
-    description: "Unlock actionable career strategies, startup case studies, economics, finance, personal mastery, and leadership wisdom from world-renowned thinkers.",
+    title: "Business & Management",
+    image: "/brand/non-fiction.webp",
+    kicker: "STRATEGY, LEADERSHIP & WEALTH",
+    description: "Essential strategies for modern entrepreneurs, management insights, economic trends, personal finance mastery, and career growth.",
     cataloguePath: "/catalogue?category=business",
-    accentColor: "#0ea5e9",
-    perks: ["Startup Playbooks", "Finance & Investing", "Executive Wisdom"],
+    accentColor: "#059669",
+    perks: ["Entrepreneurship Guides", "Leadership Case Studies", "Finance & Wealth"],
     filterFn: (b) => {
       const g = String(b.genre || "").toLowerCase();
       const cats = (b.categories || []).map((c) => String(c).toLowerCase());
-      return cats.includes("business") || g.includes("business") || g.includes("economics") || g.includes("leadership") || g.includes("finance");
+      return cats.includes("business") || g.includes("business") || g.includes("finance") || g.includes("economics") || g.includes("leadership") || g.includes("management");
     },
   },
   biography: {
-    title: "Biography & Memoir",
-    image: "/catalog/9781443408486-better.jpg",
-    kicker: "EXTRAORDINARY LIVES",
-    description: "Intimate and extraordinary life journeys of groundbreaking artists, world leaders, scientists, historical icons, and inspiring trailblazers.",
+    title: "Biographies & Memoirs",
+    image: "/brand/classic.webp",
+    kicker: "LIVES OF EXTRAORDINARY PEOPLE",
+    description: "Intimate life stories, revolutionary thinkers, inspiring leaders, creative geniuses, and the defining personal journeys of our time.",
     cataloguePath: "/catalogue?category=biography",
-    accentColor: "#14b8a6",
-    perks: ["Autobiographies", "Iconic Memoirs", "Honest & Inspiring"],
+    accentColor: "#6366f1",
+    perks: ["Inspiring Life Stories", "Unfiltered Memoirs", "Historical Icons"],
     filterFn: (b) => {
       const g = String(b.genre || "").toLowerCase();
       const cats = (b.categories || []).map((c) => String(c).toLowerCase());
@@ -131,22 +131,22 @@ export const categoryConfigs = {
 
 export const collectionConfigs = {
   "new-books": {
-    title: "Brand New Books",
+    title: "Brand New Books (Up to 80% Off)",
     image: "/brand/new-books.webp",
-    kicker: "UNREAD & PRISTINE (UP TO 80% OFF)",
-    description: "Unread, publisher-direct copies in pristine condition at a fraction of retail bookstore prices. Mint condition paperbacks, hardcovers, and boxed sets.",
+    kicker: "PRISTINE & UNREAD",
+    description: "Pristine, unread, publisher-direct copies with crisp pages and flawless bindings. Enjoy huge savings of up to 80% off retail list prices.",
     cataloguePath: "/catalogue?collection=new-books",
-    accentColor: "#f43f5e",
-    perks: ["Up to 80% Off MRP", "Publisher Direct", "100% Unread & Mint"],
-    filterFn: (b) => b.tier?.toLowerCase() === "new" || (b.categories || []).includes("new-books"),
+    accentColor: "#ec4899",
+    perks: ["100% Unread Condition", "Direct from Publishers", "Up to 80% Off MRP"],
+    filterFn: (b) => b.tier?.toLowerCase() === "new" || (b.categories || []).includes("new-books") || String(b.id).startsWith("new-") || String(b.id).startsWith("catalog-"),
   },
   "premium-books": {
     title: "Premium Books Collection",
-    image: "/brand/premium.webp",
-    kicker: "COLLECTOR EDITIONS & HARDCOVERS",
-    description: "Top-tier collectible hardcovers, art portfolios, and pristine editions curated for discerning readers and passionate book collectors.",
+    image: "/brand/coffee.webp",
+    kicker: "COLLECTOR HARDCOVERS & ART",
+    description: "High-value collectible editions, lavish coffee table hardcovers, visual encyclopedias, and pristine deluxe volumes at ₹499/Kg.",
     cataloguePath: "/catalogue?price=500-above",
-    accentColor: "#eab308",
+    accentColor: "#8b5cf6",
     perks: ["Hardcover & Illustrated", "₹499/Kg Premium Tier", "Collector Grade"],
     filterFn: (b) => b.tier === "Premium" || (b.salePrice ?? b.price ?? 0) >= 499 || b.ratePerKg >= 499,
   },
@@ -162,7 +162,7 @@ export const collectionConfigs = {
   },
   bestsellers: {
     title: "Bestselling Books",
-    image: "/books/bright-eyes.jpg",
+    image: "/brand/classic.webp",
     kicker: "MOST LOVED & HIGHLY RATED",
     description: "The most read, reviewed, and beloved pre-loved books of the season. Hand-picked reader favorites that consistently top the reading charts.",
     cataloguePath: "/catalogue?collection=bestsellers",
@@ -212,8 +212,77 @@ export const collectionConfigs = {
   },
 };
 
+export const languageConfigs = {
+  english: {
+    title: "English Books",
+    nativeTitle: "English Literature",
+    image: "/brand/classic.webp",
+    kicker: "GLOBAL LITERATURE & BESTSELLERS",
+    description: "Browse our extensive collection of quality-checked pre-loved English books, bestselling fiction, academic non-fiction, children's stories, and world classics.",
+    cataloguePath: "/catalogue?language=english",
+    accentColor: "#3b82f6",
+    perks: ["2,900+ Verified Titles", "Quality-Checked Paperbacks & Hardcovers", "Up to 80% Off MRP"],
+    filterFn: (b) => (b.languages || [b.language || "English"]).some((l) => String(l).toLowerCase() === "english"),
+  },
+  hindi: {
+    title: "Hindi Books",
+    nativeTitle: "हिन्दी साहित्य",
+    image: "/brand/non-fiction.webp",
+    kicker: "REGIONAL LITERATURE & CLASSICS",
+    description: "Discover authentic Indian literature, timeless classics, memoirs, and inspiring stories celebrating rich cultural heritage and storytelling.",
+    cataloguePath: "/catalogue?language=hindi",
+    accentColor: "#ef4444",
+    perks: ["Authentic Indian Literature", "Cultural Heritage", "Verified Pre-Loved Editions"],
+    filterFn: (b) => (b.languages || [b.language || ""]).some((l) => String(l).toLowerCase() === "hindi") || String(b.language || "").toLowerCase() === "hindi",
+  },
+  marathi: {
+    title: "Marathi Books",
+    nativeTitle: "मराठी साहित्य",
+    image: "/brand/classic.webp",
+    kicker: "REGIONAL LITERATURE & HISTORY",
+    description: "Explore captivating Marathi literature, historical sagas, biographical accounts, and treasured regional works.",
+    cataloguePath: "/catalogue?language=marathi",
+    accentColor: "#f59e0b",
+    perks: ["Historical Accounts", "Regional Literature", "Authentic Editions"],
+    filterFn: (b) => (b.languages || [b.language || ""]).some((l) => String(l).toLowerCase() === "marathi") || String(b.language || "").toLowerCase() === "marathi",
+  },
+  bengali: {
+    title: "Bengali Books",
+    nativeTitle: "বাংলা সাহিত্য",
+    image: "/brand/children.webp",
+    kicker: "REGIONAL LITERATURE & ARTS",
+    description: "Immerse yourself in rich Bengali storytelling, literary traditions, and renowned Indian literary voices.",
+    cataloguePath: "/catalogue?language=bengali",
+    accentColor: "#8b5cf6",
+    perks: ["Literary Heritage", "Inspiring Stories", "Quality-Checked Copies"],
+    filterFn: (b) => (b.languages || [b.language || ""]).some((l) => String(l).toLowerCase() === "bengali") || String(b.language || "").toLowerCase() === "bengali",
+  },
+  gujarati: {
+    title: "Gujarati Books",
+    nativeTitle: "ગુજરાતી પુસ્તકો",
+    image: "/brand/non-fiction.webp",
+    kicker: "REGIONAL LITERATURE & BIOGRAPHY",
+    description: "Explore inspiring journeys, biographies, and cherished regional stories celebrating Gujarati literary culture.",
+    cataloguePath: "/catalogue?language=gujarati",
+    accentColor: "#10b981",
+    perks: ["Biographical Accounts", "Inspiring Narratives", "Pre-Loved Value"],
+    filterFn: (b) => (b.languages || [b.language || ""]).some((l) => String(l).toLowerCase() === "gujarati") || String(b.language || "").toLowerCase() === "gujarati",
+  },
+  tamil: {
+    title: "Tamil Books",
+    nativeTitle: "தமிழ் இலக்கியம்",
+    image: "/brand/classic.webp",
+    kicker: "REGIONAL LITERATURE & CLASSICS",
+    description: "Discover classic Tamil literature, philosophical writings, and celebrated Indian stories.",
+    cataloguePath: "/catalogue?language=tamil",
+    accentColor: "#d97706",
+    perks: ["Enduring Classics", "Quality Checked", "Affordable Weight-Based Pricing"],
+    filterFn: (b) => (b.languages || [b.language || ""]).some((l) => String(l).toLowerCase() === "tamil") || String(b.language || "").toLowerCase() === "tamil",
+  },
+};
+
 // Aliases for matching various slug inputs
-const slugAliases = {
+export const slugAliases = {
   children: "children-books",
   kids: "children-books",
   "childrens-books": "children-books",
@@ -234,30 +303,46 @@ const slugAliases = {
   "extra-discount": "under-199",
   "bulk-books": "bulk",
   "books-in-bulk": "bulk",
+  eng: "english",
+  hin: "hindi",
+  mar: "marathi",
+  ben: "bengali",
+  guj: "gujarati",
+  tam: "tamil",
 };
 
 export function getLandingData(rawSlug, explicitType, allBooks = []) {
   const normalizedSlug = String(rawSlug || "").toLowerCase().trim();
   const canonicalSlug = slugAliases[normalizedSlug] || normalizedSlug;
 
-  const isCollection = explicitType === "collection" || (!categoryConfigs[canonicalSlug] && Boolean(collectionConfigs[canonicalSlug]));
-  
-  let config = isCollection ? collectionConfigs[canonicalSlug] : categoryConfigs[canonicalSlug];
+  const isLanguage = explicitType === "language" || Boolean(languageConfigs[canonicalSlug]);
+  const isCollection = explicitType === "collection" || (!isLanguage && !categoryConfigs[canonicalSlug] && Boolean(collectionConfigs[canonicalSlug]));
+
+  let config;
+  if (isLanguage) {
+    config = languageConfigs[canonicalSlug];
+  } else if (isCollection) {
+    config = collectionConfigs[canonicalSlug];
+  } else {
+    config = categoryConfigs[canonicalSlug];
+  }
 
   // Fallback for custom or unknown slugs
   if (!config) {
     config = {
       title: canonicalSlug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()) + " Books",
-      kicker: isCollection ? "CURATED COLLECTION" : "EXPLORE GENRE",
+      nativeTitle: "",
+      kicker: isLanguage ? "LANGUAGE COLLECTION" : isCollection ? "CURATED COLLECTION" : "EXPLORE GENRE",
       description: `Explore our hand-picked, quality-checked selection of ${canonicalSlug.replace(/-/g, " ")} pre-loved books by weight.`,
-      cataloguePath: isCollection ? `/catalogue?collection=${canonicalSlug}` : `/catalogue?category=${canonicalSlug}`,
+      cataloguePath: isLanguage ? `/catalogue?language=${canonicalSlug}` : isCollection ? `/catalogue?collection=${canonicalSlug}` : `/catalogue?category=${canonicalSlug}`,
       accentColor: "#ef4444",
       perks: ["100% Quality Checked", "Sold by Weight (Kg)", "Fast Pan-India Delivery"],
       filterFn: (b) => {
         const s = canonicalSlug.toLowerCase();
         const g = String(b.genre || "").toLowerCase();
+        const l = String(b.language || "").toLowerCase();
         const cats = (b.categories || []).map((c) => String(c).toLowerCase());
-        return cats.includes(s) || g.includes(s);
+        return cats.includes(s) || g.includes(s) || l.includes(s);
       },
     };
   }
@@ -267,8 +352,6 @@ export function getLandingData(rawSlug, explicitType, allBooks = []) {
   const totalCount = matchingBooks.length;
 
   // Show up to 12 books without artificial duplication:
-  // If >= 12 available -> show 12
-  // If < 12 available -> show all available
   const featuredBooks = matchingBooks.slice(0, 12);
 
   // For hero visual showcase, pick 5 to 7 covers from matching books (or fallback if fewer than 5)
@@ -281,8 +364,9 @@ export function getLandingData(rawSlug, explicitType, allBooks = []) {
 
   return {
     slug: canonicalSlug,
-    type: isCollection ? "collection" : "category",
+    type: isLanguage ? "language" : isCollection ? "collection" : "category",
     title: config.title,
+    nativeTitle: config.nativeTitle || "",
     kicker: config.kicker,
     description: config.description,
     cataloguePath: config.cataloguePath,

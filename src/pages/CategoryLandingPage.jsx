@@ -3,24 +3,23 @@ import { useParams, Link, useLocation } from "react-router-dom";
 import {
   FiChevronRight,
   FiArrowRight,
-  FiCompass,
-  FiStar,
-  FiBookOpen,
 } from "react-icons/fi";
 import BookCard from "../components/BookCard";
-import { getLandingData, categoryConfigs, collectionConfigs } from "../data/landingData";
+import { getLandingData, categoryConfigs, collectionConfigs, languageConfigs } from "../data/landingData";
 
 export default function CategoryLandingPage({ allBooks = [], type = "category" }) {
   const { slug } = useParams();
   const location = useLocation();
 
+  const isLanguageRoute = type === "language" || location.pathname.startsWith("/language");
   const isCollectionRoute = type === "collection" || location.pathname.startsWith("/collection");
-  const landingData = getLandingData(slug, isCollectionRoute ? "collection" : "category", allBooks);
+  const resolvedType = isLanguageRoute ? "language" : isCollectionRoute ? "collection" : "category";
+
+  const landingData = getLandingData(slug, resolvedType, allBooks);
 
   const {
     title,
-    kicker,
-    description,
+    nativeTitle,
     cataloguePath,
     accentColor,
     featuredBooks,
@@ -39,15 +38,39 @@ export default function CategoryLandingPage({ allBooks = [], type = "category" }
   const otherCollections = Object.entries(collectionConfigs)
     .filter(([key]) => key !== landingData.slug);
 
+  const otherLanguages = Object.entries(languageConfigs)
+    .filter(([key]) => key !== landingData.slug);
+
+  const discoveryItems = isLanguageRoute
+    ? otherLanguages
+    : isCollectionRoute
+    ? otherCollections
+    : otherCategories;
+
+  const getDiscoveryLink = (key) => {
+    if (isLanguageRoute) return `/language/${key}`;
+    if (isCollectionRoute) return `/collection/${key}`;
+    return `/category/${key}`;
+  };
+
+  const discoveryHeading = isLanguageRoute
+    ? "Explore Other Languages"
+    : isCollectionRoute
+    ? "Explore Other Collections"
+    : "Explore Other Categories";
+
   return (
     <div className="category-landing-page">
-      {/* 1. Immersive Centered Hero Showcase */}
+      {/* 1. Immersive Centered Hero Showcase (No Unwanted Description Text) */}
       <section className="centered-editorial-hero" style={{ "--accent-color": accentColor }}>
         <div className="hero-ambient-backdrop" />
 
         <div className="hero-header-centered">
+          {nativeTitle && (
+            <span className="hero-native-tag">{nativeTitle}</span>
+          )}
           <h1 className="hero-centered-headline">
-            Explore {title}
+            {isLanguageRoute ? title : title}
           </h1>
         </div>
 
@@ -82,30 +105,13 @@ export default function CategoryLandingPage({ allBooks = [], type = "category" }
             })}
           </div>
         </div>
-
-        {/* Supporting Description & Primary CTA Button */}
-        <div className="hero-footer-centered">
-          <p className="hero-supporting-desc">
-            {description}
-          </p>
-
-          <div className="hero-cta-button-row">
-            <Link to={cataloguePath} className="hero-main-cta-btn">
-              <span>Explore All {title}</span>
-              <FiArrowRight size={16} />
-            </Link>
-          </div>
-        </div>
       </section>
 
-      {/* 3. Featured Books Section (12-Book Clean Grid) */}
+      {/* 2. Featured Books Section (Clean Grid) */}
       <section className="landing-featured-section">
         <div className="landing-shelf-header">
           <div className="shelf-header-text">
             <h2>Featured {title}</h2>
-            <p className="shelf-header-subtitle">
-              Hand-picked recommendations from our quality-checked inventory
-            </p>
           </div>
           <div className="shelf-header-count">
             Showing {featuredBooks.length} of {totalCount} books
@@ -119,7 +125,7 @@ export default function CategoryLandingPage({ allBooks = [], type = "category" }
           ))}
         </div>
 
-        {/* 4. Standalone View All CTA Button */}
+        {/* 3. Standalone View All CTA Button */}
         <div className="landing-standalone-cta-wrap">
           <Link to={cataloguePath} className="landing-standalone-cta-btn">
             <span>View All {title} ({totalCount})</span>
@@ -127,17 +133,17 @@ export default function CategoryLandingPage({ allBooks = [], type = "category" }
           </Link>
         </div>
 
-        {/* 5. Explore Other Categories / Collections Section */}
+        {/* 4. Explore Other Categories / Collections / Languages Section */}
         <div className="landing-discovery-section">
           <div className="discovery-header">
-            <h3>Explore Other {isCollectionRoute ? "Collections" : "Categories"}</h3>
+            <h3>{discoveryHeading}</h3>
           </div>
 
           <div className="discovery-cards-grid">
-            {(isCollectionRoute ? otherCollections : otherCategories).map(([key, item], index) => (
+            {discoveryItems.map(([key, item], index) => (
               <Link
                 key={key}
-                to={isCollectionRoute ? `/collection/${key}` : `/category/${key}`}
+                to={getDiscoveryLink(key)}
                 className={`collection-card discovery-collection-card discovery-theme-${(index % 8) + 1}`}
               >
                 <span>

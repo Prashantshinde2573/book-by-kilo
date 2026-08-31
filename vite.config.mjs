@@ -6,6 +6,8 @@ export default defineConfig({
     include: ["react", "react-dom/client"],
   },
   server: {
+    host: true,
+    port: 5173,
     warmup: {
       clientFiles: ["./src/main.jsx"],
     },

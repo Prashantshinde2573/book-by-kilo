@@ -12,46 +12,55 @@ import {
 import { useAppContext } from "../context/AppContext";
 import Shelf from "../components/Shelf";
 
-function BookQuotesSection({ quotes }) {
+function BookQuotesSection({ quotes = [] }) {
   const railRef = useRef(null);
   const [activeIdx, setActiveIdx] = useState(0);
   const handleScroll = () => {
-    if (!railRef.current) return;
+    if (!railRef.current || !quotes.length) return;
     const cardWidth = 350;
     const current = Math.round(railRef.current.scrollLeft / cardWidth);
     setActiveIdx(current % quotes.length);
   };
+  if (!quotes || quotes.length === 0) return null;
+
   return (
     <section className="quotes-section" id="quotes">
       <div className="shelf-heading"><div><h2>Quotes</h2></div></div>
       <div className="quotes-carousel-wrapper">
         <div className="quotes-track" ref={railRef} onScroll={handleScroll}>
-          {quotes.map((item, index) => (
-            <article key={`${item.book}-${index}`} className="quote-card">
-              <img src={item.image} alt={item.book} className="quote-card-bg" />
-              <div className="quote-card-vignette" />
-              <div className="quote-card-body">
-                <h3 className="quote-headline">"{item.quote}"</h3>
-                <div className="quote-byline">
-                  <div className="quote-accent-line" />
-                  <span className="quote-author-name">{item.author}</span>
-                  <strong className="quote-book-title">{item.book}</strong>
+          {quotes.map((item, index) => {
+            const quoteText = item.quote || item.text || "";
+            const bookTitle = item.book || item.title || "";
+            const authorName = item.author || "Unknown";
+            const bgImage = item.image || "/brand/classic.webp";
+
+            return (
+              <article key={`${bookTitle}-${index}`} className="quote-card">
+                <img src={bgImage} alt={bookTitle} className="quote-card-bg" />
+                <div className="quote-card-vignette" />
+                <div className="quote-card-body">
+                  <h3 className="quote-headline">"{quoteText}"</h3>
+                  <div className="quote-byline">
+                    <div className="quote-accent-line" />
+                    <span className="quote-author-name">{authorName}</span>
+                    <strong className="quote-book-title">{bookTitle}</strong>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </div>
       <div className="quotes-dots">
         {quotes.map((q, idx) => (
-          <span key={q.book} className={`quote-dot ${activeIdx === idx ? "active" : ""}`} />
+          <span key={q.book || q.title || idx} className={`quote-dot ${activeIdx === idx ? "active" : ""}`} />
         ))}
       </div>
     </section>
   );
 }
 
-export default function HomePage({ allBooks }) {
+export default function HomePage({ allBooks = [] }) {
   const navigate = useNavigate();
   const { addCart, list, toggleList } = useAppContext();
   const [heroIndex, setHeroIndex] = useState(0);
@@ -59,10 +68,19 @@ export default function HomePage({ allBooks }) {
   useEffect(() => { document.title = "Books By Kilo — Pre-Loved Books Online"; }, []);
 
   const featuredBooks = useMemo(() => allBooks.slice(0, 5), [allBooks]);
-  const heroSlides = useMemo(() => [featuredBooks[0], featuredBooks[1], googleReviewSlide, ...featuredBooks.slice(2)].filter(Boolean), [featuredBooks]);
+  const heroSlides = useMemo(() => {
+    const slides = [];
+    if (featuredBooks[0]) slides.push(featuredBooks[0]);
+    if (featuredBooks[1]) slides.push(featuredBooks[1]);
+    if (googleReviewSlide) slides.push(googleReviewSlide);
+    if (featuredBooks.slice(2).length > 0) slides.push(...featuredBooks.slice(2));
+    return slides.filter(Boolean);
+  }, [featuredBooks]);
+
   const featured = heroSlides[heroIndex] || heroSlides[0];
-  const normFeatured = useMemo(() => getNormalizedBook(featured), [featured]);
-  const heroTitle = featured?.title;
+  const isGoogleSlide = featured?.isGoogleReview === true || featured?.id === "google-review-slide";
+  const normFeatured = useMemo(() => (!isGoogleSlide && featured ? getNormalizedBook(featured) : null), [featured, isGoogleSlide]);
+  const heroTitle = featured?.title || "";
 
   useEffect(() => {
     if (heroSlides.length < 2) return undefined;
@@ -85,16 +103,22 @@ export default function HomePage({ allBooks }) {
     else navigate("/catalogue");
   };
 
+  const surpriseTitle = Array.isArray(surpriseCard) ? surpriseCard[0] : (surpriseCard?.title || "Surprise Stack");
+  const surpriseDesc = Array.isArray(surpriseCard) ? surpriseCard[1] : (surpriseCard?.desc || "Unexpected reads, picked just for you.");
+  const surpriseImg = Array.isArray(surpriseCard) ? surpriseCard[2] : (surpriseCard?.image || "/brand/surprise_banner.jpg");
+
   return (
     <>
       <section
         className="hero"
-        data-hero-title={typeof featured?.title === "string" ? featured.title : "featured"}
-        data-hero-id={featured?.id}
+        data-hero-title={typeof heroTitle === "string" ? heroTitle : "featured"}
+        data-hero-id={featured?.id || "hero"}
       >
         <div className="hero-art">
-          <img key={`backdrop-${featured?.id}`} className="hero-backdrop" src={featured?.image} alt="" aria-hidden="true" />
-          {featured?.isGoogleReview ? (
+          {featured?.image && (
+            <img key={`backdrop-${featured?.id}`} className="hero-backdrop" src={featured.image} alt="" aria-hidden="true" />
+          )}
+          {isGoogleSlide ? (
             <div className="google-rating-card-v2 desktop-only-gcard">
               <div className="g-card-v2-left">
                 <div className="g-card-v2-logo-wrapper"><FcGoogle size={48} /></div>
@@ -131,12 +155,12 @@ export default function HomePage({ allBooks }) {
               </div>
             </div>
           ) : (
-            <img className="hero-book" src={featured?.image} alt={`${featured?.title} cover`} />
+            <img className="hero-book" src={featured?.image} alt={`${featured?.title || "Book"} cover`} />
           )}
         </div>
 
         <div className="hero-copy">
-          {featured?.isGoogleReview ? (
+          {isGoogleSlide ? (
             <>
               <span className="eyebrow">CUSTOMER TRUST &amp; REVIEWS</span>
               <h1>Google Rating <em>4.8 ★</em></h1>
@@ -145,7 +169,7 @@ export default function HomePage({ allBooks }) {
                 <span><FiCheck /> 100% Authentic Books</span>
                 <span>Fast Shipping</span>
               </div>
-              <p className="description">{googleReviewSlide.description}</p>
+              <p className="description">{googleReviewSlide?.description || "Join over 50,000 happy readers across India saving tonnes of paper and discovering quality pre-loved books by weight."}</p>
               <div className="hero-actions">
                 <Link to="/catalogue?collection=bestsellers" className="cta"><FiShoppingCart /> Shop Bestsellers</Link>
                 <button className="secondary" onClick={() => window.open("https://www.google.com/search?q=booksbykilo+reviews", "_blank")}>
@@ -176,23 +200,26 @@ export default function HomePage({ allBooks }) {
 
         <div className="hero-slider" aria-label="Featured books">
           <div className="hero-thumbnails">
-            {heroSlides.map((slide, index) => (
-              <button
-                key={slide.id}
-                className={`hero-thumb-btn ${index === heroIndex ? "active" : ""}`}
-                onClick={() => setHeroIndex(index)}
-                aria-label={`Slide ${index + 1}: ${slide.title || "Google Reviews"}`}
-              >
-                {slide.isGoogleReview ? (
-                  <div className="thumb-google-badge">
-                    <span className="g-mark"><FcGoogle size={14} /></span>
-                    <small>4.8★</small>
-                  </div>
-                ) : (
-                  <img src={slide.image} alt={slide.title} />
-                )}
-              </button>
-            ))}
+            {heroSlides.map((slide, index) => {
+              const isSlideGoogle = slide?.isGoogleReview || slide?.id === "google-review-slide";
+              return (
+                <button
+                  key={slide.id || index}
+                  className={`hero-thumb-btn ${index === heroIndex ? "active" : ""}`}
+                  onClick={() => setHeroIndex(index)}
+                  aria-label={`Slide ${index + 1}: ${slide.title || "Google Reviews"}`}
+                >
+                  {isSlideGoogle ? (
+                    <div className="thumb-google-badge">
+                      <span className="g-mark"><FcGoogle size={14} /></span>
+                      <small>4.8★</small>
+                    </div>
+                  ) : (
+                    <img src={slide.image} alt={slide.title} />
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -202,7 +229,7 @@ export default function HomePage({ allBooks }) {
         <div className="top-ten-shelf">
           <Shelf
             shelf={{ title: "Top 10 Books This Week" }}
-            items={[...allBooks].sort((a, b) => b.match - a.match).slice(0, 10)}
+            items={[...allBooks].sort((a, b) => (b.match || 0) - (a.match || 0)).slice(0, 10)}
             onViewAll={handleViewAll}
           />
         </div>
@@ -211,9 +238,9 @@ export default function HomePage({ allBooks }) {
         <section className="discovery-section genre-section" id="genres">
           <div className="shelf-heading"><div><h2>Explore by Genre</h2></div></div>
           <div className="genre-grid">
-            {genreItems.map(([title, , image, catKey], index) => (
+            {genreItems.map(([title, subtitle, image, catKey], index) => (
               <Link
-                key={title}
+                key={title || index}
                 to={`/category/${catKey}`}
                 className={`genre-card genre-${index + 1}`}
               >
@@ -226,13 +253,13 @@ export default function HomePage({ allBooks }) {
             ))}
             {/* Desktop Surprise Stack */}
             <Link to="/surprise-stack" className="genre-card genre-surprise desktop-surprise-card">
-              <img className="surprise-bg-img" src={surpriseCard[2]} alt={surpriseCard[0]} />
+              <img className="surprise-bg-img" src={surpriseImg} alt={surpriseTitle} />
               <div className="surprise-overlay" />
               <div className="surprise-content">
                 <div className="surprise-badge"><FiGift size={12} /> MYSTERY BOX</div>
                 <div className="surprise-body">
-                  <strong>{surpriseCard[0]}</strong>
-                  <small>{surpriseCard[1]}</small>
+                  <strong>{surpriseTitle}</strong>
+                  <small>{surpriseDesc}</small>
                   <span className="surprise-cta">Unlock Stack <FiChevronRight size={13} /></span>
                 </div>
               </div>
@@ -243,13 +270,13 @@ export default function HomePage({ allBooks }) {
         {/* Mobile Surprise Stack */}
         <section className="surprise-standalone-section mobile-surprise-section" id="surprisestack">
           <Link to="/surprise-stack" className="genre-card genre-surprise-standalone">
-            <img className="surprise-bg-img" src={surpriseCard[2]} alt={surpriseCard[0]} />
+            <img className="surprise-bg-img" src={surpriseImg} alt={surpriseTitle} />
             <div className="surprise-overlay" />
             <div className="surprise-content">
               <div className="surprise-badge"><FiGift size={12} /> MYSTERY BOX</div>
               <div className="surprise-body">
-                <strong>{surpriseCard[0]}</strong>
-                <small>{surpriseCard[1]}</small>
+                <strong>{surpriseTitle}</strong>
+                <small>{surpriseDesc}</small>
                 <span className="surprise-cta">Unlock Stack <FiChevronRight size={13} /></span>
               </div>
             </div>
@@ -257,10 +284,18 @@ export default function HomePage({ allBooks }) {
         </section>
 
         {/* 3. Recently Added */}
-        <Shelf shelf={{ title: "Recently Added Books", subtitle: "Freshly stocked arrivals." }} items={allBooks.slice(0, 24)} onViewAll={handleViewAll} />
+        <Shelf
+          shelf={{ title: "Recently Added Books", subtitle: "Freshly stocked arrivals." }}
+          items={allBooks.slice(0, 24)}
+          onViewAll={handleViewAll}
+        />
 
         {/* 4. Brand New Books */}
-        <Shelf shelf={{ title: "Brand New Books", subtitle: "Straight from the press." }} items={allBooks.filter((b) => b.categories?.includes("new-books") || b.tier === "New").slice(0, 24)} onViewAll={handleViewAll} />
+        <Shelf
+          shelf={{ title: "Brand New Books", subtitle: "Straight from the press." }}
+          items={allBooks.filter((b) => (b.categories || []).includes("new-books") || b.tier?.toLowerCase() === "new" || String(b.id).startsWith("new-")).slice(0, 24)}
+          onViewAll={handleViewAll}
+        />
 
         {/* 5. Banner Mid */}
         <section className="gradient-highlight">
@@ -271,7 +306,7 @@ export default function HomePage({ allBooks }) {
             <Link to="/collection/bestsellers" style={{ display: "inline-flex", alignItems: "center", gap: "8px", marginTop: "16px" }}>Explore Bestsellers <FiChevronRight /></Link>
           </div>
           <div className="editor-stack">
-            {[...allBooks].sort((a, b) => b.match - a.match).slice(0, 5).map((book, index) => (
+            {[...allBooks].sort((a, b) => (b.match || 0) - (a.match || 0)).slice(0, 5).map((book, index) => (
               <Link key={book.id} to={`/product/${book.id}`} style={{ "--editor-index": index }}>
                 <img src={book.image} alt={`${book.title} cover`} />
               </Link>
@@ -280,62 +315,85 @@ export default function HomePage({ allBooks }) {
         </section>
 
         {/* 6. Children Books */}
-        <Shelf shelf={{ title: "Children Books", subtitle: "Magic for little readers." }} items={allBooks.filter((b) => b.categories?.includes("children") || b.genre?.toLowerCase().includes("children")).slice(0, 24)} onViewAll={handleViewAll} />
+        <Shelf
+          shelf={{ title: "Children Books", subtitle: "Magic for little readers." }}
+          items={allBooks.filter((b) => (b.categories || []).includes("children-books") || (b.categories || []).includes("children") || String(b.genre || "").toLowerCase().includes("children")).slice(0, 24)}
+          onViewAll={handleViewAll}
+        />
 
         {/* 7. Teen Fiction */}
-        <Shelf shelf={{ title: "Teen Fiction", subtitle: "Captivating young adult reads." }} items={allBooks.filter((b) => b.categories?.includes("teen-fiction") || b.genre?.toLowerCase().includes("teen")).slice(0, 24)} onViewAll={handleViewAll} />
+        <Shelf
+          shelf={{ title: "Teen Fiction", subtitle: "Captivating young adult reads." }}
+          items={allBooks.filter((b) => (b.categories || []).includes("teen-fiction") || (b.categories || []).includes("teen") || String(b.genre || "").toLowerCase().includes("teen")).slice(0, 24)}
+          onViewAll={handleViewAll}
+        />
 
         {/* 8. Fiction / Non-Fiction */}
-        <Shelf shelf={{ title: "Fiction / Non-Fiction", subtitle: "From wild imaginations to real facts." }} items={allBooks.filter((b) => b.categories?.includes("fiction") || b.categories?.includes("non-fiction") || b.genre?.toLowerCase().includes("fiction")).slice(0, 24)} onViewAll={handleViewAll} />
+        <Shelf
+          shelf={{ title: "Fiction / Non-Fiction", subtitle: "From wild imaginations to real facts." }}
+          items={allBooks.filter((b) => (b.categories || []).includes("fiction") || (b.categories || []).includes("non-fiction") || String(b.genre || "").toLowerCase().includes("fiction") || String(b.genre || "").toLowerCase().includes("non-fiction")).slice(0, 24)}
+          onViewAll={handleViewAll}
+        />
 
         {/* 9. Explore by Authors */}
         <section className="discovery-section author-section" id="authors">
           <div className="shelf-heading"><div><h2>Explore by Authors</h2></div></div>
           <div className="author-grid">
-            {authors.map((author, index) => (
-              <Link 
-                key={author.name} 
-                to={`/catalogue?author=${encodeURIComponent(author.name)}`} 
-                className={`author-card author-${index + 1}`} 
-                aria-label={`Browse books by ${author.name}`}
-              >
-                <div className="author-card-left">
-                  <div className="author-avatar-wrap">
-                    {author.image ? (
-                      <img 
-                        src={author.image} 
-                        alt={author.name} 
-                        className="author-avatar-img" 
-                        loading="lazy"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    ) : null}
-                    <span className="author-avatar-initials">
-                      {author.name.split(" ").map(n => n[0]).join("")}
-                    </span>
+            {authors.map((author, index) => {
+              const authorName = author.name || "Author";
+              const authorGenre = author.genre || "Bestselling Author";
+              const authorImage = author.image;
+              const initials = authorName.split(" ").map((n) => n[0]).join("");
+
+              return (
+                <Link 
+                  key={authorName || index} 
+                  to={`/catalogue?author=${encodeURIComponent(authorName)}`} 
+                  className={`author-card author-${index + 1}`} 
+                  aria-label={`Browse books by ${authorName}`}
+                >
+                  <div className="author-card-left">
+                    <div className="author-avatar-wrap">
+                      {authorImage ? (
+                        <img 
+                          src={authorImage} 
+                          alt={authorName} 
+                          className="author-avatar-img" 
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      ) : null}
+                      <span className="author-avatar-initials">
+                        {initials}
+                      </span>
+                    </div>
+                    <div className="author-info">
+                      <strong>{authorName}</strong>
+                      <small>{authorGenre}</small>
+                    </div>
                   </div>
-                  <div className="author-info">
-                    <strong>{author.name}</strong>
-                    <small>{author.genre}</small>
-                  </div>
-                </div>
-                <FiChevronRight className="author-arrow" />
-              </Link>
-            ))}
+                  <FiChevronRight className="author-arrow" />
+                </Link>
+              );
+            })}
           </div>
         </section>
 
         {/* 10. Extra Discount Sale */}
-        <Shelf shelf={{ title: "Extra Discount Sale", subtitle: "Massive markdowns on top titles." }} items={[...allBooks].sort((a, b) => a.salePrice - b.salePrice).slice(0, 24)} onViewAll={handleViewAll} />
+        <Shelf
+          shelf={{ title: "Extra Discount Sale", subtitle: "Massive markdowns on top titles." }}
+          items={[...allBooks].sort((a, b) => (a.salePrice || 0) - (b.salePrice || 0)).slice(0, 24)}
+          onViewAll={handleViewAll}
+        />
 
         {/* 11. Regional Languages */}
         <section className="discovery-section language-section" id="languages">
           <div className="shelf-heading"><div><h2>Explore by Regional Languages</h2></div></div>
           <div className="language-grid">
             {languages.map(([language, native, image], index) => (
-              <Link key={language} to={`/search?q=${encodeURIComponent(language)}`} className={`language-card language-${index + 1}`}>
+              <Link key={language || index} to={`/language/${language.toLowerCase()}`} className={`language-card language-${index + 1}`}>
                 <span><strong>{native}</strong><small>{language}</small></span>
                 <img src={image} alt={language} />
               </Link>
@@ -344,7 +402,11 @@ export default function HomePage({ allBooks }) {
         </section>
 
         {/* 12. Coffee Table Books */}
-        <Shelf shelf={{ title: "Coffee Table Books", subtitle: "Stunning visual statements." }} items={allBooks.filter((b) => b.categories?.includes("collector") || b.tier === "Premium" || b.tier === "Classic").slice(0, 24)} onViewAll={handleViewAll} />
+        <Shelf
+          shelf={{ title: "Coffee Table Books", subtitle: "Stunning visual statements." }}
+          items={allBooks.filter((b) => (b.categories || []).includes("coffee-table-books") || (b.categories || []).includes("collector") || b.tier === "Premium" || b.tier === "Classic" || String(b.genre || "").toLowerCase().includes("coffee")).slice(0, 24)}
+          onViewAll={handleViewAll}
+        />
 
         {/* Quotes Section */}
         <BookQuotesSection quotes={bookQuotes} />
@@ -365,8 +427,8 @@ export default function HomePage({ allBooks }) {
               else if (collection.route === "surprise-stack") toPath = "/surprise-stack";
 
               return (
-                <Link className={`collection-card collection-${index + 1}`} key={collection.title} to={toPath}>
-                  <span><strong>{collection.title}</strong><small>{collection.subtitle}</small></span>
+                <Link className={`collection-card collection-${index + 1}`} key={collection.title || index} to={toPath}>
+                  <span><strong>{collection.title}</strong></span>
                   <img src={collection.image} alt={collection.title} />
                 </Link>
               );
