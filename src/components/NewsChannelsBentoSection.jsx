@@ -9,8 +9,7 @@ export default function NewsChannelsBentoSection() {
         {/* Section Heading */}
         <div className="bento-heading-wrap">
           <h2 className="bento-main-title">
-            Every Ton Of Books We Sold, We Saved
-
+            Every Book You Choose, Your Contribution Counts
           </h2>
         </div>
 
@@ -136,6 +135,11 @@ export default function NewsChannelsBentoSection() {
 
           </div>
         </div>
+
+        {/* Footnote Impact Caption */}
+        <p className="bento-footer-caption">
+          These figures show the environmental impact of every tonne of books saved.
+        </p>
 
       </div>
     </section>

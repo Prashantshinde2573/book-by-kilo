@@ -31,7 +31,7 @@ export default function SustainabilityImpactSection() {
           <div className="sustainable-header-block">
             <span className="sustainable-eyebrow">SUSTAINABLE PRACTICES &amp; IMPACT</span>
             <h2 className="sustainable-main-title">
-              Every Ton of Books We Sold, We Saved:
+              Every Book You Choose, Your Contribution Counts
             </h2>
           </div>
 
