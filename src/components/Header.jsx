@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FiChevronDown, FiChevronRight, FiMenu, FiSearch,
-  FiShoppingCart, FiUser, FiX, FiHeart, FiBook,
+  FiShoppingCart, FiUser, FiX, FiHeart, FiBook, FiArrowRight,
 } from "react-icons/fi";
 import { FaFire } from "react-icons/fa";
 import { useAppContext } from "../context/AppContext";
@@ -131,34 +131,32 @@ export default function Header() {
             <FiChevronDown className={`mega-caret ${mobileCatOpen ? "rotate" : ""}`} />
           </button>
 
-          {/* Desktop Mega Dropdown Menu */}
+          {/* Desktop Mega Dropdown Menu (Screenshot 2 Reference Layout) */}
           {megaOpen && (
-            <div className="mega-dropdown">
-              <div className="mega-container">
-                <div className="mega-left-banner">
-                  <span className="mega-badge"><FaFire /> PRE-LOVED BARGAINS</span>
-                  <h3>Featured Collections</h3>
-                  <p>Quality-checked pre-loved books at unbelievable prices. Shop by collection, genre or author!</p>
-                  <button className="mega-featured-btn" onClick={() => { navigate("/catalogue"); setMegaOpen(false); }}>
-                    Browse All Books <FiChevronRight />
-                  </button>
-                </div>
-
-                <div className="mega-right-grid">
-                  <span className="mega-grid-title">EXPLORE CATEGORIES &amp; SECTIONS</span>
-                  <div className="mega-category-grid">
-                    {megaCategories.map((cat) => (
-                      <Link
-                        key={cat.title}
-                        to={cat.path}
-                        className="mega-category-card"
-                        onClick={() => setMegaOpen(false)}
-                      >
-                        <img className="mega-cat-img" src={cat.image} alt={cat.title} />
-                        <span className="mega-cat-title">{cat.title}</span>
-                      </Link>
-                    ))}
-                  </div>
+            <div className="mega-dropdown" onMouseEnter={handleMegaEnter} onMouseLeave={handleMegaLeave}>
+              <div className="mega-dropdown-inner">
+                <div className="mega-nav-grid">
+                  {megaCategories.map((cat) => (
+                    <Link
+                      key={cat.title}
+                      to={cat.path}
+                      className="mega-nav-item-link"
+                      onClick={() => setMegaOpen(false)}
+                    >
+                      <div className="mega-item-thumb-wrap">
+                        <img
+                          className="mega-item-thumb"
+                          src={cat.image}
+                          alt={cat.title}
+                          onError={(e) => {
+                            e.currentTarget.src = "/brand/classic.webp";
+                          }}
+                        />
+                      </div>
+                      <span className="mega-item-name">{cat.title}</span>
+                      <FiArrowRight className="mega-item-arrow" />
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>

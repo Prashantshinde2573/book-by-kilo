@@ -29,32 +29,9 @@ import NotFoundPage from "./pages/NotFoundPage";
 // ─── Data loader ─────────────────────────────────────────────────────────────
 
 function useAllBooks() {
-  const [catalog, setCatalog] = useState([]);
-
-  useEffect(() => {
-    let active = true;
-    fetch("/catalog.json")
-      .then((r) => r.json())
-      .then((items) => {
-        if (!active) return;
-        setCatalog(
-          items.map((book, index) => ({
-            ...book,
-            genre: book.categories?.[0] || "Books",
-            description: `A quality-checked Books by Kilo edition of ${book.title} by ${book.author}.`,
-            id: book.id || `catalog-${index}`,
-          }))
-        );
-      })
-      .catch(() => setCatalog([]));
-    return () => { active = false; };
-  }, []);
-
-  const rawBooksList = catalog.length ? catalog : books;
   return useMemo(() => {
-    const allRaw = [...rawBooksList, ...internetNewBooks];
-    return allRaw.map((b) => getNormalizedBook(b));
-  }, [rawBooksList]);
+    return books.map((b) => getNormalizedBook(b));
+  }, []);
 }
 
 // ─── Scroll restoration ───────────────────────────────────────────────────────

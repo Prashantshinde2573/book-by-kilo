@@ -58,15 +58,11 @@ export default function HomePage({ allBooks }) {
 
   useEffect(() => { document.title = "Books By Kilo — Pre-Loved Books Online"; }, []);
 
-  const preferredHeroTitles = ["Bright Eyes, Brown Skin", "Alice in Wonderland", "King Lear", "Much Ado about Nothing", "When It Snows"];
-  const heroBooks = preferredHeroTitles.map((t) => allBooks.find((b) => b.title.toLowerCase() === t.toLowerCase())).filter(Boolean);
-  const featuredBooks = heroBooks.length === 5 ? heroBooks : allBooks.slice(0, 5);
-
+  const featuredBooks = useMemo(() => allBooks.slice(0, 5), [allBooks]);
   const heroSlides = useMemo(() => [featuredBooks[0], featuredBooks[1], googleReviewSlide, ...featuredBooks.slice(2)].filter(Boolean), [featuredBooks]);
   const featured = heroSlides[heroIndex] || heroSlides[0];
   const normFeatured = useMemo(() => getNormalizedBook(featured), [featured]);
-
-  const heroTitle = featured && featured.title === "When It Snows" ? <><>When It</><br /><>Snows</></> : featured?.title;
+  const heroTitle = featured?.title;
 
   useEffect(() => {
     if (heroSlides.length < 2) return undefined;

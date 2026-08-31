@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { FiCheck, FiChevronLeft, FiHeart, FiShoppingCart } from "react-icons/fi";
+import { FiCheck, FiChevronLeft, FiChevronRight, FiHeart, FiShoppingCart } from "react-icons/fi";
 import { getNormalizedBook, formatPrice } from "../data/books";
 import { useAppContext } from "../context/AppContext";
 import BookCard from "../components/BookCard";
@@ -10,6 +10,8 @@ export default function ProductPage({ allBooks }) {
   const navigate = useNavigate();
   const { addCart, list, toggleList } = useAppContext();
   const [recFilter, setRecFilter] = useState("genre");
+  const recRailRef = useRef(null);
+  const [recScrollState, setRecScrollState] = useState({ left: false, right: true });
 
   const book = useMemo(() => {
     const found = allBooks.find((b) => String(b.id) === String(id));
@@ -29,6 +31,40 @@ export default function ProductPage({ allBooks }) {
     }
     return allBooks.filter((b) => b.id !== book.id && (b.genre === book.genre || b.categories?.includes(book.categories?.[0])));
   }, [book, recFilter, allBooks]);
+
+  const updateRecScrollState = () => {
+    const rail = recRailRef.current;
+    if (!rail) return;
+    setRecScrollState({
+      left: rail.scrollLeft > 4,
+      right: rail.scrollLeft + rail.clientWidth < rail.scrollWidth - 4,
+    });
+  };
+
+  const scrollRec = (direction) => {
+    const rail = recRailRef.current;
+    if (!rail) return;
+    const card = rail.querySelector(".book-card");
+    const cardWidth = card ? card.getBoundingClientRect().width : 220;
+    const gap = typeof window !== "undefined" && window.innerWidth > 1024 ? 32 : 14;
+    const cardsToScroll = Math.max(1, Math.floor(rail.clientWidth / (cardWidth + gap)) - 1 || 3);
+    const scrollAmount = cardsToScroll * (cardWidth + gap);
+    rail.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const rail = recRailRef.current;
+    if (!rail) return undefined;
+    rail.scrollLeft = 0;
+    updateRecScrollState();
+
+    rail.addEventListener("scroll", updateRecScrollState, { passive: true });
+    window.addEventListener("resize", updateRecScrollState);
+    return () => {
+      rail.removeEventListener("scroll", updateRecScrollState);
+      window.removeEventListener("resize", updateRecScrollState);
+    };
+  }, [recFilter, recommendations]);
 
   if (!book) {
     return (
@@ -103,12 +139,28 @@ export default function ProductPage({ allBooks }) {
           </div>
         </div>
         <div className="shelf-wrap">
-          <div className="book-rail pdp-rec-rail">
+          <button
+            className={`rail-arrow left ${recScrollState.left ? "available" : ""}`}
+            disabled={!recScrollState.left}
+            onClick={() => scrollRec(-1)}
+            aria-label="Scroll recommendations left"
+          >
+            <FiChevronLeft />
+          </button>
+          <div className="book-rail pdp-rec-rail" ref={recRailRef}>
             {recommendations.slice(0, 16).map((recBook) => (
               <BookCard key={`rec-${recBook.id}`} book={recBook} />
             ))}
             {!recommendations.length && <div className="empty">No other books found in this filter.</div>}
           </div>
+          <button
+            className={`rail-arrow right ${recScrollState.right ? "available" : ""}`}
+            disabled={!recScrollState.right}
+            onClick={() => scrollRec(1)}
+            aria-label="Scroll recommendations right"
+          >
+            <FiChevronRight />
+          </button>
         </div>
       </div>
     </section>

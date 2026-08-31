@@ -11,12 +11,20 @@ export default function Shelf({ shelf, items, rank, onViewAll }) {
     const rail = railRef.current;
     if (!rail) return;
     setScrollState({
-      left: rail.scrollLeft > 8,
-      right: rail.scrollLeft + rail.clientWidth < rail.scrollWidth - 8,
+      left: rail.scrollLeft > 4,
+      right: rail.scrollLeft + rail.clientWidth < rail.scrollWidth - 4,
     });
   };
+
   const scroll = (direction) => {
-    railRef.current?.scrollBy({ left: direction * window.innerWidth * 0.72, behavior: "smooth" });
+    const rail = railRef.current;
+    if (!rail) return;
+    const card = rail.querySelector(".book-card");
+    const cardWidth = card ? card.getBoundingClientRect().width : 220;
+    const gap = typeof window !== "undefined" && window.innerWidth > 1024 ? 32 : 14;
+    const cardsToScroll = Math.max(1, Math.floor(rail.clientWidth / (cardWidth + gap)) - 1 || 3);
+    const scrollAmount = cardsToScroll * (cardWidth + gap);
+    rail.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
   };
   useEffect(() => {
     const rail = railRef.current;
