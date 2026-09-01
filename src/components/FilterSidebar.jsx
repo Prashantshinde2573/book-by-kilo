@@ -139,6 +139,18 @@ export default function FilterSidebar({
     currentPrice !== "all" ||
     sortBy !== "match";
 
+  // Prevent background scroll when mobile filter drawer is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
   const sidebarTrackRef = useRef(null);
   const sidebarContentRef = useRef(null);
   const [stickyStyle, setStickyStyle] = useState({

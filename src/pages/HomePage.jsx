@@ -190,7 +190,7 @@ export default function HomePage({ allBooks = [] }) {
             <img key={`backdrop-${featured?.id}`} className="hero-backdrop" src={featured.image} alt="" aria-hidden="true" />
           )}
           {isGoogleSlide ? (
-            <div className="google-rating-card-v2 desktop-only-gcard">
+            <div className="google-rating-card-v2 desktop-gcard">
               <div className="g-card-v2-left">
                 <div className="g-card-v2-logo-wrapper"><FcGoogle size={48} /></div>
               </div>
@@ -233,6 +233,42 @@ export default function HomePage({ allBooks = [] }) {
         <div className="hero-copy">
           {isGoogleSlide ? (
             <>
+              {/* Mobile Google Rating Card */}
+              <div className="google-rating-card-v2 mobile-gcard">
+                <div className="g-card-v2-left">
+                  <div className="g-card-v2-logo-wrapper"><FcGoogle size={38} /></div>
+                </div>
+                <div className="g-card-v2-divider" />
+                <div className="g-card-v2-right">
+                  <div className="g-card-v2-header">
+                    <span className="g-card-v2-title">Google Rating</span>
+                    <span className="g-card-v2-verified-badge" aria-label="Verified">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none">
+                        <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 4 .495 0 .965.084 1.4-.238 1.4 1.273 2.77 2.148 4.35 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-.65 2.148-2.02 2.148-3.6z" fill="#2563eb"/>
+                        <path d="M9.8 16.2l-3.5-3.5 1.4-1.4 2.1 2.1 6.3-6.3 1.4 1.4-7.7 7.7z" fill="#ffffff"/>
+                      </svg>
+                    </span>
+                  </div>
+                  <div className="g-card-v2-score-row">
+                    <span className="g-card-v2-score">4.8</span>
+                    <span className="g-card-v2-scale">/ 5</span>
+                  </div>
+                  <div className="g-card-v2-stars">
+                    <span className="g-star">★</span><span className="g-star">★</span><span className="g-star">★</span><span className="g-star">★</span><span className="g-star g-star-half">★</span>
+                  </div>
+                  <div className="g-card-v2-count">Based on <strong className="g-count-num">1,248</strong> Google Reviews</div>
+                  <div className="g-card-v2-hr" />
+                  <a
+                    href="https://www.google.com/search?q=booksbykilo+reviews"
+                    target="_blank" rel="noopener noreferrer"
+                    className="g-card-v2-cta-btn"
+                    onClick={(e) => { e.preventDefault(); window.open("https://www.google.com/search?q=booksbykilo+reviews", "_blank"); }}
+                  >
+                    <span className="g-cta-left"><FcGoogle size={15} /><span>Read reviews on <strong>Google</strong></span></span>
+                    <FiChevronRight size={15} className="g-cta-arrow" />
+                  </a>
+                </div>
+              </div>
               <span className="eyebrow">CUSTOMER TRUST &amp; REVIEWS</span>
               <h1>Google Rating <em>4.8 ★</em></h1>
               <p className="byline">by 50,000+ Verified Readers Across India</p>
