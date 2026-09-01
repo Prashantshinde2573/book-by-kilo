@@ -62,49 +62,51 @@ const GENRE_OPTIONS = [
 
 import { books as realBooksData } from "../data/books";
 
-// ── 3 Mathematically Pure Concentric Circular Orbit Layers (52 Real Books) ──
-const rawInner = realBooksData.slice(0, 14);
-const rawMiddle = realBooksData.slice(14, 32);
-const rawOuter = realBooksData.slice(32, 52);
-
-const INNER_ORBIT_BOOKS = rawInner.map((b, idx) => ({
-  id: `in-${b.id || idx}`,
-  title: b.title,
-  author: b.author,
-  genre: b.genre,
-  image: b.image,
-  tilt: idx % 2 === 0 ? -(6 + (idx % 6)) : (6 + (idx % 6)),
-  angleDeg: idx * (360 / 14),
-  mobile: idx % 2 === 0,
-}));
-
-const MIDDLE_ORBIT_BOOKS = rawMiddle.map((b, idx) => ({
-  id: `mid-${b.id || idx}`,
-  title: b.title,
-  author: b.author,
-  genre: b.genre,
-  image: b.image,
-  tilt: idx % 2 === 0 ? (7 + (idx % 5)) : -(7 + (idx % 5)),
-  angleDeg: idx * (360 / 18),
-  mobile: idx % 2 === 0,
-}));
-
-const OUTER_ORBIT_BOOKS = rawOuter.map((b, idx) => ({
-  id: `out-${b.id || idx}`,
-  title: b.title,
-  author: b.author,
-  genre: b.genre,
-  image: b.image,
-  tilt: idx % 2 === 0 ? -(8 + (idx % 5)) : (8 + (idx % 5)),
-  angleDeg: idx * (360 / 20),
-  mobile: idx % 2 === 0,
-}));
-
-const ALL_ORBIT_LAYERS = [
-  { name: "inner", books: INNER_ORBIT_BOOKS, speedMultiplier: 0.44, direction: 1, baseScale: 0.78, initialOffsetDeg: 10, baseOpacity: 0.38 },
-  { name: "middle", books: MIDDLE_ORBIT_BOOKS, speedMultiplier: 0.30, direction: -1, baseScale: 0.96, initialOffsetDeg: 85, baseOpacity: 0.76 },
-  { name: "outer", books: OUTER_ORBIT_BOOKS, speedMultiplier: 0.22, direction: 1, baseScale: 1.15, initialOffsetDeg: 195, baseOpacity: 0.98 },
+// ── Real Geometrically Pure Circular Orbit (24 Distinct Real Books) ──
+const ORBIT_BOOK_CONFIGS = [
+  { tilt: -14, sizeMult: 1.02 },
+  { tilt: 12, sizeMult: 0.96 },
+  { tilt: -8, sizeMult: 1.04 },
+  { tilt: 16, sizeMult: 0.98 },
+  { tilt: -18, sizeMult: 1.00 },
+  { tilt: 10, sizeMult: 1.03 },
+  { tilt: -6, sizeMult: 0.97 },
+  { tilt: 15, sizeMult: 1.01 },
+  { tilt: -20, sizeMult: 0.98 },
+  { tilt: 11, sizeMult: 1.05 },
+  { tilt: -14, sizeMult: 1.00 },
+  { tilt: 8, sizeMult: 0.96 },
+  { tilt: -16, sizeMult: 1.02 },
+  { tilt: 18, sizeMult: 0.99 },
+  { tilt: -10, sizeMult: 1.04 },
+  { tilt: 14, sizeMult: 0.95 },
+  { tilt: -12, sizeMult: 1.01 },
+  { tilt: 19, sizeMult: 0.98 },
+  { tilt: -9, sizeMult: 1.04 },
+  { tilt: 15, sizeMult: 0.97 },
+  { tilt: -17, sizeMult: 1.02 },
+  { tilt: 13, sizeMult: 0.96 },
+  { tilt: -7, sizeMult: 1.03 },
+  { tilt: 11, sizeMult: 1.00 },
 ];
+
+const TOTAL_ORBIT_BOOKS = ORBIT_BOOK_CONFIGS.length; // 24
+
+const CIRCULAR_ORBIT_BOOKS = ORBIT_BOOK_CONFIGS.map((cfg, idx) => {
+  const b = realBooksData[idx % realBooksData.length] || realBooksData[0];
+  return {
+    id: `orbit-book-${b.id || idx}`,
+    title: b.title || "Curated Book",
+    author: b.author || "Acclaimed Author",
+    genre: b.genre || "Fiction",
+    image: b.image || "https://www.booksbykilo.in/media/staticimages/logo_t_5k.png",
+    slotIndex: idx,
+    tilt: cfg.tilt,
+    sizeMult: cfg.sizeMult,
+    mobile: idx % 2 === 0, // 12 evenly spaced books on mobile
+    tablet: idx % 3 !== 0, // 16 evenly spaced books on tablet
+  };
+});
 
 const HOW_IT_WORKS_STEPS = [
   {
@@ -144,7 +146,7 @@ export default function SurpriseStackPage() {
   const [errors, setErrors] = useState({});
   const [hoveredBook, setHoveredBook] = useState(null);
 
-  // Concentric Circular Orbit states
+  // Pure Circular Orbit with Cosmos 3D Depth
   const heroRef = useRef(null);
   const cardsRefs = useRef({});
   const [windowDimensions, setWindowDimensions] = useState({
@@ -177,7 +179,7 @@ export default function SurpriseStackPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Concentric Circular Orbit Animation Loop (Slow Motion + Cosmos-Style Radial Light Veil)
+  // Real Circular Orbit Animation Loop (Smooth 3D Depth & Continuous Motion)
   useEffect(() => {
     let animationFrameId;
     let baseTime = 0;
@@ -206,95 +208,97 @@ export default function SurpriseStackPage() {
     const heroW = windowDimensions.width;
     const heroH = windowDimensions.height;
 
-    // Concentric Radii with Inner Ring wrapping closely around center
-    let radii = {
-      inner: {
-        rx: Math.max(heroW * 0.26, 375),
-        ry: Math.max(heroH * 0.27, 240),
-      },
-      middle: {
-        rx: Math.max(heroW * 0.46, 640),
-        ry: Math.max(heroH * 0.50, 450),
-      },
-      outer: {
-        rx: Math.max(heroW * 0.72, 1020),
-        ry: Math.max(heroH * 0.80, 720),
-      },
-    };
+    // Defined circular/elliptical orbital path surrounding the center
+    let rx = Math.max(heroW * 0.40, 520);
+    let ry = Math.max(heroH * 0.44, 340);
 
     if (isTablet) {
-      radii = {
-        inner: { rx: Math.max(heroW * 0.30, 275), ry: 195 },
-        middle: { rx: Math.max(heroW * 0.50, 470), ry: 340 },
-        outer: { rx: Math.max(heroW * 0.74, 710), ry: 530 },
-      };
+      rx = Math.max(heroW * 0.42, 380);
+      ry = Math.max(heroH * 0.42, 280);
     } else if (isMobile) {
-      radii = {
-        inner: { rx: Math.max(heroW * 0.36, 150), ry: 165 },
-        middle: { rx: Math.max(heroW * 0.56, 235), ry: 265 },
-        outer: { rx: Math.max(heroW * 0.80, 335), ry: 375 },
-      };
+      rx = Math.max(heroW * 0.44, 180);
+      ry = Math.max(heroH * 0.46, 240);
     }
 
-    // Slow cinematic base speed (Inner: ~50s, Middle: ~75s, Outer: ~100s)
-    const baseSpeed = prefersReducedMotion ? 0 : 0.0022;
+    // Very slow continuous circular movement speed
+    const baseSpeed = prefersReducedMotion ? 0 : 0.00065;
+
+    const activeBooks = CIRCULAR_ORBIT_BOOKS.filter((b) => {
+      if (isMobile) return b.mobile;
+      if (isTablet) return b.tablet;
+      return true;
+    });
 
     const tick = () => {
       baseTime += baseSpeed;
 
       // Parallax smooth interpolation
-      currentParallax.x += (targetParallax.x - currentParallax.x) * 0.04;
-      currentParallax.y += (targetParallax.y - currentParallax.y) * 0.04;
+      currentParallax.x += (targetParallax.x - currentParallax.x) * 0.045;
+      currentParallax.y += (targetParallax.y - currentParallax.y) * 0.045;
 
-      ALL_ORBIT_LAYERS.forEach((layer, layerIdx) => {
-        const activeBooks = isMobile
-          ? layer.books.filter((b) => b.mobile)
-          : isTablet
-          ? layer.books.slice(0, layer.name === "inner" ? 9 : layer.name === "middle" ? 12 : 14)
-          : layer.books;
+      const total = activeBooks.length;
 
-        const totalBooks = activeBooks.length;
-        const initialOffsetRad = (layer.initialOffsetDeg * Math.PI) / 180;
-        const layerAngle = baseTime * layer.speedMultiplier * layer.direction + initialOffsetRad;
-        const radius = radii[layer.name];
+      for (let i = 0; i < total; i++) {
+        const book = activeBooks[i];
+        const el = cardsRefs.current[book.id];
+        if (!el) continue;
 
-        for (let i = 0; i < totalBooks; i++) {
-          const book = activeBooks[i];
-          const el = cardsRefs.current[book.id];
-          if (!el) continue;
+        // Skip continuous position update if currently hovered
+        if (hoveredBook === book.id) continue;
 
-          // Mathematically pure circular orbit angle
-          const baseOffsetRad = (book.angleDeg * Math.PI) / 180;
-          const cardAngle = layerAngle + baseOffsetRad;
+        // Real circular coordinate system:
+        // Position each book along the continuous circle
+        const angle = (i * 2 * Math.PI) / total + baseTime;
 
-          const x = Math.cos(cardAngle) * radius.rx;
-          const y = Math.sin(cardAngle) * radius.ry;
-          const depth = Math.sin(cardAngle); // -1 (back/top) to +1 (front/bottom)
+        const x0 = Math.cos(angle) * rx;
+        const y0 = Math.sin(angle) * ry;
 
-          // 3D Depth Scale
-          const depthScale = 1.0 + depth * 0.06;
-          const finalScale = (isMobile ? layer.baseScale * 0.88 : layer.baseScale) * depthScale;
+        // Depth factor z = sin(angle) [-1 = top/back, +1 = bottom/front]
+        const z = Math.sin(angle);
+        const depthNormalized = (z + 1) / 2; // 0 (deep back) to 1 (front)
 
-          // Cosmos-style Radial Fade: Inner orbit soft/ghosted, outer orbit crisp/solid
-          const finalOpacity = (layer.baseOpacity + depth * 0.04).toFixed(2);
+        // Mouse Parallax
+        const parallaxX = currentParallax.x * (isMobile ? 4 + z * 3 : 8 + z * 5);
+        const parallaxY = currentParallax.y * (isMobile ? 4 + z * 3 : 8 + z * 5);
 
-          // Dynamic 3D Z-index ordering
-          const zIndex = 10 + layerIdx * 20 + Math.round((depth + 1) * 10);
+        const x = x0 + parallaxX;
+        const y = y0 + parallaxY;
 
-          // Natural orientation
-          const rotZ = book.tilt;
-          const rotY = Math.cos(cardAngle) * 3 + currentParallax.x * (layerIdx + 2) * 1.5;
-          const rotX = -Math.sin(cardAngle) * 3 - currentParallax.y * (layerIdx + 2) * 1.5;
+        // 1. Cosmos Depth Scale: Front is larger (~1.14), Back is smaller (~0.76)
+        const baseCardScale = isMobile ? 0.84 : 1.0;
+        const scale = baseCardScale * book.sizeMult * (0.74 + 0.38 * depthNormalized);
 
-          const parallaxFactor = isMobile ? 2 + layerIdx * 1.5 : 4 + layerIdx * 2;
-          const posX = x + currentParallax.x * parallaxFactor;
-          const posY = y + currentParallax.y * parallaxFactor;
+        // 2. Cosmos Depth Opacity: Front is 1.0, Back is 0.28
+        let opacity = 0.26 + 0.74 * depthNormalized;
 
-          el.style.transform = `translate3d(calc(-50% + ${posX.toFixed(2)}px), calc(-50% + ${posY.toFixed(2)}px), 0px) scale(${finalScale.toFixed(3)}) rotateZ(${rotZ.toFixed(1)}deg) rotateY(${rotY.toFixed(1)}deg) rotateX(${rotX.toFixed(1)}deg)`;
-          el.style.opacity = finalOpacity;
-          el.style.zIndex = zIndex;
+        // Edge vignette fade
+        const normDistX = Math.abs(x) / (heroW * 0.52);
+        const normDistY = Math.abs(y) / (heroH * 0.54);
+        const edgeDist = Math.sqrt(normDistX * normDistX + normDistY * normDistY);
+        if (edgeDist > 0.88) {
+          const edgeFade = Math.max(0, 1 - (edgeDist - 0.88) / 0.24);
+          opacity *= edgeFade;
         }
-      });
+
+        const finalOpacity = Math.max(0.12, Math.min(1.0, opacity)).toFixed(2);
+
+        // 3. Cosmos Atmospheric Blur: Front is 0px, Back is ~3.0px
+        const blurPx = Math.max(0, (1 - z) * 1.5 - 0.2);
+
+        // 4. Subtle Tilt Drift (stable rotation along orbit)
+        const rotZ = book.tilt + Math.sin(baseTime * 2.0 + i) * 1.4;
+        const rotX = -(y0 / ry) * 5.0;
+        const rotY = (x0 / rx) * 5.0;
+
+        // 5. Dynamic Z-Index: Front books always render in front of back books
+        const zIndex = Math.round(50 + z * 35);
+
+        // 6. Apply styles
+        el.style.transform = `translate3d(calc(-50% + ${x.toFixed(2)}px), calc(-50% + ${y.toFixed(2)}px), 0px) scale(${scale.toFixed(3)}) rotateZ(${rotZ.toFixed(1)}deg) rotateY(${rotY.toFixed(1)}deg) rotateX(${rotX.toFixed(1)}deg)`;
+        el.style.opacity = finalOpacity;
+        el.style.filter = blurPx > 0.2 ? `blur(${blurPx.toFixed(1)}px)` : "none";
+        el.style.zIndex = zIndex;
+      }
 
       animationFrameId = requestAnimationFrame(tick);
     };
@@ -307,7 +311,7 @@ export default function SurpriseStackPage() {
         heroElement.removeEventListener("mousemove", handleMouseMove);
       }
     };
-  }, [windowDimensions, prefersReducedMotion]);
+  }, [windowDimensions, prefersReducedMotion, hoveredBook]);
 
   const toggleAuthor = (authorId) => {
     setSelectedAuthors((prev) =>
@@ -394,54 +398,50 @@ export default function SurpriseStackPage() {
 
   return (
     <div className="static-page surprise-stack-page">
-      {/* ── 3 Concentric Circular Orbit Hero Section ── */}
+      {/* ── Cosmos Organic Floating Book Universe Hero Section ── */}
       <section className="surprise-cosmos-hero" ref={heroRef} aria-label="Surprise Stack Hero">
         {/* Cosmos Seamless Soft Radial Glow behind Center */}
         <div className="cosmos-bg-glow" />
 
-        {/* 3 Concentric Orbit Rings (Stage) */}
+        {/* Geometrically Defined Circular Orbiting Book Stage */}
         <div className="cosmos-orbit-stage" aria-hidden="true">
-          {ALL_ORBIT_LAYERS.map((layer) => {
-            const activeBooks = isMobile
-              ? layer.books.filter((b) => b.mobile)
-              : isTablet
-              ? layer.books.slice(0, layer.name === "inner" ? 9 : layer.name === "middle" ? 12 : 14)
-              : layer.books;
-
-            return activeBooks.map((book) => (
-              <div
-                key={book.id}
-                ref={(el) => (cardsRefs.current[book.id] = el)}
-                className={`cosmos-orbit-card orbit-layer-${layer.name} ${hoveredBook === book.id ? "hovered" : ""}`}
-                onMouseEnter={() => setHoveredBook(book.id)}
-                onMouseLeave={() => setHoveredBook(null)}
-                onClick={scrollToConfigurator}
-                title={`${book.title} - ${book.author}`}
-              >
-                <div className="book-card-3d-wrapper">
-                  <img
-                    src={book.image}
-                    alt={book.title}
-                    loading="lazy"
-                    className="book-cover-img"
-                    onError={(e) => {
-                      e.target.src = "/books/alice.jpg";
-                    }}
-                  />
-                  <div className="book-glare-overlay" />
-                  {hoveredBook === book.id && (
-                    <div className="cosmos-card-tooltip">
-                      <span className="tooltip-title">{book.title}</span>
-                      <span className="tooltip-genre">{book.genre}</span>
-                    </div>
-                  )}
-                </div>
+          {CIRCULAR_ORBIT_BOOKS.filter((b) => {
+            if (isMobile) return b.mobile;
+            if (isTablet) return b.tablet;
+            return true;
+          }).map((book) => (
+            <div
+              key={book.id}
+              ref={(el) => (cardsRefs.current[book.id] = el)}
+              className={`cosmos-orbit-card ${hoveredBook === book.id ? "hovered" : ""}`}
+              onMouseEnter={() => setHoveredBook(book.id)}
+              onMouseLeave={() => setHoveredBook(null)}
+              onClick={scrollToConfigurator}
+              title={`${book.title} - ${book.author}`}
+            >
+              <div className="book-card-3d-wrapper">
+                <img
+                  src={book.image}
+                  alt={book.title}
+                  loading="lazy"
+                  className="book-cover-img"
+                  onError={(e) => {
+                    e.target.src = "/books/alice.jpg";
+                  }}
+                />
+                <div className="book-glare-overlay" />
+                {hoveredBook === book.id && (
+                  <div className="cosmos-card-tooltip">
+                    <span className="tooltip-title">{book.title}</span>
+                    <span className="tooltip-genre">{book.genre}</span>
+                  </div>
+                )}
               </div>
-            ));
-          })}
+            </div>
+          ))}
         </div>
 
-        {/* Center Content (Static & Protected Exclusion Zone) */}
+        {/* Center Content (Protected Exclusion Zone) */}
         <div className="cosmos-center-content">
           <span className="cosmos-kicker-label">SURPRISE STACK</span>
 
@@ -453,14 +453,24 @@ export default function SurpriseStackPage() {
             Handpicked books, curated just for you.
           </p>
 
-          <div className="cosmos-hero-actions">
+          <div className="cosmos-hero-buttons">
             <button
               type="button"
               className="cosmos-btn-black"
               onClick={scrollToConfigurator}
             >
-              Build My Surprise Stack
+              Build Your Stack
             </button>
+            <a
+              href="#how-it-works"
+              className="cosmos-btn-gray"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
+              }}
+            >
+              How It Works
+            </a>
           </div>
         </div>
       </section>

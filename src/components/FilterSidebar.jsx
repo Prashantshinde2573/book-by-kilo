@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { FiX } from "react-icons/fi";
 
 export const categoryOptions = [
@@ -137,6 +138,95 @@ export default function FilterSidebar({
     currentAuthor !== "all" ||
     currentPrice !== "all" ||
     sortBy !== "match";
+
+  const sidebarTrackRef = useRef(null);
+  const sidebarContentRef = useRef(null);
+  const [stickyStyle, setStickyStyle] = useState({
+    position: "relative",
+    top: "0px",
+    bottom: "auto",
+    width: "100%",
+    left: "auto",
+  });
+
+  useEffect(() => {
+    let animationFrameId = null;
+
+    const calculateStickyPosition = () => {
+      if (typeof window === "undefined" || window.innerWidth <= 900) {
+        setStickyStyle({
+          position: "relative",
+          top: "0px",
+          bottom: "auto",
+          width: "100%",
+          left: "auto",
+        });
+        return;
+      }
+
+      const trackEl = sidebarTrackRef.current;
+      const contentEl = sidebarContentRef.current;
+      if (!trackEl || !contentEl) return;
+
+      const trackRect = trackEl.getBoundingClientRect();
+      const contentHeight = contentEl.offsetHeight;
+      const windowHeight = window.innerHeight;
+      const bottomGap = 20; // gap from bottom of viewport
+
+      const trackDocTop = trackRect.top + window.scrollY;
+      const contentBottomDoc = trackDocTop + contentHeight;
+      const viewportBottomDoc = window.scrollY + windowHeight;
+
+      // Has the sidebar top reached/scrolled past the fixed header line (~80px)?
+      const isPastHeader = trackRect.top <= 80;
+      // Has user scrolled enough that sidebar bottom hits bottom of viewport?
+      const hasReachedViewportBottom = viewportBottomDoc >= contentBottomDoc + bottomGap;
+
+      if (!isPastHeader || !hasReachedViewportBottom) {
+        // State 1: Normal initial document flow
+        setStickyStyle({
+          position: "relative",
+          top: "0px",
+          bottom: "auto",
+          width: "100%",
+          left: "auto",
+        });
+      } else if (trackRect.bottom > windowHeight - bottomGap) {
+        // State 2: Bottom-Sticky to Viewport
+        setStickyStyle({
+          position: "fixed",
+          top: "auto",
+          bottom: `${bottomGap}px`,
+          width: `${trackRect.width}px`,
+          left: `${trackRect.left}px`,
+        });
+      } else {
+        // State 3: Reached end of parent catalogue container
+        setStickyStyle({
+          position: "absolute",
+          top: "auto",
+          bottom: "0px",
+          width: "100%",
+          left: "0px",
+        });
+      }
+    };
+
+    const handleScrollOrResize = () => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(calculateStickyPosition);
+    };
+
+    calculateStickyPosition();
+    window.addEventListener("scroll", handleScrollOrResize, { passive: true });
+    window.addEventListener("resize", handleScrollOrResize, { passive: true });
+
+    return () => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("scroll", handleScrollOrResize);
+      window.removeEventListener("resize", handleScrollOrResize);
+    };
+  }, [categoryFilter, languageFilter, collectionFilter, authorFilter, priceFilter, sortBy, resultCount]);
 
   const content = (
     <div className="myntra-filter-inner">
@@ -305,8 +395,14 @@ export default function FilterSidebar({
   return (
     <>
       {/* Desktop Sidebar (Permanent) */}
-      <aside className="myntra-filter-sidebar desktop-filter" aria-label="Filters">
-        {content}
+      <aside
+        ref={sidebarTrackRef}
+        className="myntra-filter-sidebar desktop-filter filter-sidebar desktop-filter-sidebar"
+        aria-label="Filters"
+      >
+        <div ref={sidebarContentRef} className="myntra-filter-sticky-wrapper" style={stickyStyle}>
+          {content}
+        </div>
       </aside>
 
       {/* Mobile Drawer (Slide-Over) */}

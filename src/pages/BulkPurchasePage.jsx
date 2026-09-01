@@ -13,6 +13,11 @@ import {
   FiMessageCircle,
   FiChevronDown,
   FiChevronUp,
+  FiUser,
+  FiPackage,
+  FiArrowRight,
+  FiPercent,
+  FiAward,
 } from "react-icons/fi";
 import { useAppContext } from "../context/AppContext";
 
@@ -47,6 +52,68 @@ const whyUsItems = [
     icon: <FiClock />,
     title: "Fast Dispatch",
     desc: "All orders packed and dispatched within 24–48 business hours.",
+  },
+];
+
+const pricingTiers = [
+  {
+    qty: "10 Kgs",
+    price: "299",
+    unit: "/ kg",
+    totalEst: "₹2,990 approx.",
+    badge: "Starter Wholesale",
+    highlight: false,
+    features: [
+      "Assorted lot in 1 category",
+      "Paperback & Hardcover mix",
+      "Manual quality checked",
+      "Doorstep delivery across India",
+    ],
+  },
+  {
+    qty: "50 Kgs",
+    price: "249",
+    unit: "/ kg",
+    totalEst: "₹12,450 approx.",
+    badge: "Popular Choice",
+    highlight: false,
+    savings: "Save ~17% per kg",
+    features: [
+      "Standard shipping rate (₹30/kg)",
+      "Choice of major genre categories",
+      "Zero piracy guarantee",
+      "GST Invoice (0% tax)",
+    ],
+  },
+  {
+    qty: "100 Kgs",
+    price: "175",
+    unit: "/ kg",
+    totalEst: "₹17,500 approx.",
+    badge: "Best Value",
+    highlight: true,
+    savings: "Save ~41% per kg",
+    features: [
+      "50% OFF shipping (₹15/kg)",
+      "Live WhatsApp video preview",
+      "Priority warehouse dispatch",
+      "Dedicated account manager",
+    ],
+  },
+  {
+    qty: "100+ Kgs",
+    price: "Custom",
+    unit: "Bulk Rates",
+    totalEst: "Maximum Volume Discount",
+    badge: "Enterprise & Libraries",
+    highlight: false,
+    savings: "Special Quotation",
+    features: [
+      "Lowest wholesale price in India",
+      "Custom pallet / container packing",
+      "Direct transporter dispatch",
+      "Flexible payment & terms",
+    ],
   },
 ];
 
@@ -132,9 +199,15 @@ const bulkFaqs = [
 
 export default function BulkPurchasePage() {
   const { notify } = useAppContext();
-  const [form, setForm] = useState({ name: "", mobile: "", email: "" });
+  const [form, setForm] = useState({
+    name: "",
+    mobile: "",
+    email: "",
+    category: "Children",
+    quantity: "50 Kgs",
+  });
   const [submitted, setSubmitted] = useState(false);
-  const [openFaq, setOpenFaq] = useState(null);
+  const [openFaq, setOpenFaq] = useState(0);
 
   useEffect(() => {
     document.title = "Wholesale Bulk Purchase | Books By Kilo";
@@ -146,9 +219,16 @@ export default function BulkPurchasePage() {
       notify("Please enter a valid 10-digit mobile number");
       return;
     }
-    notify("Thank you! Give us your details and we will get back to you.");
+    notify("Thank you! Your wholesale inquiry has been received. Our team will contact you shortly.");
     setSubmitted(true);
-    setForm({ name: "", mobile: "", email: "" });
+  };
+
+  const handleSelectTier = (qty) => {
+    setForm((f) => ({ ...f, quantity: qty }));
+    const formCard = document.getElementById("bulk-inquiry-form");
+    if (formCard) {
+      formCard.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   };
 
   return (
@@ -158,79 +238,171 @@ export default function BulkPurchasePage() {
         <div className="bulk-hero-inner">
           <div className="bulk-hero-content">
             <span className="catalog-kicker">WHOLESALE BULK PURCHASE</span>
-            <h1>Wholesale Bulk Purchase</h1>
+            <h1>Buy Pre-Loved Books in Bulk at Wholesale Prices</h1>
             <p className="bulk-hero-description">
-              Looking to stock up your bookstore, library, school, or personal collection? We offer high-quality, quality-checked preloved books in bulk at unbeatable per-kilogram prices.
+              Looking to stock up your bookstore, library, school, cafe, or personal collection? We offer premium, quality-checked original preloved books in bulk starting from just 10 Kgs with unbeatable per-kilogram rates.
             </p>
+
+            {/* Quick Trust Badges */}
+            <div className="bulk-trust-pills">
+              <div className="bulk-trust-pill">
+                <FiTruck className="pill-icon" />
+                <span>Pan-India Delivery</span>
+              </div>
+              <div className="bulk-trust-pill">
+                <FiShield className="pill-icon" />
+                <span>100% Original &amp; Checked</span>
+              </div>
+              <div className="bulk-trust-pill">
+                <FiClock className="pill-icon" />
+                <span>24-48h Dispatch</span>
+              </div>
+              <div className="bulk-trust-pill">
+                <FiAward className="pill-icon" />
+                <span>0% GST Invoice</span>
+              </div>
+            </div>
+
+            {/* Quick Contact Buttons */}
             <div className="bulk-hero-quick-contacts">
               <a
                 href="https://wa.me/918828687287"
                 target="_blank"
                 rel="noreferrer"
                 className="bulk-whatsapp-pill"
+                aria-label="Chat on WhatsApp"
               >
-                <FiMessageCircle /> Chat on WhatsApp (+91 8828687287)
+                <FiMessageCircle size={18} />
+                <span>Chat on WhatsApp (+91 8828687287)</span>
               </a>
-              <a href="mailto:support@booksbykilo.in" className="bulk-email-inline">
-                <FiMail /> support@booksbykilo.in
+              <a
+                href="tel:+918828687287"
+                className="bulk-phone-pill"
+                aria-label="Call Wholesale Team"
+              >
+                <FiPhone size={15} />
+                <span>Call Us</span>
+              </a>
+              <a
+                href="mailto:support@booksbykilo.in"
+                className="bulk-email-pill"
+                aria-label="Email Wholesale Team"
+              >
+                <FiMail size={15} />
+                <span>support@booksbykilo.in</span>
               </a>
             </div>
           </div>
 
-          <div className="bulk-form-card">
-            <h3 className="bulk-form-title">Let's buy @ wholesale cost!</h3>
-            <p className="bulk-form-subtitle">Give us your details and we will get back to you.</p>
+          <div id="bulk-inquiry-form" className="bulk-form-card">
+            <div className="bulk-form-badge">
+              <FiPackage />
+              <span>Direct Wholesale Rates</span>
+            </div>
+            <h3 className="bulk-form-title">Request Wholesale Pricing</h3>
+            <p className="bulk-form-subtitle">Share your requirements and we will send a customized lot quotation.</p>
 
             {submitted ? (
               <div className="bulk-success-card">
                 <div className="bulk-success-icon"><FiCheck /></div>
-                <h3>Thank You</h3>
-                <p>We have received your details and our team will get in touch with you shortly.</p>
-                <button className="cta" onClick={() => setSubmitted(false)}>Submit Another Inquiry</button>
+                <h3>Inquiry Received!</h3>
+                <p>Thank you, <strong>{form.name}</strong>. Our wholesale team will get in touch with you at <strong>{form.mobile}</strong> within a few hours.</p>
+                <button
+                  type="button"
+                  className="bulk-submit-another-btn"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setForm({ name: "", mobile: "", email: "", category: "Children", quantity: "50 Kgs" });
+                  }}
+                >
+                  Submit Another Inquiry
+                </button>
               </div>
             ) : (
               <form className="bulk-lead-form" onSubmit={handleSubmit}>
                 <div className="bulk-field">
-                  <label htmlFor="bulk-name">Name</label>
-                  <input
-                    id="bulk-name"
-                    required
-                    type="text"
-                    placeholder="Full Name"
-                    maxLength={300}
-                    value={form.name}
-                    onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                  />
+                  <label htmlFor="bulk-name">Your Name</label>
+                  <div className="bulk-input-wrap">
+                    <FiUser className="bulk-input-icon" />
+                    <input
+                      id="bulk-name"
+                      required
+                      type="text"
+                      placeholder="e.g. Rahul Sharma"
+                      maxLength={300}
+                      value={form.name}
+                      onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                    />
+                  </div>
                 </div>
 
                 <div className="bulk-field">
-                  <label htmlFor="bulk-mobile">Mobile Number</label>
-                  <input
-                    id="bulk-mobile"
-                    required
-                    type="tel"
-                    placeholder="10-digit Mobile Number"
-                    maxLength={10}
-                    value={form.mobile}
-                    onChange={(e) => setForm((f) => ({ ...f, mobile: e.target.value.replace(/\D/g, "") }))}
-                  />
+                  <label htmlFor="bulk-mobile">Mobile Number (WhatsApp Enabled)</label>
+                  <div className="bulk-input-wrap">
+                    <FiPhone className="bulk-input-icon" />
+                    <input
+                      id="bulk-mobile"
+                      required
+                      type="tel"
+                      placeholder="10-digit Mobile Number"
+                      maxLength={10}
+                      value={form.mobile}
+                      onChange={(e) => setForm((f) => ({ ...f, mobile: e.target.value.replace(/\D/g, "") }))}
+                    />
+                  </div>
                 </div>
 
                 <div className="bulk-field">
-                  <label htmlFor="bulk-email">Email ID</label>
-                  <input
-                    id="bulk-email"
-                    required
-                    type="email"
-                    placeholder="Email Address"
-                    maxLength={300}
-                    value={form.email}
-                    onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                  />
+                  <label htmlFor="bulk-email">Email Address</label>
+                  <div className="bulk-input-wrap">
+                    <FiMail className="bulk-input-icon" />
+                    <input
+                      id="bulk-email"
+                      required
+                      type="email"
+                      placeholder="e.g. rahul@example.com"
+                      maxLength={300}
+                      value={form.email}
+                      onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                    />
+                  </div>
                 </div>
 
-                <button type="submit" className="cta bulk-submit-btn">
-                  Submit Details
+                <div className="bulk-fields-row">
+                  <div className="bulk-field">
+                    <label htmlFor="bulk-category">Preferred Category</label>
+                    <select
+                      id="bulk-category"
+                      value={form.category}
+                      onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                    >
+                      <option value="Children">Children's Books</option>
+                      <option value="Teen Fiction">Teen &amp; Young Adult</option>
+                      <option value="Fiction">Fiction &amp; Literature</option>
+                      <option value="Non-Fiction">Non-Fiction &amp; Self-Help</option>
+                      <option value="Coffee Table">Coffee Table Books</option>
+                      <option value="Mixed Lot">Mixed Assorted Lot</option>
+                    </select>
+                  </div>
+
+                  <div className="bulk-field">
+                    <label htmlFor="bulk-qty">Approx. Quantity</label>
+                    <select
+                      id="bulk-qty"
+                      value={form.quantity}
+                      onChange={(e) => setForm((f) => ({ ...f, quantity: e.target.value }))}
+                    >
+                      <option value="10 Kgs">10 Kgs (Starter)</option>
+                      <option value="50 Kgs">50 Kgs (₹249/kg)</option>
+                      <option value="100 Kgs">100 Kgs (₹175/kg)</option>
+                      <option value="Above 100 Kgs">100+ Kgs (Custom)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="submit" className="bulk-submit-btn">
+                  <span>Get Wholesale Quote</span>
+                  <FiArrowRight size={16} />
                 </button>
               </form>
             )}
@@ -258,60 +430,89 @@ export default function BulkPurchasePage() {
         </div>
       </section>
 
-      {/* ── Wholesale Pricing Table ── */}
+      {/* ── Wholesale Pricing Section ── */}
       <section className="bulk-section bulk-section-pricing">
-        <div className="bulk-section-header">
+        <div className="bulk-section-header text-center">
           <span className="catalog-kicker">PRICING STRUCTURE</span>
-          <h2>Wholesale Pricing</h2>
+          <h2>Transparent Wholesale Per-Kg Tiers</h2>
+          <p>Order assorted quality-checked book lots with heavy volume-based discounts.</p>
         </div>
 
-        <div className="bulk-pricing-container">
-          <div className="bulk-pricing-table-wrapper">
-            <table className="bulk-pricing-table">
-              <thead>
-                <tr>
-                  <th>Order Quantity</th>
-                  <th>Price Per Kg</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>10 Kgs</strong></td>
-                  <td><span className="price-tag">₹299</span> / kg</td>
-                </tr>
-                <tr>
-                  <td><strong>50 Kgs</strong></td>
-                  <td><span className="price-tag">₹249</span> / kg</td>
-                </tr>
-                <tr>
-                  <td><strong>100 Kgs</strong></td>
-                  <td><span className="price-tag">₹175</span> / kg</td>
-                </tr>
-                <tr className="bulk-pricing-special-row">
-                  <td><strong>Above 100 Kgs</strong></td>
-                  <td><span className="special-rate-badge">Special Bulk Rates Apply</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        {/* Tier Cards Grid */}
+        <div className="bulk-pricing-cards-grid">
+          {pricingTiers.map((tier) => (
+            <div
+              key={tier.qty}
+              className={`bulk-tier-card ${tier.highlight ? "featured" : ""}`}
+            >
+              {tier.badge && <span className="bulk-tier-badge">{tier.badge}</span>}
+              <h3 className="bulk-tier-qty">{tier.qty}</h3>
+              <div className="bulk-tier-price-row">
+                <span className="bulk-tier-currency">₹</span>
+                <span className="bulk-tier-amount">{tier.price}</span>
+                <span className="bulk-tier-unit">{tier.unit}</span>
+              </div>
+              <p className="bulk-tier-est">{tier.totalEst}</p>
+              {tier.savings && (
+                <span className="bulk-tier-savings-pill">
+                  <FiPercent size={12} /> {tier.savings}
+                </span>
+              )}
 
+              <ul className="bulk-tier-features">
+                {tier.features.map((feat, i) => (
+                  <li key={i}>
+                    <FiCheck className="feat-check" />
+                    <span>{feat}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                type="button"
+                className={`bulk-tier-cta-btn ${tier.highlight ? "highlight" : ""}`}
+                onClick={() => handleSelectTier(tier.qty)}
+              >
+                <span>Inquire for {tier.qty}</span>
+                <FiArrowRight size={15} />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Custom Rates Callout */}
+        <div className="bulk-pricing-container">
           <div className="bulk-pricing-callout">
-            <p className="bulk-pricing-callout-text">
-              Ordering more than 100 Kgs? <strong>Get custom discounted rates!</strong>
-            </p>
-            <div className="bulk-pricing-callout-links">
+            <div className="bulk-pricing-callout-icon">
+              <FiMessageCircle />
+            </div>
+            <div className="bulk-pricing-callout-content">
+              <p className="bulk-pricing-callout-text">
+                Ordering more than 100 Kgs or need an ongoing monthly supply for your bookstore/library?
+              </p>
+              <span className="bulk-pricing-callout-sub">
+                Our wholesale managers will arrange special customized per-kg pricing and dedicated transport.
+              </span>
+            </div>
+            <div className="bulk-pricing-callout-actions">
               <a
                 href="https://wa.me/918828687287"
                 target="_blank"
                 rel="noreferrer"
                 className="bulk-whatsapp-btn"
+                aria-label="Chat on WhatsApp"
               >
-                <FiMessageCircle /> Chat on WhatsApp
+                <FiMessageCircle size={17} />
+                <span>Chat on WhatsApp</span>
               </a>
-              <span className="bulk-pricing-or">
-                or email us at <a href="mailto:support@booksbykilo.in">support@booksbykilo.in</a> or call{" "}
-                <a href="tel:+918828687287">8828687287</a>
-              </span>
+              <a
+                href="tel:+918828687287"
+                className="bulk-phone-callout-btn"
+                aria-label="Call Wholesale"
+              >
+                <FiPhone size={15} />
+                <span>Call 8828687287</span>
+              </a>
             </div>
           </div>
         </div>
@@ -320,27 +521,45 @@ export default function BulkPurchasePage() {
       {/* ── Shipping & Delivery ── */}
       <section className="bulk-section bulk-section-shipping">
         <div className="bulk-section-header text-center">
-          <span className="catalog-kicker">LOGISTICS & DISPATCH</span>
-          <h2>Shipping &amp; Delivery</h2>
-          <p>We ship safely and securely all across India.</p>
+          <span className="catalog-kicker">LOGISTICS &amp; DISPATCH</span>
+          <h2>Safe &amp; Insured Pan-India Shipping</h2>
+          <p>We pack every lot with multi-layer heavy-duty boxes to ensure zero damage during transit.</p>
         </div>
 
         <div className="bulk-shipping-cards-grid">
           <div className="bulk-shipping-box">
-            <h4>Up to 50 Kgs</h4>
+            <div className="shipping-box-top">
+              <FiTruck className="shipping-icon" />
+              <h4>Standard Wholesale (Up to 50 Kgs)</h4>
+            </div>
             <div className="bulk-shipping-price">
               <span className="amount">₹30</span>
-              <span className="unit">per kg</span>
+              <span className="unit">per kg across India</span>
+            </div>
+            <p className="shipping-box-desc">
+              Reliable doorstep delivery via surface courier partners with online SMS/Email tracking enabled.
+            </p>
+            <div className="shipping-badge-wrap">
+              <span className="shipping-sub-badge">24–48h Dispatch</span>
             </div>
           </div>
 
           <div className="bulk-shipping-box featured">
-            <h4>Above 100 Kgs</h4>
+            <div className="shipping-box-top">
+              <FiPackage className="shipping-icon highlight" />
+              <h4>Heavy Wholesale (100 Kgs &amp; Above)</h4>
+            </div>
             <div className="bulk-shipping-price">
               <span className="amount">₹15</span>
-              <span className="unit">per kg</span>
+              <span className="unit">per kg across India</span>
             </div>
-            <span className="bulk-shipping-discount-tag">Reduced Rate</span>
+            <span className="bulk-shipping-discount-tag">50% Reduced Shipping Rate</span>
+            <p className="shipping-box-desc">
+              Special reduced freight logistics for bulk buyers and institutions with direct pallet dispatch.
+            </p>
+            <div className="shipping-badge-wrap">
+              <span className="shipping-sub-badge highlight">Live Video Verification Before Dispatch</span>
+            </div>
           </div>
         </div>
       </section>
@@ -348,8 +567,9 @@ export default function BulkPurchasePage() {
       {/* ── Frequently Asked Questions ── */}
       <section className="bulk-section bulk-section-faq">
         <div className="bulk-section-header text-center">
-          <span className="catalog-kicker">QUESTIONS & ANSWERS</span>
+          <span className="catalog-kicker">QUESTIONS &amp; ANSWERS</span>
           <h2>Frequently Asked Questions</h2>
+          <p>Got questions about wholesale orders? Here is everything you need to know.</p>
         </div>
 
         <div className="bulk-faq-container">
@@ -362,6 +582,7 @@ export default function BulkPurchasePage() {
                 type="button"
                 className="bulk-faq-accordion-header"
                 onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                aria-expanded={openFaq === idx}
               >
                 <span>{faq.q}</span>
                 <span className="faq-toggle-icon">
