@@ -872,7 +872,8 @@ a.mega-nav-item-link:focus-visible {
 .g-card-v2-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  overflow: visible;
 }
 
 .g-card-v2-title {
@@ -880,12 +881,22 @@ a.mega-nav-item-link:focus-visible {
   color: #4b5563;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .g-card-v2-verified-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+  overflow: visible;
+}
+
+.g-card-v2-verified-badge svg {
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
 }
 
 .g-card-v2-score-row {
@@ -4961,6 +4972,7 @@ a.collection-8::after {
     display: flex !important;
     align-items: center !important;
     gap: 6px !important;
+    overflow: visible !important;
   }
 
   .mobile-gcard .g-card-v2-title {
@@ -4968,6 +4980,22 @@ a.collection-8::after {
     color: #4b5563 !important;
     letter-spacing: 0.4px !important;
     text-transform: uppercase !important;
+    white-space: nowrap !important;
+  }
+
+  .mobile-gcard .g-card-v2-verified-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    line-height: 1 !important;
+    overflow: visible !important;
+  }
+
+  .mobile-gcard .g-card-v2-verified-badge svg {
+    display: block !important;
+    flex-shrink: 0 !important;
+    overflow: visible !important;
   }
 
   .mobile-gcard .g-card-v2-score-row {
@@ -12917,8 +12945,8 @@ body {
   color: #0f172a;
   letter-spacing: -0.03em;
   line-height: 1.25;
-  margin: 0 auto;
-  max-width: 700px;
+  margin: 0;
+  max-width: 800px;
 }
 
 /* Glass Frame */

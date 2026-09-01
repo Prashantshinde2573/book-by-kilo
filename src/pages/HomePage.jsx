@@ -5,6 +5,7 @@ import {
   FiInfo, FiPlus, FiShoppingCart, FiStar,
 } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
+import { MdVerified } from "react-icons/md";
 import {
   genreItems, surpriseCard, bookQuotes, collections, authors, languages,
   googleReviewSlide, getNormalizedBook, formatPrice,
@@ -199,10 +200,7 @@ export default function HomePage({ allBooks = [] }) {
                 <div className="g-card-v2-header">
                   <span className="g-card-v2-title">Google Rating</span>
                   <span className="g-card-v2-verified-badge" aria-label="Verified">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
-                      <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 4 .495 0 .965.084 1.4-.238 1.4 1.273 2.77 2.148 4.35 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-.65 2.148-2.02 2.148-3.6z" fill="#2563eb"/>
-                      <path d="M9.8 16.2l-3.5-3.5 1.4-1.4 2.1 2.1 6.3-6.3 1.4 1.4-7.7 7.7z" fill="#ffffff"/>
-                    </svg>
+                    <MdVerified size={16} color="#1a73e8" />
                   </span>
                 </div>
                 <div className="g-card-v2-score-row">
@@ -243,10 +241,7 @@ export default function HomePage({ allBooks = [] }) {
                   <div className="g-card-v2-header">
                     <span className="g-card-v2-title">Google Rating</span>
                     <span className="g-card-v2-verified-badge" aria-label="Verified">
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none">
-                        <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 4 .495 0 .965.084 1.4-.238 1.4 1.273 2.77 2.148 4.35 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-.65 2.148-2.02 2.148-3.6z" fill="#2563eb"/>
-                        <path d="M9.8 16.2l-3.5-3.5 1.4-1.4 2.1 2.1 6.3-6.3 1.4 1.4-7.7 7.7z" fill="#ffffff"/>
-                      </svg>
+                      <MdVerified size={15} color="#1a73e8" />
                     </span>
                   </div>
                   <div className="g-card-v2-score-row">
