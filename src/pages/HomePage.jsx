@@ -16,47 +16,111 @@ import Shelf from "../components/Shelf";
 function BookQuotesSection({ quotes = [] }) {
   const railRef = useRef(null);
   const [activeIdx, setActiveIdx] = useState(0);
+  const navigate = useNavigate();
+
+  const getStep = () => {
+    if (!railRef.current) return 240;
+    const card = railRef.current.querySelector(".quote-card");
+    return card ? card.getBoundingClientRect().width + 24 : 240;
+  };
+
   const handleScroll = () => {
     if (!railRef.current || !quotes.length) return;
-    const cardWidth = 350;
-    const current = Math.round(railRef.current.scrollLeft / cardWidth);
-    setActiveIdx(current % quotes.length);
+    const step = getStep();
+    const current = Math.round(railRef.current.scrollLeft / step);
+    setActiveIdx(Math.min(Math.max(0, current), quotes.length - 1));
   };
+
+  const scrollByAmount = (direction) => {
+    if (!railRef.current) return;
+    const step = getStep();
+    railRef.current.scrollBy({ left: direction * step * 2, behavior: "smooth" });
+  };
+
   if (!quotes || quotes.length === 0) return null;
 
   return (
     <section className="quotes-section" id="quotes">
-      <div className="shelf-heading"><div><h2>Quotes</h2></div></div>
+      <div className="shelf-heading">
+        <div>
+          <h2>Quote</h2>
+        </div>
+      </div>
       <div className="quotes-carousel-wrapper">
+        <button
+          type="button"
+          className="quotes-nav-btn prev"
+          onClick={() => scrollByAmount(-1)}
+          aria-label="Previous quote"
+        >
+          <FiChevronLeft size={22} />
+        </button>
+
         <div className="quotes-track" ref={railRef} onScroll={handleScroll}>
           {quotes.map((item, index) => {
-            const quoteText = item.quote || item.text || "";
-            const bookTitle = item.book || item.title || "";
-            const authorName = item.author || "Unknown";
-            const bgImage = item.image || "/brand/classic.webp";
+            const book = item.book || {};
+            const bookTitle = book.title || item.bookTitle || "";
+            const authorName = book.author || item.author || "";
+            const coverImage = book.cover || item.cover || "/quotes/alchemist.jpg";
+            const quoteText = item.quote || "";
 
             return (
-              <article key={`${bookTitle}-${index}`} className="quote-card">
-                <img src={bgImage} alt={bookTitle} className="quote-card-bg" />
+              <article
+                key={`${bookTitle}-${index}`}
+                className="quote-card"
+                onClick={() => navigate(`/search?q=${encodeURIComponent(bookTitle)}`)}
+                title={`Find ${bookTitle}`}
+              >
+                <img src={coverImage} alt="" className="quote-card-bg" loading="lazy" />
                 <div className="quote-card-vignette" />
                 <div className="quote-card-body">
-                  <h3 className="quote-headline">"{quoteText}"</h3>
-                  <div className="quote-byline">
-                    <div className="quote-accent-line" />
-                    <span className="quote-author-name">{authorName}</span>
-                    <strong className="quote-book-title">{bookTitle}</strong>
+                  <div className="quote-card-text-wrap">
+                    <p className="quote-headline">“{quoteText}”</p>
+                  </div>
+                  <div className="quote-card-footer">
+                    <img src={coverImage} alt={bookTitle} className="quote-book-thumb" loading="lazy" />
+                    <div className="quote-byline">
+                      <strong className="quote-book-title">{bookTitle}</strong>
+                      <span className="quote-author-name">{authorName}</span>
+                    </div>
                   </div>
                 </div>
               </article>
             );
           })}
         </div>
+
+        <button
+          type="button"
+          className="quotes-nav-btn next"
+          onClick={() => scrollByAmount(1)}
+          aria-label="Next quote"
+        >
+          <FiChevronRight size={22} />
+        </button>
       </div>
-      <div className="quotes-dots">
-        {quotes.map((q, idx) => (
-          <span key={q.book || q.title || idx} className={`quote-dot ${activeIdx === idx ? "active" : ""}`} />
-        ))}
-      </div>
+
+      {quotes.length > 1 && (
+        <div className="quotes-dots">
+          {quotes.map((item, idx) => {
+            const key = item.book?.title || item.bookTitle || idx;
+            return (
+              <button
+                key={key}
+                type="button"
+                className={`quote-dot ${activeIdx === idx ? "active" : ""}`}
+                onClick={() => {
+                  if (railRef.current) {
+                    const step = getStep();
+                    railRef.current.scrollTo({ left: idx * step, behavior: "smooth" });
+                  }
+                }}
+                aria-label={`Go to quote ${idx + 1}`}
+              />
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }

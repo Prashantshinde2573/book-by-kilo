@@ -233,14 +233,70 @@ export const languages = [
 ];
 
 export const bookQuotes = [
-  { quote: "When you want something, all the universe conspires in helping you to achieve it.", book: "The Alchemist", author: "Paulo Coelho", image: "/brand/classic.webp" },
-  { quote: "It is our choices that show what we truly are, far more than our abilities.", book: "Harry Potter & Chamber of Secrets", author: "J.K. Rowling", image: "/brand/children.webp" },
-  { quote: "Not all those who wander are lost.", book: "The Fellowship of the Ring", author: "J.R.R. Tolkien", image: "/brand/classic.webp" },
-  { quote: "Whatever our souls are made of, his and mine are the same.", book: "Wuthering Heights", author: "Emily Brontë", image: "/brand/classic.webp" },
-  { quote: "The only way out of the labyrinth of suffering is to forgive.", book: "Looking for Alaska", author: "John Green", image: "/brand/children.webp" },
-  { quote: "So we beat on, boats against the current, borne back ceaselessly into the past.", book: "The Great Gatsby", author: "F. Scott Fitzgerald", image: "/brand/coffee.webp" },
-  { quote: "There is no friend as loyal as a book.", book: "A Moveable Feast", author: "Ernest Hemingway", image: "/brand/non-fiction.webp" },
-  { quote: "Until I feared I would lose it, I never loved to read. One does not love breathing.", book: "To Kill a Mockingbird", author: "Harper Lee", image: "/brand/new-books.webp" },
+  {
+    book: {
+      title: "The Alchemist",
+      author: "Paulo Coelho",
+      cover: "/quotes/alchemist.jpg",
+    },
+    quote: "When you want something, all the universe conspires in helping you to achieve it.",
+  },
+  {
+    book: {
+      title: "King Lear",
+      author: "William Shakespeare",
+      cover: "/quotes/kinglear.jpg",
+    },
+    quote: "Speak what we feel, not what we ought to say.",
+  },
+  {
+    book: {
+      title: "Alice in Wonderland",
+      author: "Lewis Carroll",
+      cover: "/quotes/alice.jpg",
+    },
+    quote: "It's no use going back to yesterday, because I was a different person then.",
+  },
+  {
+    book: {
+      title: "Romeo and Juliet",
+      author: "William Shakespeare",
+      cover: "/quotes/romeo.jpg",
+    },
+    quote: "These violent delights have violent ends and in their triumph die, like fire and powder.",
+  },
+  {
+    book: {
+      title: "The Velveteen Rabbit",
+      author: "Margery Williams Bianco",
+      cover: "/quotes/velveteen.jpg",
+    },
+    quote: "Real isn't how you are made. It's a thing that happens to you.",
+  },
+  {
+    book: {
+      title: "The Secret Garden",
+      author: "Frances Hodgson Burnett",
+      cover: "/quotes/secretgarden.jpg",
+    },
+    quote: "If you look the right way, you can see that the whole world is a garden.",
+  },
+  {
+    book: {
+      title: "The Adventures of Tom Sawyer",
+      author: "Mark Twain",
+      cover: "/quotes/tomsawyer.jpg",
+    },
+    quote: "Work consists of whatever a body is obliged to do, and Play consists of whatever a body is not obliged to do.",
+  },
+  {
+    book: {
+      title: "Peter Pan",
+      author: "J. M. Barrie",
+      cover: "/quotes/peterpan.jpg",
+    },
+    quote: "To live will be an awfully big adventure.",
+  },
 ];
 
 export const googleReviewSlide = {

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap');
+
 :root {
   font-family: "Inter", Arial, sans-serif;
   color: #111827;
@@ -3312,13 +3314,11 @@ a.collection-8::after {
   margin-right: -50vw;
   margin-top: 54px;
   margin-bottom: 54px;
-  padding: 64px 0;
-  min-height: 440px;
-  background: linear-gradient(120deg, #09090b 0%, #18181b 50%, #27272a 100%) !important;
-  border-top: 1px solid #27272a;
-  border-bottom: 1px solid #27272a;
+  padding: 56px 0;
+  background: #000000 !important;
+  border-top: 1px solid #18181b;
+  border-bottom: 1px solid #18181b;
   color: #ffffff;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
 }
 
 .quotes-section .shelf-heading {
@@ -3328,9 +3328,9 @@ a.collection-8::after {
 
 .quotes-section .shelf-heading h2 {
   color: #ffffff;
-  font-size: 26px;
-  font-weight: 600 !important;
-  letter-spacing: -0.3px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
 }
 
 .quotes-carousel-wrapper {
@@ -3343,8 +3343,8 @@ a.collection-8::after {
 .quotes-track {
   display: flex;
   align-items: stretch;
-  gap: 20px;
-  padding: 12px 0 28px var(--page-gutter);
+  gap: 24px;
+  padding: 6px var(--page-gutter) 24px var(--page-gutter);
   scroll-padding-left: var(--page-gutter);
   overflow-x: auto;
   scroll-behavior: smooth;
@@ -3357,181 +3357,203 @@ a.collection-8::after {
   display: none;
 }
 
-/* Spacious Premium Quote Card */
+/* Atmospheric Book Quote Card - EXACT MATCH to Book Card Dimensions */
 .quote-card {
   position: relative;
-  flex: 0 0 clamp(240px, 24vw, 240px);
-  width: clamp(240px, 24vw, 240px);
-  min-height: 295px;
-  height: 295px;
-  border-radius: 16px;
+  flex: 0 0 calc((100% - 4 * 24px) / 5);
+  width: calc((100% - 4 * 24px) / 5);
+  min-width: calc((100% - 4 * 24px) / 5);
+  max-width: calc((100% - 4 * 24px) / 5);
+  aspect-ratio: 1 / 1.62;
+  border-radius: 12px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  background: #09090b;
-
+  background: #0d0f14;
   cursor: pointer;
   scroll-snap-align: start;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.22s;
   user-select: none;
+  box-sizing: border-box;
 }
 
 .quote-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.65);
-  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
-/* Background Image - Right Anchored Artwork */
+/* Ambient Background Artwork from Book Cover */
 .quote-card-bg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center right;
-  filter: brightness(1) contrast(1.05);
+  object-position: center top;
   pointer-events: none;
-  transition: transform 0.4s ease, filter 0.4s ease;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .quote-card:hover .quote-card-bg {
   transform: scale(1.05);
-  filter: brightness(0.92) contrast(1.1);
 }
 
-/* Dark Gradient Overlay for High Contrast Text */
+/* Progressive blur & smooth dark gradient reaching ~50% of the card height from bottom */
 .quote-card-vignette {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(180deg, rgba(9, 9, 11, 0.88) 0%, rgba(9, 9, 11, 0.75) 45%, rgba(9, 9, 11, 0.94) 100%);
+  background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.10) 36%,
+      rgba(6, 8, 11, 0.30) 48%,
+      rgba(6, 8, 11, 0.50) 64%,
+      rgba(6, 8, 11, 0.70) 84%,
+      rgba(4, 5, 8, 0.80) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 50%, black 60%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%, black 60%, black 100%);
   pointer-events: none;
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  /* Safari */
 }
 
-/* Card Body Content (Quote Top → Author & White Book Title at Bottom Area) */
+/* Card Body Content - Aligned to Bottom */
 .quote-card-body {
   position: relative;
   z-index: 2;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 26px 22px;
+  justify-content: flex-end;
+  padding: 18px 14px 14px 14px;
   box-sizing: border-box;
+  gap: 24px;
+}
+
+.quote-card-text-wrap {
+  margin-top: auto;
+  margin-bottom: 0;
+  padding: 0;
 }
 
 .quote-headline {
-  font-family: cursive;
-  font-size: clamp(16px, 1.35vw, 20px);
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-style: italic;
   font-weight: 500;
-  line-height: 1.45;
+  font-size: 20px;
+  line-height: 1.36;
   color: #ffffff;
   margin: 0;
+  letter-spacing: -0.15px;
+  /* text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9), 0 1px 3px rgba(0, 0, 0, 0.95); */
   display: -webkit-box;
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  word-wrap: break-word;
-  letter-spacing: -0.3px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+}
+
+/* Bottom Card Footer: Glassmorphic Capsule/Pill */
+.quote-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 6px 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  box-sizing: border-box;
+  width: 100%;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.quote-card:hover .quote-card-footer {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.quote-book-thumb {
+  width: 32px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .quote-byline {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  margin-top: 16px;
-}
-
-.quote-accent-line {
-  width: 24px;
-  height: 2.5px;
-  border-radius: 1px;
-  background: var(--red);
-  margin-bottom: 8px;
-}
-
-.quote-author-name {
-  font-size: 12.5px;
-  font-weight: 500;
-  color: #a1a1aa;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  letter-spacing: -0.1px;
+  justify-content: center;
+  gap: 1.5px;
+  min-width: 0;
+  text-align: left;
 }
 
 .quote-book-title {
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 700;
   color: #ffffff;
-  white-space: nowrap;
+  line-height: 1.25;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
   letter-spacing: -0.1px;
 }
 
-/* Outline Action Button */
-.quote-read-btn {
-  align-self: flex-start;
-  margin-top: 18px;
-  padding: 9px 20px;
-  border: 1.5px solid rgba(255, 255, 255, 0.45);
-  border-radius: 7px;
-  background: rgba(9, 9, 11, 0.25);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  color: #ffffff;
-  font-size: 13.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+.quote-author-name {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.quote-card:hover .quote-read-btn {
-  background: #ffffff;
-  color: #09090b;
-  border-color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
-}
-
-/* Arrow Navigation Buttons (Positioned Outside Content) */
-.quotes-arrow {
+.quotes-nav-btn {
   position: absolute;
-  top: 50%;
+  top: calc(50% - 10px);
   transform: translateY(-50%);
   z-index: 10;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(9, 9, 11, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(12, 14, 18, 0.85);
   backdrop-filter: blur(8px);
   color: #ffffff;
-  display: grid;
-  place-items: center;
-  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  transition: all 0.2s ease;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.quotes-arrow:hover {
-  background: var(--red);
-  border-color: var(--red);
+.quotes-carousel-wrapper:hover .quotes-nav-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.quotes-nav-btn:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
   transform: translateY(-50%) scale(1.08);
 }
 
-.quotes-arrow.left {
-  left: max(16px, calc(var(--page-gutter) - 24px));
+.quotes-nav-btn.prev {
+  left: max(16px, calc(var(--page-gutter) - 20px));
 }
 
-.quotes-arrow.right {
-  right: max(16px, calc(var(--page-gutter) - 24px));
+.quotes-nav-btn.next {
+  right: max(16px, calc(var(--page-gutter) - 20px));
 }
 
 /* Pagination Dots */
@@ -3548,6 +3570,9 @@ a.collection-8::after {
   height: 6px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.25);
+  border: none;
+  padding: 0;
+  cursor: pointer;
   transition: background 0.3s ease, width 0.3s ease, border-radius 0.3s ease;
 }
 
@@ -3557,21 +3582,69 @@ a.collection-8::after {
   border-radius: 3px;
 }
 
-@media (max-width: 768px) {
-  .quotes-section {
-    padding: 44px var(--page-gutter);
-    min-height: auto;
+@media (max-width: 1080px) {
+  .quotes-track {
+    gap: 16px !important;
   }
 
   .quote-card {
-    flex: 0 0 85vw;
-    width: 85vw;
-    min-height: 310px;
-    height: 310px;
+    flex: 0 0 calc((100% - 2 * 16px) / 3) !important;
+    width: calc((100% - 2 * 16px) / 3) !important;
+    min-width: calc((100% - 2 * 16px) / 3) !important;
+    max-width: calc((100% - 2 * 16px) / 3) !important;
+    aspect-ratio: 1 / 1.6;
+  }
+}
+
+@media (max-width: 640px) {
+  .quotes-section {
+    padding: 36px 0;
   }
 
-  .quotes-arrow {
+  .quotes-nav-btn {
     display: none;
+  }
+
+  .quotes-track {
+    gap: 12px !important;
+  }
+
+  .quote-card {
+    flex: 0 0 calc((100% - 12px) / 2) !important;
+    width: calc((100% - 12px) / 2) !important;
+    min-width: calc((100% - 12px) / 2) !important;
+    max-width: calc((100% - 12px) / 2) !important;
+    border-radius: 10px !important;
+    aspect-ratio: 1 / 1.65;
+  }
+
+  .quote-headline {
+    font-size: 14.5px !important;
+    line-height: 1.35 !important;
+  }
+
+  .quote-card-body {
+    padding: 12px 10px 10px 10px !important;
+    gap: 8px !important;
+  }
+
+  .quote-card-footer {
+    padding: 5px 8px 5px 5px !important;
+    border-radius: 8px !important;
+    gap: 7px !important;
+  }
+
+  .quote-book-thumb {
+    width: 26px !important;
+    height: 36px !important;
+  }
+
+  .quote-book-title {
+    font-size: 11px !important;
+  }
+
+  .quote-author-name {
+    font-size: 9.5px !important;
   }
 }
 
